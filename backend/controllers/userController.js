@@ -78,7 +78,6 @@ exports.userSignup=asyncWrapper(async (req, res) => {
 
 exports.userLogin =asyncWrapper( async (req, res) => {
   // try {
-    console.log("HAHAHAHHHA")
     let { email, password } = req.body;
     email=email.trim()
     password=password.trim()
@@ -123,6 +122,8 @@ exports.userLogin =asyncWrapper( async (req, res) => {
   //   res.status(400).json({status:"fail", message: error.message });
   // }
 })
+
+
 
 
 //NOTE: Will be implemented later. Not using it anywhere for now.
