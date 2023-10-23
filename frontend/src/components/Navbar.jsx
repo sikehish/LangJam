@@ -1,4 +1,5 @@
 import  { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,10 +39,12 @@ const Navbar = () => {
           </button>
         </div>
         <ul className="hidden lg:flex space-x-8">
-          <li className="text-white hover:text-blue-200 cursor-pointer">Home</li>
-          <li className="text-white hover:text-blue-200 cursor-pointer">Courses</li>
-          <li className="text-white hover:text-blue-200 cursor-pointer">Practice</li>
-          <li className="text-white hover:text-blue-200 cursor-pointer">About</li>
+          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Home</Link>
+          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Languages</Link>
+          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Leaderboard</Link>
+          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Login</Link>
+          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Profile</Link>
+          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Admin</Link>
         </ul>
       </div>
       {isMenuOpen && (
@@ -63,10 +66,12 @@ const Navbar = () => {
             </svg>
           </button>
           <ul className="space-y-4 py-16">
-            <li className="cursor-pointer">Home</li>
-            <li className="cursor-pointer">Courses</li>
-            <li className="cursor-pointer">Practice</li>
-            <li className="cursor-pointer">About</li>
+            <Link to='' className="cursor-pointer">Home</Link>
+            <Link to='' className="cursor-pointer">Languages</Link>
+            <Link to='' className="cursor-pointer">Leaderboard</Link>
+            <Link to='' className="cursor-pointer">Login</Link>
+            <Link to='' className="cursor-pointer">Profile</Link>
+            <Link to='' className="cursor-pointer">Admin</Link>
           </ul>
         </div>
       )}

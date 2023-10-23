@@ -9,11 +9,9 @@ export const useAuthContext = () => {
 };
 
 const reducer = (state, action) => {
-  console.log("HHHHHHHHHHHHHHHHHHA")
   if (action.type === 'SIGNUP') {
     return { user: null, flag: 'signed up' }; //NOT IMPLEMENTING AUTO REGISTRATION ON SIGNUP
   } else if (action.type === 'LOGIN') {
-    console.log("HAAAAAAAAAH ",action.payload)
     return { user: action.payload };
   } else if (action.type === 'LOGOUT') {
     return { user: null };
