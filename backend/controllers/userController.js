@@ -124,6 +124,51 @@ exports.userLogin =asyncWrapper( async (req, res) => {
 })
 
 
+//Admin Login
+exports.adminLogin =asyncWrapper( async (req, res) => {
+  // try {
+    let { email, password } = req.body;
+    email=email.trim()
+    password=password.trim()
+    if (!email || !password) {
+      res.status(400)
+      throw Error("Email and password must be filled");
+    }
+        else if (!validator.isEmail(email)) {
+          res.status(400)
+          throw Error("Email format invalid");
+        }
+        
+        
+        // Find the user by email
+        const user = await User.findOne({ email });
+
+        if (!user) {
+          res.status(404)
+          throw new Error("You aren't authorized!")
+        }
+        
+        // Compare passwords
+        const exists = await bcrypt.compare(password, user.password);
+        if (!exists) {
+          res.status(401)
+          throw new Error("Incorrect password")
+        }
+
+        //Will be implemented later
+        // if(!user.verified) {
+        //   res.status(401)
+        //   throw new Error("User is not verified")
+        // }
+
+    // Create a JWT token
+    console.log(process.env.JWT_KEY, process.env)
+    const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, { expiresIn: '1d'});
+
+    res.status(200).json({status:"success", data:{ email , name:user.name, token }});
+
+})
+
 
 
 //NOTE: Will be implemented later. Not using it anywhere for now.
