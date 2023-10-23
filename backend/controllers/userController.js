@@ -77,6 +77,7 @@ exports.userSignup=asyncWrapper(async (req, res) => {
 
 exports.userLogin =asyncWrapper( async (req, res) => {
   // try {
+    console.log("HAHAHAHHHA")
     let { email, password } = req.body;
     email=email.trim()
     password=password.trim()
@@ -112,6 +113,7 @@ exports.userLogin =asyncWrapper( async (req, res) => {
         // }
 
     // Create a JWT token
+    console.log(process.env.JWT_KEY, process.env)
     const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, { expiresIn: '5d'});
 
     res.status(200).json({status:"success", data:{ email , name:user.name, token }});

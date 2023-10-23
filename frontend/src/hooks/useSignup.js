@@ -30,8 +30,8 @@ function useSignup() {
       setIsLoading(false);
       setIsSucc(false);
       //Some error -  refer to userController to see what error was thrown and most imp-the err property name
-      setError(res.statusText); //data.err is undefined
-      toast.error(res.message);
+      setError(data.statusText); //data.err is undefined
+      toast.error(data.message);
     } else if (res.ok) {
       dispatch({ type: "SIGNUP" });
       // localStorage.setItem("user", JSON.stringify(data));

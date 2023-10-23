@@ -67,8 +67,8 @@ function Signup() {
           </button>
         </form>
 
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        {isSucc && <div className="text-green-500 mb-4">Signup successful!</div>}
+        {/* {error && <div className="text-red-500 mb-4">{error}</div>} */}
+        {/* {isSucc && <div className="text-green-500 mb-4">Signup successful!</div>} */}
 
         <div className="mt-4 text-gray-600">
           Already have an account?{" "}

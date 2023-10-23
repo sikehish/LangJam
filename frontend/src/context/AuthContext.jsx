@@ -22,7 +22,7 @@ const reducer = (state, action) => {
 
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, {
-    user: JSON.parse(localStorage.getItem("langJam-user")) || null
+    user: localStorage.getItem("langJam-user")? JSON.parse(localStorage.getItem("langJam-user")) : null
   });
 
   return (

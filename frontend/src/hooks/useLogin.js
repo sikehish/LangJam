@@ -24,13 +24,14 @@ function useLogin() {
     const data = await res.json();
 
     if (!res.ok) {
-      console.log(data.err, res);
+      console.log(data, res);
       setIsLoading(false);
       setIsSucc(false);
       //Some error -  refer to userController to see what error was thrown and most imp-the err property name
-      setError(res.statusText); //data.err is undefined
-      toast.error(res.message);
+      setError(data.message); //data.err is undefined
+      toast.error(data.message);
     } else if (res.ok) {
+      console.log(res, data, data.data);
       localStorage.setItem("langJam-user", JSON.stringify(data.data));
       dispatch({ type: "LOGIN", payload: data.data });
       setError(null);

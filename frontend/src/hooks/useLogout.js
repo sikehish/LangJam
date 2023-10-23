@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 function useLogout() {
   const { dispatch } = useAuthContext();
 
-  const logout = () => {
+  const logout = (e) => {
     localStorage.removeItem("langJam-user");
     dispatch({ type: "LOGOUT" });
     toast.success("Logged out!");

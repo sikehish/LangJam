@@ -1,10 +1,12 @@
 import  { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
+import useLogout from '../hooks/useLogout';
 
 const Navbar = () => {
   const {state, dispatch}=useAuthContext()
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const logout=useLogout()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -40,14 +42,15 @@ const Navbar = () => {
             </svg>
           </button>
         </div>
-        <ul className="hidden lg:flex space-x-8">
+        <div className="hidden lg:flex space-x-8">
           <Link to='/' className="text-white hover:text-blue-200 cursor-pointer">Home</Link>
           <Link to='/languages' className="text-white hover:text-blue-200 cursor-pointer">Languages</Link>
           <Link to='/leaderboard' className="text-white hover:text-blue-200 cursor-pointer">Leaderboard</Link>
           {!state.user && <Link to='/login' className="text-white hover:text-blue-200 cursor-pointer">Login</Link>}
           {state.user && <Link to='/profile' className="text-white hover:text-blue-200 cursor-pointer">Profile</Link>}
           {!state.user && <Link to='/admin' className="text-white hover:text-blue-200 cursor-pointer">Admin</Link>}
-        </ul>
+          {state.user && <button onClick={logout} className="text-white hover:text-blue-200 cursor-pointer">Logout</button>}
+        </div>
       </div>
       {isMenuOpen && (
         <div className="lg:hidden fixed top-0 left-0 w-full h-screen bg-blue-800 text-white text-center z-10">

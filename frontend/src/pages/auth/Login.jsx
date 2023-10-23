@@ -72,8 +72,8 @@ function Login() {
           </button>
         </form>
 
-        {error && <div className="text-red-500 mt-4">{error}</div>}
-        {isSucc && <div className="text-green-500 mt-4">Login successful!</div>}
+        {/* {error && <div className="text-red-500 mt-4">{error}</div>} */}
+        {/* {isSucc && <div className="text-green-500 mt-4">Login successful!</div>} */}
         
         <div className="mt-4 text-gray-600">
           Don't have an account?{" "}
