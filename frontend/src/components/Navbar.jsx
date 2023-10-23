@@ -48,7 +48,7 @@ const Navbar = () => {
           <Link to='/leaderboard' className="text-white hover:text-blue-200 cursor-pointer">Leaderboard</Link>
           {!state.user && <Link to='/login' className="text-white hover:text-blue-200 cursor-pointer">Login</Link>}
           {state.user && <Link to='/profile' className="text-white hover:text-blue-200 cursor-pointer">Profile</Link>}
-          {!state.user && <Link to='/admin' className="text-white hover:text-blue-200 cursor-pointer">Admin</Link>}
+          {!state.user && <Link to='/admin-login' className="text-white hover:text-blue-200 cursor-pointer">Admin</Link>}
           {state.user && <button onClick={logout} className="text-white hover:text-blue-200 cursor-pointer">Logout</button>}
         </div>
       </div>

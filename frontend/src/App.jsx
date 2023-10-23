@@ -12,6 +12,7 @@ import {
   BrowserRouter, Routes, Route
 } from "react-router-dom";
 import { useAuthContext } from "./context/AuthContext";
+import AdminLogin from "./pages/auth/AdminLogin";
 export default function App() {
 
   const{state, dispatch}=useAuthContext()
@@ -24,7 +25,7 @@ export default function App() {
       {!state.user && <Route path="/login"  element={<Login />} />}
       {!state.user && <Route path="/signup"  element={<Signup />} />}
        <Route path="/leaderboard"  element={<Leaderboard />} />
-      {!state.user && <Route path="/admin"  element={<Admin />} />}
+      {!state.user && <Route path="/admin-login"  element={<AdminLogin />} />}
        <Route path="/languages"  element={<Languages />} />
       {state.user && <Route path="/profile"  element={<Profile />} />}
     </Routes>
