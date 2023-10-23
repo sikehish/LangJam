@@ -18,9 +18,11 @@ const reducer = (state, action) => {
   } else return state;
 };
 
+//NOTE: Due to shortage of time, I'm storing the JWT key on the frontend. Otherwise, I would have stored it in a cookie.
+
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, {
-    user: JSON.parse(localStorage.getItem("user")) || null
+    user: JSON.parse(localStorage.getItem("langJam-user")) || null
   });
 
   return (
