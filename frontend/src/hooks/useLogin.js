@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function useLogin() {
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isSucc, setIsSucc] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +40,7 @@ function useLogin() {
       setIsLoading(false);
       setIsSucc(true);
       toast.success("Successfully logged in!");
+      navigate("/languages");
     }
   };
 

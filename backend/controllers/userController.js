@@ -63,7 +63,8 @@ exports.userSignup=asyncWrapper(async (req, res) => {
         <p>Thank you for signing up. Please click the following link to verify your account:</p>
         <a href=${url}>Verify Email</a>`
 
-    sendMail(email,subject, html)
+      //Will be implemented later.
+    // sendMail(email,subject, html)
 
     
     res.status(201).json({ status: 'success', data: { name, email} });
@@ -163,7 +164,8 @@ exports.deleteAccount = asyncWrapper(async (req, res) => {
         <p>Your account was succesfully deleted</p>
         <a href=${url}>Sign up to create an account!</a>`
 
-    sendMail(user.email,subject, html)
+        //Will be implemented later.
+    // sendMail(user.email,subject, html)
 
     res.status(204).json({ status:"success",message: 'User account deleted successfully.' });
   // } catch (error) {
