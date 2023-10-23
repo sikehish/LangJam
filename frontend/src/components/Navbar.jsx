@@ -1,7 +1,9 @@
 import  { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
 
 const Navbar = () => {
+  const {state, dispatch}=useAuthContext()
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -39,12 +41,12 @@ const Navbar = () => {
           </button>
         </div>
         <ul className="hidden lg:flex space-x-8">
-          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Home</Link>
-          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Languages</Link>
-          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Leaderboard</Link>
-          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Login</Link>
-          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Profile</Link>
-          <Link to='' className="text-white hover:text-blue-200 cursor-pointer">Admin</Link>
+          <Link to='/' className="text-white hover:text-blue-200 cursor-pointer">Home</Link>
+          <Link to='/languages' className="text-white hover:text-blue-200 cursor-pointer">Languages</Link>
+          <Link to='/leaderboard' className="text-white hover:text-blue-200 cursor-pointer">Leaderboard</Link>
+          {!state.user && <Link to='/login' className="text-white hover:text-blue-200 cursor-pointer">Login</Link>}
+          {state.user && <Link to='/profile' className="text-white hover:text-blue-200 cursor-pointer">Profile</Link>}
+          {!state.user && <Link to='/admin' className="text-white hover:text-blue-200 cursor-pointer">Admin</Link>}
         </ul>
       </div>
       {isMenuOpen && (
