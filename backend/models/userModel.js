@@ -25,11 +25,13 @@ const userSchema = new mongoose.Schema({
     minlength: [8, 'Password must be at least 8 characters'],
     validate: [isStrongPassword, 'Password not strong enough']
   },
-  verified: {
-    type: Boolean,
-    required: true,
-    default: false
-}
+  
+  //NOTE: Will be implemented later
+//   verified: {
+//     type: Boolean,
+//     required: true,
+//     default: false
+// }
 },{
   timestamps: true
 });

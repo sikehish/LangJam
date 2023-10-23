@@ -105,10 +105,11 @@ exports.userLogin =asyncWrapper( async (req, res) => {
           throw new Error("Incorrect password")
         }
 
-        if(!user.verified) {
-          res.status(401)
-          throw new Error("User is not verified")
-        }
+        //Will be implemented later
+        // if(!user.verified) {
+        //   res.status(401)
+        //   throw new Error("User is not verified")
+        // }
 
     // Create a JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, { expiresIn: '5d'});
@@ -121,6 +122,7 @@ exports.userLogin =asyncWrapper( async (req, res) => {
 })
 
 
+//NOTE: Will be implemented later. Not using it anywhere for now.
 exports.userVerify=asyncWrapper(async (req,res)=>{
   const {token} = req.params;
   // try{
@@ -134,12 +136,7 @@ exports.userVerify=asyncWrapper(async (req,res)=>{
     throw new Error("User doesn't exist")
   }
   console.log(newDoc)
-  // res.status(200).json({status:"success", message:"Verified successfully!"})
   res.sendFile(path.join(__dirname,'..','static','html','verified.html'));
-// }catch(err){
-//   console.log(err)
-//   res.sendFile(path.join(__dirname,'..','static','html','verifiederr.html'));
-//   }
   
 })
 
