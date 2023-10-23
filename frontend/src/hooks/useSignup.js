@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 function useSignup() {
   const [error, setError] = useState(null);
@@ -30,12 +31,14 @@ function useSignup() {
       setIsSucc(false);
       //Some error -  refer to userController to see what error was thrown and most imp-the err property name
       setError(res.statusText); //data.err is undefined
+      toast.error(res.statusText);
     } else if (res.ok) {
       dispatch({ type: "SIGNUP" });
       // localStorage.setItem("user", JSON.stringify(data));
       setIsSucc(true);
       setIsLoading(false);
       setError(null);
+      toast.success("Successfully signed up!");
     }
   };
 

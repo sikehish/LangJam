@@ -6,6 +6,8 @@ import Login from "./pages/auth/Login"
 import Profile from "./pages/Profile"
 import Signup from "./pages/auth/Signup"
 import Navbar from "./components/Navbar";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   BrowserRouter, Routes, Route
 } from "react-router-dom";
@@ -26,6 +28,7 @@ export default function App() {
        <Route path="/languages"  element={<Languages />} />
       {state.user && <Route path="/profile"  element={<Profile />} />}
     </Routes>
+    <ToastContainer position="top-right"/>
     </BrowserRouter>
   )
 }

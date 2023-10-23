@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 function useLogin() {
   const [error, setError] = useState(null);
@@ -28,12 +29,14 @@ function useLogin() {
       setIsSucc(false);
       //Some error -  refer to userController to see what error was thrown and most imp-the err property name
       setError(res.statusText); //data.err is undefined
+      toast.error(res.statusText);
     } else if (res.ok) {
-      localStorage.setItem("user", JSON.stringify(data.data));
+      localStorage.setItem("langJam-user", JSON.stringify(data.data));
       dispatch({ type: "LOGIN", payload: data.data });
       setError(null);
       setIsLoading(false);
       setIsSucc(true);
+      toast.success("Successfully logged in!");
     }
   };
 

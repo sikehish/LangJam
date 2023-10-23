@@ -6,7 +6,7 @@ function useLogout() {
   const { dispatch } = useAuthContext();
 
   const logout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("langJam-user");
     dispatch({ type: "LOGOUT" });
     toast.success("Logged out!");
   };
