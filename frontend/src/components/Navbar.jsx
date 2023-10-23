@@ -54,33 +54,46 @@ const Navbar = () => {
         </div>
       </div>
       {isMenuOpen && (
-        <div className="lg:hidden fixed top-0 left-0 w-full h-screen bg-blue-800 text-white text-center z-10">
-          <button
-            onClick={closeMenu}
-            className="absolute top-4 right-4 text-white p-2 focus:outline-none"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          <ul className="space-y-8 py-16">
-            <Link to='' className="cursor-pointer">Home</Link>
-            <Link to='' className="cursor-pointer">Languages</Link>
-            <Link to='' className="cursor-pointer">Leaderboard</Link>
-            <Link to='' className="cursor-pointer">Login</Link>
-            <Link to='' className="cursor-pointer">Profile</Link>
-            <Link to='' className="cursor-pointer">Admin</Link>
-          </ul>
-        </div>
-      )}
+  <div className="lg:hidden fixed top-0 left-0 w-full h-screen bg-blue-800 text-white text-center z-10">
+    <button
+      onClick={closeMenu}
+      className="absolute top-4 right-4 text-white p-2 focus:outline-none"
+    >
+      <svg
+        className="w-6 h-6"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <ul className="space-y-8 py-16">
+      <li>
+        <Link to='/'>Home</Link>
+      </li>
+      <li>
+        <Link to='/languages'>Languages</Link>
+      </li>
+      <li>
+        <Link to='/leaderboard'>Leaderboard</Link>
+      </li>
+      <li>
+        <Link to='/login'>Login</Link>
+      </li>
+      <li>
+        <Link to='/profile'>Profile</Link>
+      </li>
+      <li>
+        <Link to='/admin'>Admin</Link>
+      </li>
+    </ul>
+  </div>
+)}
+
     </nav>
   );
 };
