@@ -19,7 +19,7 @@ function AdminLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white rounded-md shadow-md">
-        <h2 className="text-2xl font-bold mb-4">User Login</h2>
+        <h2 className="text-2xl font-bold mb-4">Admin Login</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

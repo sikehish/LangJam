@@ -9,7 +9,7 @@ import Navbar from "./components/Navbar";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
-  BrowserRouter, Routes, Route
+  BrowserRouter, Routes, Route, redirect
 } from "react-router-dom";
 import { useAuthContext } from "./context/AuthContext";
 import AdminLogin from "./pages/auth/AdminLogin";
@@ -26,6 +26,7 @@ export default function App() {
       {!state.user && <Route path="/signup"  element={<Signup />} />}
        <Route path="/leaderboard"  element={<Leaderboard />} />
       {!state.user && <Route path="/admin-login"  element={<AdminLogin />} />}
+      {state.user && <Route path="/admin"  element={<Admin />} />}
        <Route path="/languages"  element={<Languages />} />
       {state.user && <Route path="/profile"  element={<Profile />} />}
     </Routes>

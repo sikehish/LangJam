@@ -40,7 +40,7 @@ function useLogin() {
       setIsLoading(false);
       setIsSucc(true);
       toast.success("Successfully logged into admin!");
-      navigate("/languages");
+      navigate("/admin");
     }
   };
 

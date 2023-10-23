@@ -49,6 +49,7 @@ const Navbar = () => {
           {!state.user && <Link to='/login' className="text-white hover:text-blue-200 cursor-pointer">Login</Link>}
           {state.user && <Link to='/profile' className="text-white hover:text-blue-200 cursor-pointer">Profile</Link>}
           {!state.user && <Link to='/admin-login' className="text-white hover:text-blue-200 cursor-pointer">Admin</Link>}
+          {state.user && <Link to='/admin' className="text-white hover:text-blue-200 cursor-pointer">Admin</Link>}
           {state.user && <button onClick={logout} className="text-white hover:text-blue-200 cursor-pointer">Logout</button>}
         </div>
       </div>
@@ -70,7 +71,7 @@ const Navbar = () => {
               <path d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <ul className="space-y-4 py-16">
+          <ul className="space-y-8 py-16">
             <Link to='' className="cursor-pointer">Home</Link>
             <Link to='' className="cursor-pointer">Languages</Link>
             <Link to='' className="cursor-pointer">Leaderboard</Link>
