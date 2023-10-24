@@ -12,7 +12,6 @@ const { requestReset, passwordReset } = require('../services/passwords');
 const Language = require('../models/LanguageModel');
 
 
-
 // Set up routes
 exports.createLanguage=createLangasyncWrapper(async (req, res) => {
 
@@ -41,6 +40,15 @@ exports.createLanguage=createLangasyncWrapper(async (req, res) => {
 
     const data = await Language.create({ lang });
     
+    console.log(data)
 
+    res.status(201).json({ status: 'success', data });
+})
+
+exports.getAllLanguages=createLangasyncWrapper(async (req, res) => {
+
+
+    const data = await Language.find();
+    console.log(data)
     res.status(201).json({ status: 'success', data });
 })
