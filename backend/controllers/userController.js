@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User= require('../models/userModel');
+const Admin= require('../models/adminModel');
 const validator=require('validator');
 const asyncWrapper=require('express-async-handler')
 
@@ -113,10 +114,9 @@ exports.userLogin =asyncWrapper( async (req, res) => {
         // }
 
     // Create a JWT token
-    console.log(process.env.JWT_KEY, process.env)
     const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, { expiresIn: '5d'});
-
-    res.status(200).json({status:"success", data:{ email , name:user.name, token }});
+    console.log(user,user.name,  user.isAdmin, Boolean(user.isAdmin))
+    res.status(200).json({status:"success", data:{  email , name:user.name, token }});
   // } catch (error) {
   //   console.error('Error in login', error);
   //   res.status(400).json({status:"fail", message: error.message });
@@ -141,7 +141,8 @@ exports.adminLogin =asyncWrapper( async (req, res) => {
         
         
         // Find the user by email
-        const user = await User.findOne({ email });
+        const user = await Admin.findOne({ email });
+        console.log(Admin)
 
         if (!user) {
           res.status(404)
@@ -162,10 +163,9 @@ exports.adminLogin =asyncWrapper( async (req, res) => {
         // }
 
     // Create a JWT token
-    console.log(process.env.JWT_KEY, process.env)
     const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, { expiresIn: '1d'});
 
-    res.status(200).json({status:"success", data:{ email , name:user.name, token }});
+    res.status(200).json({status:"success", data:{ email ,isAdmin: true, name:user.name, token }});
 
 })
 

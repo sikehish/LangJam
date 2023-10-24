@@ -15,7 +15,7 @@ function useLogin() {
     setIsLoading(true);
     setError(null);
 
-    const res = await fetch("/api/users/admin-login-login", {
+    const res = await fetch("/api/users/admin-login", {
       method: "POST",
       headers: {
         "Content-type": "application/json",

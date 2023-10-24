@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
-import useLogin from "../../hooks/useLogin"; // Import your useLogin hook
+import useAdminLogin from "../../hooks/useAdminLogin"; // Import your useLogin hook
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function AdminLogin() {
-  const { login, error, isLoading, isSucc } = useLogin();
+  const { login, error, isLoading, isSucc } = useAdminLogin();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); // For password visibility

@@ -24,7 +24,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: [8, 'Password must be at least 8 characters'],
     validate: [isStrongPassword, 'Password not strong enough']
-  },
+  },isAdmin:{
+    type: Boolean,
+    default: true
+  }
   
   //NOTE: Will be implemented later
 //   verified: {
