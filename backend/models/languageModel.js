@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 const languageSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type:String,
+    required: true
+  },
   exercises: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Exercise' }]
 });
 

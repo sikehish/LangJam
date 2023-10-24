@@ -5,7 +5,8 @@ const  userRouter  = require('./routes/userRouter')
 const mongoose=require('mongoose')
 const morgan=require('morgan');
 const mongoSantize = require('express-mongo-sanitize')
-const xssClean= require('xss-clean')
+const xssClean= require('xss-clean');
+const langRouter = require('./routes/langRouter');
 
 // Set up logger
 app.use(morgan('dev'))
@@ -18,6 +19,7 @@ app.use(xssClean())  // protection against injection of malicious code
 
 //Routes
 app.use('/api/users',userRouter)
+app.use('/api/lang',langRouter)
 
 const uri=process.env.MONGO_URI.replace('<password>', process.env.MONGO_PW)
 const PORT=process.env.PORT || 3000
