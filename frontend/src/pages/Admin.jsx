@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 
 const Admin = () => {
   const [languages, setLanguages] = useState([]);
@@ -7,17 +6,24 @@ const Admin = () => {
 
   useEffect(() => {
     // Fetch languages from your backend and set them in the state
-    axios.get("/api/lang/all-lang").then((response) => {
-      setLanguages(response.data);
-    });
+    fetch("/api/lang/all-lang")
+      .then((response) => response.json())
+      .then((data) => setLanguages(data))
+      .catch((error) => console.error("Failed to fetch languages:", error));
   }, []);
 
   const handleAddLanguage = () => {
     // Send a POST request to your backend to add a new language
-    axios
-      .post("/api/lang/create-lang", { lang: newLanguage })
-      .then((response) => {
-        setLanguages([...languages, response.data]);
+    fetch("/api/lang/create-lang", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ lang: newLanguage }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setLanguages([...languages, data]);
         setNewLanguage("");
       })
       .catch((error) => {
