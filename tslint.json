@@ -1,0 +1,14 @@
+{
+    "extends": ["tslint:recommended"],
+    "rules": {
+      "noImplicitAny": true,
+      "strictNullChecks": true
+    },
+    "linterOptions": {
+      "exclude": [
+        "frontend/**/*.js",
+        "backend/**/*.js"
+      ]
+    }
+  }
+  
