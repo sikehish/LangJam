@@ -3,14 +3,45 @@ import { useAuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-function useLogin() {
+interface LoginResponse {
+  message: string;
+  data: UserData; // Assuming UserData is a type representing your user data
+}
+
+interface UserData {
+  status: string
+  data: {
+    email: string
+    name: string
+    token: string 
+  }
+}
+
+interface ErrorResponse {
+  state: string;
+  message: string
+}
+
+interface LoginHook {
+  login: (resData: LoginData) => Promise<void>;
+  error: string | null;
+  isLoading: boolean;
+  isSucc: boolean | null;
+}
+
+interface LoginData{
+  email: string,
+  password: string
+}
+
+function useLogin(): LoginHook {
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
-  const [isSucc, setIsSucc] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isSucc, setIsSucc] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { dispatch } = useAuthContext();
 
-  const login = async (resData) => {
+  const login = async (resData: LoginData): Promise<void> => {
     setIsSucc(false);
     setIsLoading(true);
     setError(null);
@@ -23,19 +54,20 @@ function useLogin() {
       body: JSON.stringify(resData),
     });
 
-    const data = await res.json();
+    const data: LoginResponse | ErrorResponse = await res.json();
 
     if (!res.ok) {
       console.log(data, res);
       setIsLoading(false);
       setIsSucc(false);
-      //Some error -  refer to userController to see what error was thrown and most imp-the err property name
-      setError(data.message); //data.err is undefined
+      // Some error - refer to userController to see what error was thrown
+      // and most importantly, the error property name
+      setError(data.message); // data.err is undefined
       toast.error(data.message);
     } else if (res.ok) {
-      console.log(res, data, data.data);
-      localStorage.setItem("langJam-user", JSON.stringify(data.data));
-      dispatch({ type: "LOGIN", payload: data.data });
+      console.log(res, data, (data as LoginResponse).data);
+      localStorage.setItem("langJam-user", JSON.stringify((data as LoginResponse).data));
+      dispatch({ type: "LOGIN", payload: (data as LoginResponse).data.data });
       setError(null);
       setIsLoading(false);
       setIsSucc(true);
