@@ -1,10 +1,24 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { isEmail, isStrongPassword } = require('validator');
+import { NextFunction } from "express";
+;
+import mongoose, { Document, Model, Schema } from 'mongoose';
+import bcrypt from 'bcrypt';
+import jwt, { Jwt } from 'jsonwebtoken';
+import validator from 'validator';
+import { isEmail, isStrongPassword } from "validator"
 
-// Define the User schema
-const userSchema = new mongoose.Schema({
+export interface UserDocument extends Document {
+  name: string;
+  email: string;
+  password: string;
+  isAdmin?: boolean;
+  createToken(verify?: boolean): string;
+}
+
+// export interface UserModel extends Model<UserDocument> {
+//   createToken(verify?: boolean): string;
+// }
+
+const userSchema = new Schema<UserDocument>({
   name: {
     type: String,
     required: true,
@@ -40,21 +54,21 @@ const userSchema = new mongoose.Schema({
 });
 
 //Using pre middleware function to utilise the data validation used in the schema https://mongoosejs.com/docs/validation.html
-userSchema.pre('save', async function (next) {
-  const user = this;
-  if (user.isModified('password')) { 
-    //salt with 10 rounds will be generated and then the password will be hashed
-      user.password=await bcrypt.hash(user.password, 10)
-}
-  next()
-}
-)
 
-userSchema.methods.createToken = function () {
-  return jwt.sign({ id: this.id }, process.env.JWT_KEY, { expiresIn: "2d" });    
+userSchema.pre('save', async function (next) {
+  const user = this as UserDocument;
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 10);
+  }
+  next();
+});
+
+userSchema.methods.createToken = function (verify = false): string {
+  return verify
+    ? jwt.sign({ id: this.id }, process.env.JWT_VERIFY_KEY as jwt.Secret, { expiresIn: '2d' })
+    : jwt.sign({ id: this.id }, process.env.JWT_KEY as jwt.Secret, { expiresIn: '2d' });
 };
 
-// Create the User model
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model<UserDocument>('User', userSchema);
 
-module.exports = User;
+export default User;

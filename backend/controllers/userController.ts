@@ -1,20 +1,18 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User= require('../models/userModel');
-const Admin= require('../models/adminModel');
-const validator=require('validator');
-const asyncWrapper=require('express-async-handler')
+import { Request, Response } from 'express';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import validator from 'validator';
+import asyncWrapper from 'express-async-handler';
+import path from 'path';
 
-const  path = require('path');
-const { sendMail } = require('../utils/mailFunc');
-const { requestReset, passwordReset } = require('../services/passwords');
+import User from '../models/userModel';
+import Admin, { AdminSchema } from '../models/adminModel';
+import { sendMail } from '../utils/mailFunc';
+import { requestReset, passwordReset } from '../services/passwords';
+import { AuthReq } from '../typings';
 
 
-
-// Set up routes
-exports.userSignup=asyncWrapper(async (req, res) => {
-  // try {
+export const userSignup=asyncWrapper(async (req, res) => {
     let { name, email, password, confirmPassword } = req.body;
 
     name=name.trim()
@@ -53,13 +51,13 @@ exports.userSignup=asyncWrapper(async (req, res) => {
     
     const user = await User.create({ email, password, name });
     
-    const token = user.createToken();
+    const token = user.createToken(true); //verify=true
     
     const url = `http://localhost:3000/api/users/verify/${token}`
     
 
-      subject = 'Account Verification'
-      html=`
+    const subject = 'Account Verification'
+    const html=`
         <h1>Account Verification</h1>
         <p>Thank you for signing up. Please click the following link to verify your account:</p>
         <a href=${url}>Verify Email</a>`
@@ -69,15 +67,9 @@ exports.userSignup=asyncWrapper(async (req, res) => {
 
     
     res.status(201).json({ status: 'success', data: { name, email} });
-
-
-  // } catch (error) {
-  //   console.error('Error in signup', error);
-  //   res.status(400).json({status:"fail", message: error.message });
-  // }
 })
 
-exports.userLogin =asyncWrapper( async (req, res) => {
+export const userLogin =asyncWrapper( async (req, res) => {
   // try {
     let { email, password } = req.body;
     email=email.trim()
@@ -114,19 +106,14 @@ exports.userLogin =asyncWrapper( async (req, res) => {
         // }
 
     // Create a JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, { expiresIn: '5d'});
+    const token = jwt.sign({ id: user._id }, process.env.JWT_KEY as jwt.Secret, { expiresIn: '5d'});
     console.log(user,user.name,  user.isAdmin, Boolean(user.isAdmin))
     res.status(200).json({status:"success", data:{  email , name:user.name, token }});
-  // } catch (error) {
-  //   console.error('Error in login', error);
-  //   res.status(400).json({status:"fail", message: error.message });
-  // }
 })
 
 
 //Admin Login
-exports.adminLogin =asyncWrapper( async (req, res) => {
-  // try {
+export const adminLogin =asyncWrapper( async (req, res) => {
     let { email, password } = req.body;
     email=email.trim()
     password=password.trim()
@@ -141,7 +128,7 @@ exports.adminLogin =asyncWrapper( async (req, res) => {
         
         
         // Find the user by email
-        const user = await Admin.findOne({ email });
+        const user: AdminSchema | null= await Admin.findOne({ email });
         console.log(Admin)
 
         if (!user) {
@@ -163,19 +150,15 @@ exports.adminLogin =asyncWrapper( async (req, res) => {
         // }
 
     // Create a JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, { expiresIn: '1d'});
-
-    res.status(200).json({status:"success", data:{ email ,isAdmin: true, name:user.name, token }});
+    const token = jwt.sign({ id: user._id }, (process?.env?.JWT_KEY as jwt.Secret), { expiresIn: '1d'});
+    res.status(200).json({status:"success", data:{ email ,isAdmin: true, name:user?.email, token }});
 
 })
 
-
-
 //NOTE: Will be implemented later. Not using it anywhere for now.
-exports.userVerify=asyncWrapper(async (req,res)=>{
+export const userVerify=asyncWrapper(async (req,res)=>{
   const {token} = req.params;
-  // try{
-    const { id }= jwt.verify(token,process.env.JWT_KEY)
+    const { id }= jwt.verify(token,process.env.JWT_VERIFY_KEY as jwt.Secret) as JwtPayload
   console.log(token, id)
   const newDoc = await User.findByIdAndUpdate(id,{ verified: true},{
     new: true
@@ -186,13 +169,11 @@ exports.userVerify=asyncWrapper(async (req,res)=>{
   }
   console.log(newDoc)
   res.sendFile(path.join(__dirname,'..','static','html','verified.html'));
-  
 })
 
 
-exports.deleteAccount = asyncWrapper(async (req, res) => {
-  // try {
-    const id = req.user;
+export const deleteAccount = asyncWrapper(async (req, res) => {
+    const id = ((req as unknown) as AuthReq).user;
 
     // Find the user by email
     const user = await User.findByIdAndDelete(id);
@@ -204,8 +185,8 @@ exports.deleteAccount = asyncWrapper(async (req, res) => {
 
     const url = `${process.env.CLIENT_URL}/signup`
 
-    subject = 'Account Deleted'
-      html=`
+    const subject = 'Account Deleted'
+    const html=`
         <h1>Account Deleted</h1>
         <p>Your account was succesfully deleted</p>
         <a href=${url}>Sign up to create an account!</a>`
@@ -214,16 +195,10 @@ exports.deleteAccount = asyncWrapper(async (req, res) => {
     // sendMail(user.email,subject, html)
 
     res.status(204).json({ status:"success",message: 'User account deleted successfully.' });
-  // } catch (error) {
-  //   console.error(error);
-  //   res.status(500).json({ status:"fail",message: 'An error occurred while deleting the user account.' });
-  // }
 })
 
-exports.updateUser= asyncWrapper(async (req,res)=>{
-  // try{
-
-  const id = req.user;
+export const updateUser= asyncWrapper(async (req,res)=>{
+  const id = ((req as unknown) as AuthReq).user;
   let { name,password,confirmPassword } = req.body;
   console.log(name,password,confirmPassword)
   //Changing passwords
@@ -273,48 +248,22 @@ exports.updateUser= asyncWrapper(async (req,res)=>{
   }
   console.log(newDoc)
   res.status(200).json({status:"success", data: newDoc})
-// }catch(err){
-//   console.log(err)
-//   res.status(400).json({status:"fail", message: err.message });
-//   }
 })
 
 
-exports.resetRequestController=asyncWrapper(async (req,res)=>{
-  // try{
+export const resetRequestController=asyncWrapper(async (req,res)=>{
     let { email } = req.body
-
     email=email.trim()
-
     if(!email || !validator.isEmail(email)) {
       res.status(400)
       throw new Error("Please enter a valid email")
     }
-    
     const data = await requestReset(email)
-
     res.status(200).json({status:"success", data})
-
-  // }catch(err){
-  //   console.log(err)
-  //   res.status(400).json({status:"fail", message: err.message});
-  // }
-
 })
 
-exports.resetPasswordController=asyncWrapper(async (req,res)=>{
-
-  // try{
-
+export const resetPasswordController=asyncWrapper(async (req,res)=>{
     let { password, confirmPassword, uid, token } = req.body
-    
     const newDoc=await passwordReset(uid, token, password, confirmPassword)
-
     res.status(200).json({status:"success", data: newDoc})
-
-  // }catch(err){
-  //   console.log(err)
-  //   res.status(400).json({status:"fail", message: err.message});
-  // }
-
 })

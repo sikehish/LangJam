@@ -1,54 +1,49 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User= require('../models/userModel');
-const Admin= require('../models/adminModel');
-const validator=require('validator');
-const asyncWrapper=require('express-async-handler')
+import { Request, Response } from 'express';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import User from '../models/userModel';
+import Admin from '../models/adminModel';
+import validator from 'validator';
+import asyncWrapper from 'express-async-handler';
+import path from 'path';
+import { sendMail } from '../utils/mailFunc';
+import { requestReset, passwordReset } from '../services/passwords';
+import Language from '../models/languageModel';
+import { AuthReq } from '../typings';
 
-const  path = require('path');
-const { sendMail } = require('../utils/mailFunc');
-const { requestReset, passwordReset } = require('../services/passwords');
-const Language = require('../models/LanguageModel');
+export const createLanguage = asyncWrapper(async (req: Request, res: Response) => {
+  const id = ((req as unknown)as AuthReq).user;
+  const user = await Admin.findById(id);
 
+  if (!user) {
+    res.status(404);
+    throw new Error("User isn't authorized");
+  }
 
-// Set up routes
-exports.createLanguage=createLangasyncWrapper(async (req, res) => {
+  let { lang } = req.body;
 
-  const id = req.user;
-    const user = await Admin.findById(id);
+  lang = lang.trim();
 
-    if (!user) {
-       res.status(404)
-       throw new Error("User isn't authorized")
-    }
+  if (!lang) {
+    res.status(400);
+    throw new Error('All fields must be filled');
+  }
 
-    let { lang } = req.body;
+  const checkLang = await Language.findOne({ lang });
+  if (checkLang) {
+    res.status(400);
+    throw new Error('Language already entered!');
+  }
 
-    lang=lang.trim()
+  const data = await Language.create({ lang });
 
-    if (!lang) {
-      res.status(400)
-      throw Error("All fields must be filled");
-    }
+  console.log(data);
 
-    const checkLang = await Language.findOne({ lang });
-    if (checkLang) {
-      res.status(400)
-      throw new Error('Language already entered!');
-    }
+  res.status(201).json({ status: 'success', data });
+});
 
-    const data = await Language.create({ lang });
-    
-    console.log(data)
-
-    res.status(201).json({ status: 'success', data });
-})
-
-exports.getAllLanguages=createLangasyncWrapper(async (req, res) => {
-
-
-    const data = await Language.find();
-    console.log(data)
-    res.status(201).json({ status: 'success', data });
-})
+export const getAllLanguages = asyncWrapper(async (req: Request, res: Response) => {
+  const data = await Language.find();
+  console.log(data);
+  res.status(201).json({ status: 'success', data });
+});

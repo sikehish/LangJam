@@ -1,21 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-interface AuthReq extends Request {
-  user?: string;
-  headers: {
-    authorization?: string;
-  };
-}
+import { AuthReq } from "../typings"
 
-export const checkAuth = (req: AuthReq, res: Response, next: NextFunction): Response | void => {
-  const { authorization: auth } = req.headers;
+export const checkAuth = (req: Request, res: Response, next: NextFunction): Response | void => {
+  // const { authorization: auth } = req.headers;
 
-  if (!auth || !auth.startsWith('Bearer ')) {
-    return res.status(401).json({ status: "fail", message: 'Unauthorized access. Bearer token not provided.' });
-  }
+  // if (!auth || !auth.startsWith('Bearer ')) {
+  //   return res.status(401).json({ status: "fail", message: 'Unauthorized access. Bearer token not provided.' });
+  // }
+  // const token = auth.split(' ')[1]; // Format: Bearer 'token'
+  //OR
+  const token = req.header('Authorization')?.replace('Bearer ', '');
 
-  const token = auth.split(' ')[1]; // Format: Bearer 'token'
 
   if (!token) {
     return res.status(401).json({ status: "fail", message: 'Unauthorized access. Invalid Bearer token.' });
@@ -29,7 +26,7 @@ export const checkAuth = (req: AuthReq, res: Response, next: NextFunction): Resp
     }
 
     const { id } = decodedToken;
-    req.user = id;
+    ((req as unknown) as AuthReq).user = id;
     next();
   } catch (error) {
     console.log(error);

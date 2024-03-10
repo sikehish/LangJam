@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { isEmail, isStrongPassword } from 'validator';
 
-interface AdminSchema extends Document {
+export interface AdminSchema extends Document {
   email: string;
   password: string;
 }
