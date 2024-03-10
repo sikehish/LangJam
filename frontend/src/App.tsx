@@ -1,3 +1,5 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useAuthContext } from "./context/AuthContext";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import Leaderboard from "./pages/Leaderboard";
@@ -6,12 +8,8 @@ import Login from "./pages/auth/Login";
 import Profile from "./pages/Profile";
 import Signup from "./pages/auth/Signup";
 import Navbar from "./components/Navbar";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import {
-  BrowserRouter, Routes, Route, Navigate
-} from "react-router-dom";
-import { useAuthContext } from "./context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AdminLogin from "./pages/auth/AdminLogin";
 
 export default function App() {
@@ -36,11 +34,7 @@ export default function App() {
           path="/admin-login"
           element={state.user ? <Navigate to="/" /> : <AdminLogin />}
         />
-        {state?.user?.isAdmin ? (
-          <Route path="/admin" element={<Admin />} />
-        ) : (
-          <Navigate to="/" />
-        )}
+          <Route path="/admin" element={state?.user?.isAdmin? <Admin /> :   <Navigate to="/" />} />
         <Route
           path="/profile"
           element={state.user ? <Profile /> : <Navigate to="/" />}
