@@ -1,11 +1,5 @@
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
-
-interface User {
-  email: string
-  isAdmin?: Boolean
-  name:string, 
-  token: string
-}
+import {User} from "../../typings"
 
 interface AuthState {
   user: User | null | undefined;

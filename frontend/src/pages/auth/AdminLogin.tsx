@@ -11,7 +11,7 @@ function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false); // For password visibility
   const { dispatch } = useAuthContext();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     login({ email, password });
   };

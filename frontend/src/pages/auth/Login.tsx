@@ -11,11 +11,11 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false); // For password visibility
   const { dispatch } = useAuthContext();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     login({ email, password });
   };
-
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white rounded-md shadow-md">

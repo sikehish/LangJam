@@ -3,14 +3,21 @@ import { useAuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
+interface SignupData{
+  name: string
+  email: string
+  password: string
+  confirmPassword: string
+}
+
 function useSignup() {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSucc, setIsSucc] = useState(null);
+  const [isSucc, setIsSucc] = useState<boolean | null>(null);
   const { dispatch } = useAuthContext();
 
-  const signup = async (resData) => {
+  const signup = async (resData: SignupData) => {
     setIsSucc(false);
     setIsLoading(true);
     setError(null);

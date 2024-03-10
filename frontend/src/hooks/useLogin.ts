@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { User, LoginData } from "../../typings";
 
 interface LoginResponse {
   message: string;
@@ -10,11 +11,7 @@ interface LoginResponse {
 
 interface UserData {
   status: string
-  data: {
-    email: string
-    name: string
-    token: string 
-  }
+  data: User
 }
 
 interface ErrorResponse {
@@ -29,10 +26,6 @@ interface LoginHook {
   isSucc: boolean | null;
 }
 
-interface LoginData{
-  email: string,
-  password: string
-}
 
 function useLogin(): LoginHook {
   const navigate = useNavigate();

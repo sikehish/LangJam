@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
 
-const Admin = () => {
-  const [languages, setLanguages] = useState([]);
-  const [newLanguage, setNewLanguage] = useState("");
+interface Language {
+  _id: string;
+  name: string;
+}
+
+const Admin: React.FC = () => {
+  const [languages, setLanguages] = useState<Language[]>([]);
+  const [newLanguage, setNewLanguage] = useState<string>("");
 
   useEffect(() => {
     // Fetch languages from your backend and set them in the state
     fetch("/api/lang/all-lang")
       .then((response) => response.json())
-      .then((data) => setLanguages(data))
+      .then((data: Language[]) => setLanguages(data))
       .catch((error) => console.error("Failed to fetch languages:", error));
   }, []);
 
@@ -22,7 +27,7 @@ const Admin = () => {
       body: JSON.stringify({ lang: newLanguage }),
     })
       .then((response) => response.json())
-      .then((data) => {
+      .then((data: Language) => {
         setLanguages([...languages, data]);
         setNewLanguage("");
       })

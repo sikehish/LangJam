@@ -2,15 +2,16 @@ import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { LoginData } from "../../typings";
 
 function useLogin() {
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
-  const [isSucc, setIsSucc] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isSucc, setIsSucc] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { dispatch } = useAuthContext();
 
-  const login = async (resData) => {
+  const login = async (resData: LoginData) => {
     setIsSucc(false);
     setIsLoading(true);
     setError(null);

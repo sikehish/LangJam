@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import useSignup from "../../hooks/useSignup"; // Import your useSignup hook
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const { dispatch } = useAuthContext();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     signup({ name, email, password, confirmPassword });
   };
