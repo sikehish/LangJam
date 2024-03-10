@@ -5,7 +5,7 @@ import { FaGlobe, FaTrophy, FaMobileAlt, FaUsers } from 'react-icons/fa';
 
 const Home = () => {
   const [currentLanguageIndex, setCurrentLanguageIndex] = useState(0);
-  const languages = ['English', 'Français', 'Español', 'Deutsch', '日本語', '中文'];
+  const languages = ['Rust', 'Golang', 'JavaScript', 'Python', 'C++', 'Java'];
 
   const changeLanguage = () => {
     setCurrentLanguageIndex((prevIndex) => (prevIndex + 1) % languages.length);
