@@ -1,18 +1,23 @@
-//Global error handler
+import { Request, Response, NextFunction } from 'express';
 
-const globalErrHandler=(err,req,res,next) => {
+const globalErrHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+  if (res.statusCode < 400) {
+    next();
+  }
 
-    if(res.statusCode < 400) next()
-    const statusCode = res.statusCode || 500;
+  const statusCode = res.statusCode || 500;
+  let status = 'error';
 
-    let status='error'
-    if(statusCode.toString().startsWith('4')) status='fail'
-    res.status(statusCode).json({
-        status,
-        message:err.message
-    })
-    next()
+  if (statusCode.toString().startsWith('4')) {
+    status = 'fail';
+  }
 
-}
+  res.status(statusCode).json({
+    status,
+    message: err.message,
+  });
 
-module.exports= globalErrHandler
+  next();
+};
+
+export = globalErrHandler;

@@ -1,52 +1,49 @@
-const dotenv=require('dotenv').config()
-const app=require('./app'); //Importing the instantiated/initialsed app from app.js
-const globalErrHandler = require('./middleware/errorHandler');
-const  userRouter  = require('./routes/userRouter')
-const mongoose=require('mongoose')
-const morgan=require('morgan');
-const mongoSantize = require('express-mongo-sanitize')
-const xssClean= require('xss-clean');
-const langRouter = require('./routes/langRouter');
+import dotenv from 'dotenv';
+dotenv.config();
+
+import express from 'express';
+import mongoose from 'mongoose';
+import morgan from 'morgan';
+import mongoSanitize from 'express-mongo-sanitize';
+import globalErrHandler from './middleware/errorHandler';
+import userRouter from './routes/userRouter';
+import langRouter from './routes/langRouter';
+
+const app = express();
 
 // Set up logger
-app.use(morgan('dev'))
+app.use(morgan('dev'));
 
-//Data sanitization (NoSQL query injection protection)
-app.use(mongoSantize()) //looks at req.body and req.params and filters out '$' and '.'
+// Data sanitization (NoSQL query injection protection)
+app.use(mongoSanitize());
 
-//Data sanitization (XSS - Cross-site scripting attacks) 
-app.use(xssClean())  // protection against injection of malicious code
+// Routes
+app.use('/api/users', userRouter);
+app.use('/api/lang', langRouter);
 
-//Routes
-app.use('/api/users',userRouter)
-app.use('/api/lang',langRouter)
+const uri = process.env.MONGO_URI.replace('<password>', process.env.MONGO_PW || '');
 
-const uri=process.env.MONGO_URI.replace('<password>', process.env.MONGO_PW)
-const PORT=process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 
-
-//Middleware for unhandled routes
-app.all('*', (req,res,next) => {
+// Middleware for unhandled routes
+app.all('*', (req, res) => {
   res.status(404).json({
-    status: 'fail', message: `The API endpoint ${req.url} does not exist!`
-  })
+    status: 'fail',
+    message: `The API endpoint ${req.url} does not exist!`,
+  });
+});
 
-})
+// Global error handler to handle all errors thrown in the controllers
+app.use(globalErrHandler);
 
-//Global error handler to handle all errors thrown in the controllers
-app.use(globalErrHandler)
-
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose
+  .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB Atlas!');
-    app.listen(PORT, function () {
-      console.log('Server is listening at 3000')
-    })	
+    app.listen(PORT, () => {
+      console.log(`Server is listening at ${PORT}`);
+    });
   })
   .catch((err) => {
     console.error('Error connecting to MongoDB Atlas:', err);
   });
-
-
-								
-
