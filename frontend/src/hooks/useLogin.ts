@@ -1,27 +1,25 @@
+// /useLogin.ts: Latest version of custom hook: useLogin
 import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { User, LoginData } from "../../typings";
+import { UseMutateFunction, useMutation } from "@tanstack/react-query";
 
 interface LoginResponse {
-  message: string;
-  data: UserData; // Assuming UserData is a type representing your user data
+  status: string;
+  data: User // Assuming UserData is a type representing your user data
 }
 
-interface UserData {
-  status: string
-  data: User
-}
 
 interface ErrorResponse {
-  state: string;
+  status: string;
   message: string
 }
 
 interface LoginHook {
-  login: (resData: LoginData) => Promise<void>;
-  error: string | null;
+  login: UseMutateFunction<LoginResponse | ErrorResponse, Error, LoginData, unknown>
+  error: Error | null;
   isLoading: boolean;
   isSucc: boolean | null;
 }
@@ -29,16 +27,10 @@ interface LoginHook {
 
 function useLogin(): LoginHook {
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
-  const [isSucc, setIsSucc] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const { dispatch } = useAuthContext();
-
-  const login = async (resData: LoginData): Promise<void> => {
-    setIsSucc(false);
-    setIsLoading(true);
-    setError(null);
-
+  
+  const {mutate:login,error,isPending:isLoading , isSuccess: isSucc }=useMutation({ 
+    mutationFn: async (resData: LoginData): Promise<LoginResponse | ErrorResponse> => {
     const res = await fetch("/api/users/login", {
       method: "POST",
       headers: {
@@ -48,26 +40,18 @@ function useLogin(): LoginHook {
     });
 
     const data: LoginResponse | ErrorResponse = await res.json();
-
-    if (!res.ok) {
-      console.log(data, res);
-      setIsLoading(false);
-      setIsSucc(false);
-      // Some error - refer to userController to see what error was thrown
-      // and most importantly, the error property name
-      setError(data.message); // data.err is undefined
-      toast.error(data.message);
-    } else if (res.ok) {
-      console.log(res, data, (data as LoginResponse).data);
-      localStorage.setItem("langJam-user", JSON.stringify((data as LoginResponse).data));
-      dispatch({ type: "LOGIN", payload: (data as LoginResponse).data.data });
-      setError(null);
-      setIsLoading(false);
-      setIsSucc(true);
+    return data
+  }, onError: (error, variables, context) => {
+    console.log("ERRRR!")
+    toast.error(error.message);
+  },
+  onSuccess: (data, variables, context) => {
+        localStorage.setItem("langJam-user", JSON.stringify((data as LoginResponse).data));
+      dispatch({ type: "LOGIN", payload: (data as LoginResponse).data });
       toast.success("Successfully logged in!");
       navigate("/languages");
-    }
-  };
+  },
+})
 
   return { login, error, isLoading, isSucc };
 }
