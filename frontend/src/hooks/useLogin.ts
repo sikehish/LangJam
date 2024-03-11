@@ -38,7 +38,7 @@ function useLogin(): LoginHook {
       },
       body: JSON.stringify(resData),
     });
-    
+    console.log(res)
     const data: LoginResponse | ErrorResponse = await res.json();
     if(!res.ok) throw Error((data as ErrorResponse).message)
     return data

@@ -41,13 +41,10 @@ interface AuthContextProviderProps {
 }
 
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
-  console.log(localStorage.getItem('langJam-user'))
-  
   const [state, dispatch] = useReducer(reducer, {
-    // user: localStorage.getItem('langJam-user') ? JSON.parse(localStorage.getItem('langJam-user')!) : null,
-    user:null
+    user: localStorage.getItem('langJam-user') ? JSON.parse(localStorage.getItem('langJam-user')!) : null,
+    // user:  null,
   });
-  // console.log("HAHAHAH2")
 
   return (
     <AuthContext.Provider value={{ dispatch, state }}>
