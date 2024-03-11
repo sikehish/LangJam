@@ -2,20 +2,11 @@
 import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { User, LoginData } from "../../typings";
+import { ErrorResponse, useNavigate } from "react-router-dom";
+import { User, LoginData, LoginResponse } from "../../typings";
 import { UseMutateFunction, useMutation } from "@tanstack/react-query";
+import { userLoginMutFn } from "../utils/mutations";
 
-interface LoginResponse {
-  status: string;
-  data: User // Assuming UserData is a type representing your user data
-}
-
-
-interface ErrorResponse {
-  status: string;
-  message: string
-}
 
 interface LoginHook {
   login: UseMutateFunction<LoginResponse | ErrorResponse, Error, LoginData, unknown>
@@ -30,19 +21,8 @@ function useLogin(): LoginHook {
   const { dispatch } = useAuthContext();
   
   const {mutate:login,error,isPending:isLoading , isSuccess: isSucc }=useMutation({ 
-    mutationFn: async (resData: LoginData): Promise<LoginResponse | ErrorResponse> => {
-    const res = await fetch("/api/users/login", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(resData),
-    });
-    console.log(res)
-    const data: LoginResponse | ErrorResponse = await res.json();
-    if(!res.ok) throw Error((data as ErrorResponse).message)
-    return data
-  }, onError: (error, variables, context) => {
+    mutationFn: userLoginMutFn
+    , onError: (error, variables, context) => {
     toast.error(error.message);
   },
   onSuccess: (data, variables, context) => {

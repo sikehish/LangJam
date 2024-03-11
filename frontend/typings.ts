@@ -9,3 +9,14 @@ export interface User {
     email: string,
     password: string
   }
+
+ export  interface LoginResponse {
+    status: string;
+    data: User // Assuming UserData is a type representing your user data
+  }
+  
+  
+  export interface ErrorResponse {
+    status: string;
+    message: string
+  }
