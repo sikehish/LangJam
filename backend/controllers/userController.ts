@@ -71,6 +71,7 @@ export const userSignup=asyncWrapper(async (req, res) => {
 
 export const userLogin =asyncWrapper( async (req, res) => {
   // try {
+    console.log(req.body)
     let { email, password } = req.body;
     email=email.trim()
     password=password.trim()

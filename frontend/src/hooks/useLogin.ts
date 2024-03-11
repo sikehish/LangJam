@@ -38,21 +38,21 @@ function useLogin(): LoginHook {
       },
       body: JSON.stringify(resData),
     });
-
+    
     const data: LoginResponse | ErrorResponse = await res.json();
+    if(!res.ok) throw Error((data as ErrorResponse).message)
     return data
   }, onError: (error, variables, context) => {
-    console.log("ERRRR!")
     toast.error(error.message);
   },
   onSuccess: (data, variables, context) => {
+    console.log(data)
         localStorage.setItem("langJam-user", JSON.stringify((data as LoginResponse).data));
       dispatch({ type: "LOGIN", payload: (data as LoginResponse).data });
       toast.success("Successfully logged in!");
       navigate("/languages");
   },
 })
-
   return { login, error, isLoading, isSucc };
 }
 

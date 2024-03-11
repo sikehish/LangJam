@@ -6,13 +6,16 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import mongoSanitize from 'express-mongo-sanitize';
 import globalErrHandler from './middleware/errorHandler';
-import userRouter from './routes/userRouter';
-import langRouter from './routes/langRouter';
+import {userRouter} from './routes/userRouter';
+import {langRouter} from './routes/langRouter';
 
 const app = express();
 
 // Set up logger
 app.use(morgan('dev'));
+
+//Body parser
+app.use(express.json())
 
 // Data sanitization (NoSQL query injection protection)
 app.use(mongoSanitize());
@@ -21,7 +24,7 @@ app.use(mongoSanitize());
 app.use('/api/users', userRouter);
 app.use('/api/lang', langRouter);
 
-const uri = process.env.MONGO_URI.replace('<password>', process.env.MONGO_PW || '');
+const uri = (process.env.MONGO_URI ?? '').replace('<password>', process.env.MONGO_PW || '');
 
 const PORT = process.env.PORT || 3000;
 
@@ -37,7 +40,7 @@ app.all('*', (req, res) => {
 app.use(globalErrHandler);
 
 mongoose
-  .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(uri)
   .then(() => {
     console.log('Connected to MongoDB Atlas!');
     app.listen(PORT, () => {
