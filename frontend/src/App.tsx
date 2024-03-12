@@ -39,6 +39,7 @@ export default function App() {
           path="/profile"
           element={state.user ? <Profile /> : <Navigate to="/" />}
         />
+        <Route path="/languages" element={state.user? <Languages/> : <Navigate to="/login" /> } />
       </Routes>
       <ToastContainer position="top-right" />
     </BrowserRouter>
