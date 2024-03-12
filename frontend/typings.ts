@@ -21,6 +21,14 @@ export interface User {
     message: string
   }
 
+
+export interface SignupData{
+  name: string
+  email: string
+  password: string
+  confirmPassword: string
+}
+
 // export interface ApiResponse<T = unknown> {
 //   status: string;
 //   data?: T;
