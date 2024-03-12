@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 const userRouter: Router = express.Router();
 import { userLogin, userVerify, userSignup, deleteAccount, updateUser, resetRequestController, resetPasswordController, adminLogin } from '../controllers/userController';
-import { checkAuth } from '../middleware/checkAuth';
+import { checkAuth } from '../middleware/authMiddleware';
 
 userRouter.route('/login').post(userLogin);
 userRouter.route('/signup').post(userSignup);

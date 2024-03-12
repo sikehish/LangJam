@@ -2,7 +2,7 @@ import mongoose, { Document } from 'mongoose';
 
 export interface LanguageModel extends Document {
   name: string;
-  exercises: mongoose.Types.ObjectId[];
+  exercises?: mongoose.Types.ObjectId[];
 }
 
 const languageSchema = new mongoose.Schema({

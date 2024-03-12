@@ -29,21 +29,16 @@ export const createLanguage = asyncWrapper(async (req: Request, res: Response) =
     throw new Error('All fields must be filled');
   }
 
-  const checkLang = await Language.findOne({ lang });
+  const checkLang = await Language.findOne({ name: lang });
   if (checkLang) {
     res.status(400);
     throw new Error('Language already entered!');
   }
-
-  const data = await Language.create({ lang });
-
-  console.log(data);
-
+  const data = await Language.create({ name: lang });
   res.status(201).json({ status: 'success', data });
 });
 
 export const getAllLanguages = asyncWrapper(async (req: Request, res: Response) => {
   const data = await Language.find();
-  console.log(data);
-  res.status(201).json({ status: 'success', data });
+  res.status(200).json({ status: 'success', data });
 });

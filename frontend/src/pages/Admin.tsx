@@ -1,42 +1,63 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useAuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Language from '../../../backend/models/languageModel';
 
-interface Language {
-  _id: string;
+
+interface Language{
+  _id?: string,
   name: string;
+  exercises?: [string];
 }
 
-const Admin: React.FC = () => {
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [newLanguage, setNewLanguage] = useState<string>("");
+const fetchLanguages = async ():Promise<Language[]> => {
+  const response = await fetch("/api/lang/all-lang");
+  const data = await response.json();
+  return data.data;
+};
 
-  useEffect(() => {
-    // Fetch languages from your backend and set them in the state
-    fetch("/api/lang/all-lang")
-      .then((response) => response.json())
-      .then((data: Language[]) => {
-        // console.log(data)
-        setLanguages(data.data)
-      })
-      .catch((error) => console.error("Failed to fetch languages:", error));
-  }, []);
+const createLanguage = async ({newLanguage, token}: {newLanguage: string, token: string | undefined}): Promise<Language> => {
+  const response = await fetch("/api/lang/create-lang", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ lang: newLanguage }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to create language");
+  }
+  return data;
+};
+
+const Admin: React.FC = () => {
+  const { state } = useAuthContext();
+  const [newLanguage, setNewLanguage] = useState<string>("");
+  const queryClient = useQueryClient();
+
+  // Query for fetching languages
+  const { data: languages } = useQuery({ queryKey: ["languages"], queryFn: fetchLanguages});
+
+  // Mutation for adding a new language
+  const addLanguageMutation = useMutation({
+    mutationFn: createLanguage,
+    onSuccess: () => {
+      // Invalidate and refetch the languages query after mutation
+      queryClient.invalidateQueries({ queryKey: ["languages"]});
+      setNewLanguage("");
+      toast.success("Language added successfully!");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
 
   const handleAddLanguage = () => {
-    // Send a POST request to your backend to add a new language
-    fetch("/api/lang/create-lang", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ lang: newLanguage }),
-    })
-      .then((response) => response.json())
-      .then((data: Language) => {
-        setLanguages([...languages, data]);
-        setNewLanguage("");
-      })
-      .catch((error) => {
-        console.error("Failed to add a new language:", error);
-      });
+    addLanguageMutation.mutate({newLanguage, token: state?.user?.token });
   };
 
   return (
@@ -46,9 +67,10 @@ const Admin: React.FC = () => {
       <div className="mb-4">
         <h2 className="text-lg font-bold mb-2">Languages</h2>
         <ul>
-          {languages.map((language) => (
-            <li key={language._id}>{language.name}</li>
-          ))}
+          {languages &&
+            languages.map((language) => (
+              <li key={language._id}>{language.name}</li>
+            ))}
         </ul>
       </div>
 
