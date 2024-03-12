@@ -13,7 +13,10 @@ const Admin: React.FC = () => {
     // Fetch languages from your backend and set them in the state
     fetch("/api/lang/all-lang")
       .then((response) => response.json())
-      .then((data: Language[]) => setLanguages(data))
+      .then((data: Language[]) => {
+        // console.log(data)
+        setLanguages(data.data)
+      })
       .catch((error) => console.error("Failed to fetch languages:", error));
   }, []);
 

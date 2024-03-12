@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { User, LoginData, LoginResponse, ErrorResponse } from "../../typings";
 import { UseMutateFunction, useMutation } from "@tanstack/react-query";
-import { userLoginMutFn } from "../utils/mutations";
+import { loginMutFn } from "../utils/mutations";
 
 
 interface LoginHook {
@@ -21,7 +21,7 @@ function useLogin(): LoginHook {
   const { dispatch } = useAuthContext();
   
   const {mutate:login,error,isPending:isLoading , isSuccess: isSucc }=useMutation({ 
-    mutationFn: userLoginMutFn
+    mutationFn: (resData: LoginData) => loginMutFn(resData, "login")
     , onError: (error, variables, context) => {
     toast.error(error.message);
   },
