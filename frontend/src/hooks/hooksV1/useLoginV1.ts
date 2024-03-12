@@ -1,9 +1,9 @@
 // /useLogin.ts: Latest version of custom hook: useLogin
 import { useState } from "react";
-import { useAuthContext } from "../context/AuthContext";
+import { useAuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { User, LoginData } from "../../typings";
+import { User, LoginData } from "../../../typings";
 import { UseMutateFunction, useMutation } from "@tanstack/react-query";
 
 interface LoginResponse {

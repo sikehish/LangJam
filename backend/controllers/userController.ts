@@ -150,7 +150,7 @@ export const adminLogin =asyncWrapper( async (req, res) => {
         // }
 
     // Create a JWT token
-    const token = jwt.sign({ id: user._id }, (process?.env?.JWT_KEY as jwt.Secret), { expiresIn: '1d'});
+    const token = jwt.sign({ id: user._id }, (process?.env?.JWT_ADMIN_KEY as jwt.Secret), { expiresIn: '1d'});
     res.status(200).json({status:"success", data:{ email ,isAdmin: true, name:user?.email, token }});
 
 })
