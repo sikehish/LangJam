@@ -140,3 +140,63 @@ export const getAllQuizzes = asyncWrapper(async (req: Request, res: Response) =>
   const data = await Quiz.find();
   res.status(200).json({ status: 'success', data });
 });
+
+//Deleting entities
+// ----------------------
+
+//Deleting a category
+export const deleteCategory = asyncWrapper(async (req: Request, res: Response) => {
+  const { categoryId } = req.params;
+  const subjects = await Subject.find({ category: categoryId });
+  for (const subject of subjects) {
+    const topics = await Topic.find({ subject: subject._id });
+    for (const topic of topics) {
+      const quizzes = await Quiz.find({ topic: topic._id });
+      for (const quiz of quizzes) {
+        await Quiz.findByIdAndDelete(quiz._id);
+      }
+      await Topic.findByIdAndDelete(topic._id);
+    }
+    await Subject.findByIdAndDelete(subject._id);
+  }
+  const deletedCategory = await Category.findByIdAndDelete(categoryId);
+  res.status(200).json({ status: 'success', data: deletedCategory });
+});
+
+//Deleting a subject
+export const deleteSubject = asyncWrapper(async (req: Request, res: Response) => {
+  const { subjectId } = req.params;
+  const topics = await Topic.find({ subject: subjectId });
+
+  for (const topic of topics) {
+    const quizzes = await Quiz.find({ topic: topic._id });
+    for (const quiz of quizzes) await Quiz.findByIdAndDelete(quiz._id);
+    await Topic.findByIdAndDelete(topic._id);
+  }
+  const deletedSubject = await Subject.findByIdAndDelete(subjectId);
+
+  res.status(200).json({ status: 'success', data: deletedSubject });
+});
+
+// Delete a topic and its associated quizzes
+export const deleteTopic = asyncWrapper(async (req: Request, res: Response) => {
+  const { topicId } = req.params;
+
+  // Delete the topic
+  const deletedTopic = await Topic.findByIdAndDelete(topicId);
+  
+  // Delete all quizzes under the deleted topic
+  await Quiz.deleteMany({ topic: topicId });
+
+  res.status(200).json({ status: 'success', data: deletedTopic });
+});
+
+// Delete a quiz
+export const deleteQuiz = asyncWrapper(async (req: Request, res: Response) => {
+  const { quizId } = req.params;
+
+  // Delete the quiz
+  const deletedQuiz = await Quiz.findByIdAndDelete(quizId);
+
+  res.status(200).json({ status: 'success', data: deletedQuiz });
+});
