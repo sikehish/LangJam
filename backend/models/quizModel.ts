@@ -1,23 +1,23 @@
 import { Schema, model, Document, Types } from 'mongoose';
-import Topic, { ITopic } from './topicModel'; // Assuming the Topic model file is in the same directory
+import Topic, { ITopic } from './topicModel';
 
-interface IQuiz extends Document {
+interface IQuestion extends Document {
   question: string;
-  difficultyLevel: 'Easy' | 'Medium' | 'Hard';
   choices: string[];
   correctOption: number;
   explanation: string;
-  topic: Types.ObjectId | ITopic;
 }
 
-const quizSchema = new Schema<IQuiz>({
+export interface IQuiz extends Document {
+  questions: IQuestion[];
+  topic: Types.ObjectId | ITopic;
+  difficultyLevel: 'Easy' | 'Medium' | 'Hard';
+  numberOfQuestions: number;
+}
+
+const questionSchema = new Schema<IQuestion>({
   question: {
     type: String,
-    required: true,
-  },
-  difficultyLevel: {
-    type: String,
-    enum: ['Easy', 'Medium', 'Hard'],
     required: true,
   },
   choices: [String],
@@ -29,9 +29,22 @@ const quizSchema = new Schema<IQuiz>({
     type: String,
     required: true,
   },
+});
+
+const quizSchema = new Schema<IQuiz>({
+  questions: [questionSchema],
   topic: {
     type: Types.ObjectId,
     ref: 'Topic',
+    required: true,
+  },
+  difficultyLevel: {
+    type: String,
+    enum: ['Easy', 'Medium', 'Hard'],
+    required: true,
+  },
+  numberOfQuestions: {
+    type: Number,
     required: true,
   },
 });
