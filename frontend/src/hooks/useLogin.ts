@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
-import { ErrorResponse, useNavigate } from "react-router-dom";
-import { User, LoginData, LoginResponse } from "../../typings";
+import { useNavigate } from "react-router-dom";
+import { User, LoginData, LoginResponse, ErrorResponse } from "../../typings";
 import { UseMutateFunction, useMutation } from "@tanstack/react-query";
 import { userLoginMutFn } from "../utils/mutations";
 

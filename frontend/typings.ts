@@ -20,3 +20,24 @@ export interface User {
     status: string;
     message: string
   }
+
+// export interface ApiResponse<T = unknown> {
+//   status: string;
+//   data?: T;
+//   message?: string;
+// }
+
+// export interface User {
+//   email: string;
+//   isAdmin?: boolean;
+//   name: string;
+//   token: string;
+// }
+
+// export interface LoginData {
+//   email: string;
+//   password: string;
+// }
+
+// export type LoginResponse = ApiResponse<User>;
+// export type ErrorResponse = ApiResponse<{ message: string }>;
