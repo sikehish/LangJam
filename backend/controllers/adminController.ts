@@ -200,3 +200,101 @@ export const deleteQuiz = asyncWrapper(async (req: Request, res: Response) => {
 
   res.status(200).json({ status: 'success', data: deletedQuiz });
 });
+
+//Update entities
+// --------------------------------------
+
+//Update Category
+export const updateCategory = asyncWrapper(async (req: Request, res: Response) => {
+  const { categoryId } = req.params;
+  const { name } = req.body;
+
+  if (!name) {
+    res.status(400);
+    throw new Error('Name is required for update');
+  }
+
+  const updatedCategory = await Category.findByIdAndUpdate(categoryId, { name }, { new: true });
+
+  if (!updatedCategory) {
+    res.status(404);
+    throw new Error('Category not found');
+  }
+
+  res.status(200).json({ status: 'success', data: updatedCategory });
+});
+
+//Update Subject
+export const updateSubject = asyncWrapper(async (req: Request, res: Response) => {
+  const { subjectId } = req.params;
+  const { name, categoryId } = req.body;
+
+  if (!name || !categoryId) {
+    res.status(400);
+    throw new Error('Name and categoryId are required for update');
+  }
+
+  const category = await Category.findById(categoryId);
+  if (!category) {
+    res.status(404);
+    throw new Error('Category not found');
+  }
+
+  const updatedSubject = await Subject.findByIdAndUpdate(subjectId, { name /*, category: categoryId*/ }, { new: true });
+
+  if (!updatedSubject) {
+    res.status(404);
+    throw new Error('Subject not found');
+  }
+
+  res.status(200).json({ status: 'success', data: updatedSubject });
+});
+
+//Update Topic
+export const updateTopic = asyncWrapper(async (req: Request, res: Response) => {
+  const { topicId } = req.params;
+  const { name, subjectId } = req.body;
+
+  if (!name || !subjectId) {
+    res.status(400);
+    throw new Error('Name and subjectId are required for update');
+  }
+
+  const subject = await Subject.findById(subjectId);
+  if (!subject) {
+    res.status(404);
+    throw new Error('Subject not found');
+  }
+
+  const updatedTopic = await Topic.findByIdAndUpdate(topicId, { name /*,subject: subjectId*/ }, { new: true });
+  //
+
+  if (!updatedTopic) {
+    res.status(404);
+    throw new Error('Topic not found');
+  }
+
+  res.status(200).json({ status: 'success', data: updatedTopic });
+});
+
+
+//Update Quiz
+export const updateQuiz = asyncWrapper(async (req: Request, res: Response) => {
+  const { quizId } = req.params;
+  const { topic, difficultyLevel, numberOfQuestions, questions } = req.body;
+
+  const updatedQuiz = await Quiz.findByIdAndUpdate(quizId, {
+    topic,
+    difficultyLevel,
+    numberOfQuestions,
+    questions,
+  }, { new: true });
+
+  if (!updatedQuiz) {
+    res.status(404);
+    throw new Error('Quiz not found');
+  }
+
+  res.status(200).json({ status: 'success', data: updatedQuiz });
+});
+
