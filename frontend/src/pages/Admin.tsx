@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Language from '../../../backend/models/languageModel';
-
 
 interface Language{
   _id?: string,
