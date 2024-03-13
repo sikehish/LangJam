@@ -6,8 +6,8 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import mongoSanitize from 'express-mongo-sanitize';
 import globalErrHandler from './middleware/errorHandler';
-import {userRouter} from './routes/userRouter';
-import {langRouter} from './routes/langRouter';
+import userRouter from './routes/userRouter';
+import adminRouter from './routes/adminRouter';
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.use(mongoSanitize());
 
 // Routes
 app.use('/api/users', userRouter);
-app.use('/api/lang', langRouter);
+app.use('/api/admin', adminRouter);
 
 const uri = (process.env.MONGO_URI ?? '').replace('<password>', process.env.MONGO_PW || '');
 

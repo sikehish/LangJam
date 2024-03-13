@@ -14,4 +14,4 @@ userRouter.route('/reset-password').patch(resetPasswordController);
 // Admin route
 userRouter.route('/admin-login').post(adminLogin);
 
-export { userRouter };
+export default userRouter 
