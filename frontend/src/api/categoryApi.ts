@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 
 // Fetch all categories
 export const getCategories = (token: string) => {
-  return useQuery(['categories'], async () => {
+  return useQuery({queryKey: ['categories'], queryFn: async () => {
     const response = await fetch('/api/entities/categories', {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -14,7 +14,7 @@ export const getCategories = (token: string) => {
     }
 
     return response.json();
-  });
+}});
 };
 
 // Create a new category
@@ -25,7 +25,7 @@ export const createCategory = (newCategoryName: string, token: string) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // Assuming a global or context-based token
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ name: newCategoryName }),
         });
@@ -33,14 +33,11 @@ export const createCategory = (newCategoryName: string, token: string) => {
         if (!response.ok) {
           throw new Error('Unable to create category');
         }
-  
-        return response.json(); // Might return the created category data
+
+        return response.json(); 
       },
-      {
-        // Optional configuration for useMutation
-        onSuccess: (data) => {
-          // Perform actions after successful creation, potentially using data
-        },
+      onSuccess: (data) => {
+      },
   }
   );
 };
@@ -48,39 +45,31 @@ export const createCategory = (newCategoryName: string, token: string) => {
 // Edit a category
 export const editCategory = (categoryId: string, newName: string, token: string) => {
   return useMutation({
-    mutationFn: async ({ categoryId, newName }) => {
+    mutationFn: async ({ categoryId, newName }: { categoryId: string, newName: string }) => {
         const response = await fetch(`/api/admin/categories/${categoryId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // Assuming a global or context-based token
-          },
-          body: JSON.stringify({ name: newName }),
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`, 
+            },
+            body: JSON.stringify({ name: newName }),
         });
-  
-        if (!response.ok) {
-          throw new Error('Unable to edit category');
-        }
-  
-        return response.json(); // Might return the updated category data
+        if (!response.ok) throw new Error('Unable to edit category');
+        return response.json();
+    },    
+      onSuccess: (data) => {
       },
-      {
-        // Optional configuration for useMutation
-        onSuccess: (data) => {
-          // Perform actions after successful edit, potentially using data
-        },
-      }
-  );
+  });
 };
 
 // Delete a category
-export const deleteCategory = (categoryId: string, token:string) => {
+export const deleteCategory = (categoryId: string, token: string) => {
     return useMutation({
        mutationFn: async (categoryId) => {
             const response = await fetch(`/api/admin/categories/${categoryId}`, {
               method: 'DELETE',
               headers: {
-                Authorization: `Bearer ${token}`, // Assuming a global or context-based token
+                Authorization: `Bearer ${token}`, 
               },
             });
       
@@ -88,13 +77,9 @@ export const deleteCategory = (categoryId: string, token:string) => {
               throw new Error('Unable to delete category');
             }
       
-            return response.json(); // Might return a success message or data
+            return response.json(); 
           },
-          {
-            // Optional configuration for useMutation
-            onSuccess: () => {
-              // Perform actions after successful deletion
-            },
-          }
-      );
+          onSuccess: () => {
+          },
+        });
 };
