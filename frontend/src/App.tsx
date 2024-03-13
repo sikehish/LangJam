@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthContext } from "./context/AuthContext";
 import Home from "./pages/Home";
-import Admin from "./pages/Admin";
+import Admin from "./pages/admin/Categories";
 import Leaderboard from "./pages/Leaderboard";
 import Languages from "./pages/Languages";
 import Login from "./pages/auth/Login";
