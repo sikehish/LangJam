@@ -298,6 +298,39 @@ export const updateQuiz = asyncWrapper(async (req: Request, res: Response) => {
   res.status(200).json({ status: 'success', data: updatedQuiz });
 });
 
+// // Update a question in a quiz
+// export const updateQuestion = asyncWrapper(async (req: Request, res: Response) => {
+//   const { quizId, questionId } = req.params;
+//   const { question, choices, correctOption, explanation } = req.body;
+
+//   // Check if the quiz exists
+//   const quiz = await Quiz.findById(quizId);
+//   if (!quiz) {
+//     res.status(404);
+//     throw new Error('Quiz not found');
+//   }
+
+//   // Check if the question exists in the quiz
+//   const existingQuestion = quiz.questions.find((question) => question._id.toString() === questionId);
+//   if (!existingQuestion) {
+//     res.status(404);
+//     throw new Error('Question not found in the quiz');
+//   }
+  
+
+//   // Update the question fields
+//   existingQuestion.question = question || existingQuestion.question;
+//   existingQuestion.choices = choices || existingQuestion.choices;
+//   existingQuestion.correctOption = correctOption || existingQuestion.correctOption;
+//   existingQuestion.explanation = explanation || existingQuestion.explanation;
+
+//   // Save the updated quiz
+//   const updatedQuiz = await quiz.save();
+
+//   res.status(200).json({ status: 'success', data: updatedQuiz });
+// });
+
+
 // Update a question in a quiz
 export const updateQuestion = asyncWrapper(async (req: Request, res: Response) => {
   const { quizId, questionId } = req.params;
@@ -310,22 +343,24 @@ export const updateQuestion = asyncWrapper(async (req: Request, res: Response) =
     throw new Error('Quiz not found');
   }
 
-  // Check if the question exists in the quiz
-  const existingQuestion = quiz.questions.find((question) => question._id.toString() === questionId);
-  if (!existingQuestion) {
+  // Use findByIdAndUpdate to update the question in the quiz
+  const updatedQuiz = await Quiz.findByIdAndUpdate(
+    quizId,
+    {
+      $set: {
+        'questions.$[element].question': question,
+        'questions.$[element].choices': choices,
+        'questions.$[element].correctOption': correctOption,
+        'questions.$[element].explanation': explanation,
+      },
+    },
+    { arrayFilters: [{ 'element._id': questionId }], new: true }
+  );
+
+  if (!updatedQuiz) {
     res.status(404);
     throw new Error('Question not found in the quiz');
   }
-  
-
-  // Update the question fields
-  existingQuestion.question = question || existingQuestion.question;
-  existingQuestion.choices = choices || existingQuestion.choices;
-  existingQuestion.correctOption = correctOption || existingQuestion.correctOption;
-  existingQuestion.explanation = explanation || existingQuestion.explanation;
-
-  // Save the updated quiz
-  const updatedQuiz = await quiz.save();
 
   res.status(200).json({ status: 'success', data: updatedQuiz });
 });
