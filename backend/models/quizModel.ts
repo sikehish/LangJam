@@ -1,7 +1,9 @@
 import { Schema, model, Document, Types } from 'mongoose';
 import Topic, { ITopic } from './topicModel';
+import { ObjectId } from 'mongodb';
 
 interface IQuestion extends Document {
+  id?:ObjectId
   question: string;
   choices: string[];
   correctOption: number;
