@@ -4,10 +4,6 @@ import {
   createSubject,
   createTopic,
   createQuiz,
-  getAllCategories,
-  getAllSubjects,
-  getAllTopics,
-  getAllQuizzes,
   deleteCategory,
   deleteSubject,
   deleteTopic,
@@ -27,12 +23,6 @@ adminRouter.post('/categories', checkAdminAuth, createCategory);
 adminRouter.post('/subjects', checkAdminAuth, createSubject);
 adminRouter.post('/topics', checkAdminAuth, createTopic);
 adminRouter.post('/quizzes', checkAdminAuth, createQuiz);
-
-// Getting entities
-adminRouter.get('/categories', checkMixedAuth, getAllCategories);
-adminRouter.get('/subjects', checkMixedAuth, getAllSubjects);
-adminRouter.get('/topics', checkMixedAuth, getAllTopics);
-adminRouter.get('/quizzes', checkMixedAuth, getAllQuizzes);
 
 // Deleting entities
 adminRouter.delete('/categories/:categoryId', checkAdminAuth, deleteCategory);

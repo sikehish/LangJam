@@ -8,6 +8,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import globalErrHandler from './middleware/errorHandler';
 import userRouter from './routes/userRouter';
 import adminRouter from './routes/adminRouter';
+import entityRouter from './routes/entityRouter';
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(mongoSanitize());
 // Routes
 app.use('/api/users', userRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/entities', entityRouter) //Getting all entities(categories,subjects,topics,quizzes)
 
 const uri = (process.env.MONGO_URI ?? '').replace('<password>', process.env.MONGO_PW || '');
 
