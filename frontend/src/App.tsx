@@ -34,7 +34,7 @@ export default function App() {
           path="/admin-login"
           element={state.user ? <Navigate to="/" /> : <AdminLogin />}
         />
-          <Route path="/admin" element={state?.user?.isAdmin? <Categories token={state?.user?.token} /> :   <Navigate to="/" />} />
+          <Route path="/admin/" element={state?.user?.isAdmin? <Categories token={state?.user?.token} /> :   <Navigate to="/" />} />
         <Route
           path="/profile"
           element={state.user ? <Profile /> : <Navigate to="/" />}

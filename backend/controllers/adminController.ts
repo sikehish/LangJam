@@ -25,6 +25,7 @@ export const createCategory = asyncWrapper(async (req: Request, res: Response) =
   }
 
   const checkCategory = await Category.findOne({ name });
+  console.log(name, checkCategory)
   if (checkCategory) {
     res.status(400);
     throw new Error('Category already exists');

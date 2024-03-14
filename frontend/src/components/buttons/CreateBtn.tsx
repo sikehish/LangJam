@@ -11,19 +11,27 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
+import { toast } from "react-toastify"
  
 export function CreateBtn({saveMethod, name}: {saveMethod: any, name: string}) {
     const [data, setData] = useState("")
+    const [isClicked, setClicked]= useState(false)
+    const {mutateAsync, isSuccess, isError, status}=saveMethod;
 
-    function submitHandler(e:React.FormEvent){
+   async  function submitHandler(e:React.FormEvent){
         e.preventDefault()
-        console.log("CLICKED",data)
-        const {mutate}=saveMethod;
-        mutate({name: data});
+        
+    mutateAsync({ name: data })
+    .then(() => {
+       setClicked(false); 
+    })
+    .catch((error: Error) => {
+      console.error("Error creating category:", error);
+    });
     }
 
   return (
-    <Dialog>
+    <Dialog open={isClicked} onOpenChange={setClicked}>
       <DialogTrigger asChild>
         <Button variant="outline">Create {name}</Button>
       </DialogTrigger>

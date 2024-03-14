@@ -1,29 +1,29 @@
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
-export const useCategoryQueries = (queryClient: QueryClient, token: string) => {
-  const {data: getCategories} = useQuery({
-    queryKey: ['categories'],
+export const useSubjectQueries = (queryClient: QueryClient, token: string, subjectId: string) => {
+  const {data: getSubjects} = useQuery({
+    queryKey: ['subjects', subjectId],
     queryFn: async () => {
-      const response = await fetch('/api/entities/categories', {
+      const response = await fetch('/api/entities/subjects', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error('Unable to fetch categories');
+        throw new Error('Unable to fetch subjects');
       }
 
       return response.json();
     },
   });
 
-  const createCategoryMutation = useMutation({
+  const createSubjectMutation = useMutation({
     mutationFn: async (data: {name: string, message?: string}) => {
       const {name} = data
       console.log(data)
-      const response = await fetch('/api/admin/categories', {
+      const response = await fetch('/api/admin/subjects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,8 +37,8 @@ export const useCategoryQueries = (queryClient: QueryClient, token: string) => {
       return resData
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success("Category created succesfully")
+      queryClient.invalidateQueries({ queryKey: ['subjects', subjectId] });
+      toast.success("Subject created succesfully")
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -46,11 +46,11 @@ export const useCategoryQueries = (queryClient: QueryClient, token: string) => {
   });
   
 
-  // Edit a category
-  const editCategoryMutation = useMutation({
-    mutationFn: async (data: { categoryId: string; newName: string }) => {
-      const { categoryId, newName } = data; // Destructure categoryId and newName from data
-      const response = await fetch(`/api/admin/categories/${categoryId}`, {
+  // Edit a subject
+  const editSubjectMutation = useMutation({
+    mutationFn: async (data: { subjectId: string; newName: string }) => {
+      const { subjectId, newName } = data; // Destructure subjectId and newName from data
+      const response = await fetch(`/api/admin/subjects/${subjectId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -64,17 +64,17 @@ export const useCategoryQueries = (queryClient: QueryClient, token: string) => {
       return resData
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success("Category edited succesfully")
+      queryClient.invalidateQueries({ queryKey: ['subjects', subjectId] });
+      toast.success("Subject edited succesfully")
     },
     onError: (error: Error) => {
       toast.error(error.message);
     },
   });
   
-   const deleteCategoryMutation= useMutation({
-      mutationFn: async (categoryId: string) => {
-        const response = await fetch(`/api/admin/categories/${categoryId}`, {
+   const deleteSubjectMutation= useMutation({
+      mutationFn: async (subjectId: string) => {
+        const response = await fetch(`/api/admin/subjects/${subjectId}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -86,8 +86,8 @@ export const useCategoryQueries = (queryClient: QueryClient, token: string) => {
       return resData
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({queryKey: ['categories']});
-        toast.success("Category deleted succesfully")
+        queryClient.invalidateQueries({queryKey: ['subjects', subjectId]});
+        toast.success("Subject deleted succesfully")
       },
       onError: (error: Error) => {
         toast.error(error.message);
@@ -95,5 +95,5 @@ export const useCategoryQueries = (queryClient: QueryClient, token: string) => {
     });
   
 
-  return { getCategories, createCategoryMutation , editCategoryMutation, deleteCategoryMutation };
+  return { getSubjects, createSubjectMutation , editSubjectMutation, deleteSubjectMutation };
 };

@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { useCategoryQueries } from "../hooks/useCategoryQueries";
+import { useSubjectQueries } from "../hooks/useSubjectQueries";
 import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,57 +9,55 @@ import { toast } from "react-toastify";
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Import edit and delete icons
 import { Link } from "react-router-dom";
 
-function Category({
-  category,
+function Subject({
+  subject,
   token,
 }: {
-  category: { name: string; _id: string };
+  subject: { name: string; _id: string };
   token: string;
 }) {
   const queryClient = useQueryClient();
-  const [editedCategoryName, setEditedCategoryName] = useState(category?.name);
+  const [editedSubjectName, setEditedSubjectName] = useState(subject?.name);
   const [isEditClicked, setEditClicked] = useState(false);
   const {
-    getCategories,
-    createCategoryMutation,
-    editCategoryMutation,
-    deleteCategoryMutation,
-  } = useCategoryQueries(queryClient, token);
+    editSubjectMutation,
+    deleteSubjectMutation,
+  } = useSubjectQueries(queryClient, token);
 
   const handleEditSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!editedCategoryName) return;
-      console.log(editedCategoryName)
+    if (!editedSubjectName) return;
+      console.log(editedSubjectName)
     try {
-      editCategoryMutation.mutate({
-        categoryId: category._id,
-        newName: editedCategoryName,
+      editSubjectMutation.mutate({
+        subjectId: subject._id,
+        newName: editedSubjectName,
       });
-      setEditedCategoryName(""); 
+      setEditedSubjectName(""); 
       setEditClicked(false);
     } catch (error) {
-      console.error("Error editing category:", error);
-      toast.error("Failed to edit category!");
+      console.error("Error editing subject:", error);
+      toast.error("Failed to edit subject!");
     }
   };
 
   const handleDelete = async (e: React.MouseEvent) => {
     try {
-      const result: boolean=confirm(`Are you sure you want to delete the ${editedCategoryName} category?`)
+      const result: boolean=confirm(`Are you sure you want to delete the ${editedSubjectName} subject?`)
       if(result){
-        deleteCategoryMutation.mutate(category._id);
-      }else toast.error(`${editedCategoryName}: Delete event aborted`)
+        deleteSubjectMutation.mutate(subject._id);
+      }else toast.error(`${editedSubjectName}: Delete event aborted`)
     } catch (error) {
-      console.error("Error editing category:", error);
-      toast.error("Failed to edit category!");
+      console.error("Error editing subject:", error);
+      toast.error("Failed to edit subject!");
     }
   };
 
   return (
     <div className="mb-4">
-      <Link to={`/admin/categories/${category._id}`}>
+      <Link to={`/admin/subjects/${subject._id}`}>
       <div className="p-4 rounded-lg shadow-md bg-blue-500">
-        <p className="text-white">{category.name}</p>
+        <p className="text-white">{subject.name}</p>
       </div>
       </Link>
       <div className="flex">
@@ -76,16 +74,16 @@ function Category({
             <PopoverContent className="w-80">
               <div className="grid gap-4">
                 <div className="space-y-2">
-                  <h4 className="font-medium leading-none">Category Name</h4>
+                  <h4 className="font-medium leading-none">Subject Name</h4>
                 </div>
                 <div className="grid gap-2">
                   <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="cname">Category Name</Label>
+                    <Label htmlFor="cname">Subject Name</Label>
                     <Input
                       id="cname"
-                      defaultValue={category.name} // Set default value to current name
+                      defaultValue={subject.name} // Set default value to current name
                       className="col-span-2 h-8"
-                      onChange={(e) => setEditedCategoryName(e.target.value)}
+                      onChange={(e) => setEditedSubjectName(e.target.value)}
                     />
                   </div>
                 </div>
@@ -98,4 +96,4 @@ function Category({
   );
 }
 
-export default Category;
+export default Subject;
