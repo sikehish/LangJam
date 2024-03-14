@@ -15,7 +15,9 @@ import { AuthReq } from '../typings';
 
 // Create a new category
 export const createCategory = asyncWrapper(async (req: Request, res: Response) => {
-  const { name } = req.body;
+  let { name } = req.body;
+  name=name.trim()
+  console.log(req.body)
 
   if (!name) {
     res.status(400);

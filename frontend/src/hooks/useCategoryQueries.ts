@@ -1,8 +1,9 @@
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { error } from 'console';
 import { toast } from 'react-toastify';
 
 export const useCategoryQueries = (queryClient: QueryClient, token: string) => {
-  const getCategories = useQuery({
+  const {data: getCategories} = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
       const response = await fetch('/api/entities/categories', {
@@ -20,24 +21,25 @@ export const useCategoryQueries = (queryClient: QueryClient, token: string) => {
   });
 
   const createCategoryMutation = useMutation({
-    mutationFn: async (newCategoryName: string) => {
+    mutationFn: async (data: {name: string, message?: string}) => {
+      const {name} = data
+      console.log(data)
       const response = await fetch('/api/admin/categories', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name: newCategoryName }),
+        body: JSON.stringify({ name }),
       });
 
-      if (!response.ok) {
-        throw new Error('Unable to create category');
-      }
-
-      return response.json();
+      const resData = await response.json();
+      if(!response.ok) throw Error(resData.message)
+      return resData
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+      toast.success("Category created succesfully")
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -58,14 +60,13 @@ export const useCategoryQueries = (queryClient: QueryClient, token: string) => {
         body: JSON.stringify({ name: newName }),
       });
   
-      if (!response.ok) {
-        throw new Error('Unable to edit category');
-      }
-  
-      return response.json();
+      const resData = await response.json();
+      if(!response.ok) throw Error(resData.message)
+      return resData
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+      toast.success("Category edited succesfully")
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -81,14 +82,13 @@ export const useCategoryQueries = (queryClient: QueryClient, token: string) => {
           },
         });
   
-        if (!response.ok) {
-          throw new Error('Unable to delete category');
-        }
-  
-        return response.json();
+        const resData = await response.json();
+      if(!response.ok) throw Error(resData.message)
+      return resData
       },
       onSuccess: () => {
         queryClient.invalidateQueries({queryKey: ['categories']});
+        toast.success("Category deleted succesfully")
       },
       onError: (error: Error) => {
         toast.error(error.message);
