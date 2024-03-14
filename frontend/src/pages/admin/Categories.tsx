@@ -1,88 +1,85 @@
-// components/Categories.tsx
+// Categories.tsx
 
 import React, { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { deleteCategory, editCategory, createCategory, getCategories } from '../../api/categoryApi';
+import { useQueryClient } from '@tanstack/react-query';
+import {useCategoryQueries} from "../../hooks/useCategoryQueries"
 
-interface Category {
-  id: number;
-  name: string;
-}
-
-const Categories: React.FC = () => {
+const Categories: React.FC<{ token: string }> = ({ token }) => {
+  const queryClient = useQueryClient();
+  
   const [newCategoryName, setNewCategoryName] = useState('');
-  const [editCategoryId, setEditCategoryId] = useState<number | null>(null);
+  const [editedCategoryName, setEditedCategoryName] = useState('');
+  const [editingCategoryId, setEditingCategoryId] = useState('');
+  const [deletingCategoryId, setDeletingCategoryId] = useState('');
+  const { getCategories, createCategoryMutation , editCategoryMutation, deleteCategoryMutation } = useCategoryQueries(queryClient, token)
 
-  // Query to fetch categories
-  const { data: categories, refetch } = useQuery<Category[]>('categories', getCategories);
-
-  // Mutation to delete a category
-  const deleteCategoryMutation = useMutation(deleteCategory, {
-    onSuccess: () => refetch(),
-  });
-
-  // Mutation to edit a category
-  const editCategoryMutation = useMutation(editCategory, {
-    onSuccess: () => {
-      setEditCategoryId(null);
-      refetch();
-    },
-  });
-
-  // Mutation to create a new category
-  const createCategoryMutation = useMutation(createCategory, {
-    onSuccess: () => {
-      setNewCategoryName('');
-      refetch();
-    },
-  });
-
-  const handleEditCategory = (id: number) => {
-    setEditCategoryId(id);
-    // Fetch the category details if needed
+  const handleCreateCategory = async () => {
+     const{mutate, isSuccess, isError, isPending}=createCategory(newCategoryName, token, queryClient)
+     mutate()
+    if(isSuccess) setNewCategoryName('');
   };
 
-  const handleSaveEdit = () => {
-    if (editCategoryId !== null) {
-      editCategoryMutation.mutate({ id: editCategoryId, name: newCategoryName });
+  const handleEditCategory = async (categoryId: string) => {
+    const{mutate, isSuccess, isError, isPending}=editCategory(categoryId, editedCategoryName, token, queryClient);
+    mutate()
+    if(isSuccess){
+      setEditingCategoryId('');
+      setEditedCategoryName('');
     }
   };
 
-  const handleCreateCategory = () => {
-    createCategoryMutation.mutate({ name: newCategoryName });
+  const handleDeleteCategory = async (categoryId: string) => {
+    const{mutate, isSuccess, isError, isPending}=deleteCategory(categoryId, token, queryClient);
+    mutate()
+    if(isSuccess){
+      setDeletingCategoryId('');
+    }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError || !categories) {
+    return <div>Error fetching categories</div>;
+  }
 
   return (
     <div>
-      {/* Create Category Button */}
-      <button onClick={() => handleCreateCategory()}>Create New Category</button>
-
-      {/* Categories List */}
-      {categories?.map((category) => (
-        <div key={category.id}>
-          {/* Category Card */}
-          <div className="border p-4 mb-4">
-            {editCategoryId === category.id ? (
-              // Edit Mode
+      <h1>Categories</h1>
+      <ul>
+        {categories.length && categories.map((category: any) => (
+          <li key={category._id}>
+            {category.name}
+            <button onClick={() => setEditingCategoryId(category._id)}>Edit</button>
+            <button onClick={() => setDeletingCategoryId(category._id)}>Delete</button>
+            {editingCategoryId === category._id && (
               <div>
                 <input
                   type="text"
-                  value={newCategoryName}
-                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  value={editedCategoryName}
+                  onChange={(e) => setEditedCategoryName(e.target.value)}
                 />
-                <button onClick={() => handleSaveEdit()}>Save</button>
-              </div>
-            ) : (
-              // Display Mode
-              <div>
-                <p>{category.name}</p>
-                <button onClick={() => handleEditCategory(category.id)}>Edit</button>
-                <button onClick={() => deleteCategoryMutation.mutate(category.id)}>Delete</button>
+                <button onClick={() => handleEditCategory(category._id)}>Save</button>
               </div>
             )}
-          </div>
-        </div>
-      ))}
+            {deletingCategoryId === category._id && (
+              <div>
+                Are you sure you want to delete this category?
+                <button onClick={() => handleDeleteCategory(category._id)}>Confirm</button>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div>
+        <input
+          type="text"
+          value={newCategoryName}
+          onChange={(e) => setNewCategoryName(e.target.value)}
+        />
+        <button onClick={handleCreateCategory}>Create Category</button>
+      </div>
     </div>
   );
 };

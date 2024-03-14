@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthContext } from "./context/AuthContext";
 import Home from "./pages/Home";
-import Admin from "./pages/admin/Categories";
+import Categories from "./pages/admin/Categories";
 import Leaderboard from "./pages/Leaderboard";
 import Languages from "./pages/Languages";
 import Login from "./pages/auth/Login";
@@ -34,7 +34,7 @@ export default function App() {
           path="/admin-login"
           element={state.user ? <Navigate to="/" /> : <AdminLogin />}
         />
-          <Route path="/admin" element={state?.user?.isAdmin? <Admin /> :   <Navigate to="/" />} />
+          <Route path="/admin" element={state?.user?.isAdmin? <Categories token={state?.user?.token} /> :   <Navigate to="/" />} />
         <Route
           path="/profile"
           element={state.user ? <Profile /> : <Navigate to="/" />}
