@@ -41,7 +41,6 @@ export const checkAdminAuth = (req: Request, res: Response, next: NextFunction):
   }
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_ADMIN_KEY as jwt.Secret);
-    console.log("AJAJAJ;" +decodedToken)
 
     if (!decodedToken || typeof decodedToken !== 'object' || !decodedToken.id) {
       return res.status(401).json({ status: "fail", message: "Invalid token format" });

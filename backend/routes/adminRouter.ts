@@ -13,6 +13,7 @@ import {
   updateTopic,
   updateQuiz,
   getAdminStats,
+  generateQuiz,
 } from '../controllers/adminController'; // Import your controllers
 
 import { checkAdminAuth, checkAuth, checkMixedAuth } from '../middleware/authMiddleware'; // Import your auth middleware
@@ -39,5 +40,8 @@ adminRouter.patch('/quizzes/:quizId', checkAdminAuth, updateQuiz);
 
 //Stats data
 adminRouter.get('/stats', checkAdminAuth, getAdminStats)
+
+//Quiz generation
+adminRouter.post('/ai-quiz-gen', checkAdminAuth, generateQuiz)
 
 export default adminRouter;
