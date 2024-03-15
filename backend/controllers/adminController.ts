@@ -366,5 +366,7 @@ export const getAdminStats = asyncWrapper(async (req: Request, res: Response) =>
         quizCount,
     };
 
+    console.log("YOOOOOOO ",stats)
+
     res.status(200).json({ status: 'success', stats });
 });

@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import AdminLogin from "./pages/auth/AdminLogin";
 import Subjects from "./pages/admin/Subjects";
 import Topics from "./pages/admin/Topics";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 export default function App() {
   const { state } = useAuthContext();
@@ -22,7 +23,6 @@ export default function App() {
     <BrowserRouter>
       <Navbar />
       <Routes>
-        
         <Route path="/" element={<Home />} />
 
         <Route
@@ -41,19 +41,61 @@ export default function App() {
           path="/admin-login"
           element={state.user ? <Navigate to="/" /> : <AdminLogin />}
         />
-          <Route path="/admin/" element={state?.user?.isAdmin? <Categories token={state?.user?.token} /> :   <Navigate to="/" />} />
 
-          <Route path="/admin/categories/:categoryId" element={state?.user?.isAdmin? <Subjects token={state?.user?.token} /> :   <Navigate to="/" />} />
+        <Route
+          path="/admin"
+          element={
+            state?.user?.isAdmin ? (
+              <AdminDashboard token={state?.user?.token} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
 
-          <Route path="/admin/categories/:categoryId/subjects/:subjectId" element={state?.user?.isAdmin? <Topics token={state?.user?.token} /> :   <Navigate to="/" />} />        
+        <Route
+          path="/admin/categories"
+          element={
+            state?.user?.isAdmin ? (
+              <Categories token={state?.user?.token} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
 
-          {/* <Route path="/admin/categories/:categoryId/subjects/:subjectId/topics/:topicId" element={state?.user?.isAdmin? <Topics token={state?.user?.token} /> :   <Navigate to="/" />} />   */}
+        <Route
+          path="/admin/categories/:categoryId"
+          element={
+            state?.user?.isAdmin ? (
+              <Subjects token={state?.user?.token} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+
+        <Route
+          path="/admin/categories/:categoryId/subjects/:subjectId"
+          element={
+            state?.user?.isAdmin ? (
+              <Topics token={state?.user?.token} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+
+        {/* <Route path="/admin/categories/:categoryId/subjects/:subjectId/topics/:topicId" element={state?.user?.isAdmin? <Topics token={state?.user?.token} /> :   <Navigate to="/" />} />   */}
 
         <Route
           path="/profile"
           element={state.user ? <Profile /> : <Navigate to="/" />}
         />
-        <Route path="/languages" element={state.user? <Languages/> : <Navigate to="/login" /> } />
+        <Route
+          path="/languages"
+          element={state.user ? <Languages /> : <Navigate to="/login" />}
+        />
       </Routes>
       <ToastContainer position="top-right" />
     </BrowserRouter>

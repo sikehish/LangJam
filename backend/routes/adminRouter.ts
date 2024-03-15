@@ -12,6 +12,7 @@ import {
   updateSubject,
   updateTopic,
   updateQuiz,
+  getAdminStats,
 } from '../controllers/adminController'; // Import your controllers
 
 import { checkAdminAuth, checkAuth, checkMixedAuth } from '../middleware/authMiddleware'; // Import your auth middleware
@@ -35,5 +36,8 @@ adminRouter.patch('/categories/:categoryId', checkAdminAuth, updateCategory);
 adminRouter.patch('/subjects/:subjectId', checkAdminAuth, updateSubject);
 adminRouter.patch('/topics/:topicId', checkAdminAuth, updateTopic);
 adminRouter.patch('/quizzes/:quizId', checkAdminAuth, updateQuiz);
+
+//Stats data
+adminRouter.get('/stats', checkAdminAuth, getAdminStats)
 
 export default adminRouter;
