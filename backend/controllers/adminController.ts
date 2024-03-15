@@ -379,7 +379,8 @@ export const getAdminStats = asyncWrapper(async (req: Request, res: Response) =>
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
     const prompt = `
-    Generate a COMPLETE JSON array consisting of JSON objects for a quiz with the following specifications:
+    Generate a COMPLETE JSON object for a quiz with the following specifications:
+    DO NOT USE MARKDOWN AND BACKTICKS
     
     - Subject: JavaScript
     - Topic: DOM
@@ -393,13 +394,28 @@ export const getAdminStats = asyncWrapper(async (req: Request, res: Response) =>
         - DifficultyLevel of each Question
         - Choices: An array of multiple choices
         - CorrectOption: The index of the correct choice (0 for A, 1 for B, 2 for C, and so on)
-        - Explanation: A clear explanation of the correct solution`
+        - Explanation: A clear explanation of the correct solution
+        
+
+        return response in JSON format {
+          difficultyLevel,
+          numberOfQuestions,
+          questions:[{
+            question,
+            choices,
+            correctOption,
+            explanation
+          }]
+        }
+        `
         
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const text = await response.text();
-    console.log(text); // Logging the generated story
-    res.status(200).json({ status: "success", data: text });
+    const text = await response.text()
+    console.log(typeof text); // Logging the generated story
+    const data = JSON.parse(text);
+    console.log(data)
+    res.status(200).json({ status: "success", data });
   } catch (error) {
     res.status(404);
     throw new Error('An error occurred while generating the quiz.');
