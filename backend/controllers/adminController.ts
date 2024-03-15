@@ -8,6 +8,7 @@ import Topic from '../models/topicModel';
 import Quiz, { IQuiz } from '../models/quizModel';
 import asyncWrapper from 'express-async-handler';
 import { AuthReq } from '../typings';
+import User from '../models/userModel';
 
 
 //Creating entities
@@ -348,4 +349,22 @@ export const updateQuestion = asyncWrapper(async (req: Request, res: Response) =
   res.status(200).json({ status: 'success', data: updatedQuiz });
 });
 
+// ---------------------------------------------
+//Admin Dashboard Stats
+export const getAdminStats = asyncWrapper(async (req: Request, res: Response) => {
+    const userCount = await User.countDocuments();
+    const categoryCount = await Category.countDocuments();
+    const subjectCount = await Subject.countDocuments();
+    const topicCount = await Topic.countDocuments();
+    const quizCount = await Quiz.countDocuments();
 
+    const stats = {
+        userCount,
+        categoryCount,
+        subjectCount,
+        topicCount,
+        quizCount,
+    };
+
+    res.status(200).json({ status: 'success', stats });
+});
