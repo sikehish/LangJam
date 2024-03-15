@@ -14,6 +14,7 @@ import AdminLogin from "./pages/auth/AdminLogin";
 import Subjects from "./pages/admin/Subjects";
 import Topics from "./pages/admin/Topics";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import CreateQuiz from "./pages/admin/CreateQuiz";
 
 export default function App() {
   const { state } = useAuthContext();
@@ -54,6 +55,17 @@ export default function App() {
         />
 
         <Route
+          path="/admin/create-quiz"
+          element={
+            state?.user?.isAdmin ? (
+              <CreateQuiz token={state?.user?.token} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+
+        <Route
           path="/admin/categories"
           element={
             state?.user?.isAdmin ? (
@@ -85,6 +97,8 @@ export default function App() {
             )
           }
         />
+
+        
 
         {/* <Route path="/admin/categories/:categoryId/subjects/:subjectId/topics/:topicId" element={state?.user?.isAdmin? <Topics token={state?.user?.token} /> :   <Navigate to="/" />} />   */}
 
