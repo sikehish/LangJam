@@ -47,8 +47,8 @@ import {
             </Card>
           ))}
         </div>
-        <div className="flex justify-center mt-16">
-          <Button className="px-6 py-4" onClick={() => { navigate("/admin/categories") }}>View Categories</Button>
+        <div className="flex justify-center mt-16 mb-8">
+          <Button className="px-8 py-6" onClick={() => { navigate("/admin/categories") }}>View Categories</Button>
         </div>
       </div>
     );
