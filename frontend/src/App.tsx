@@ -12,6 +12,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminLogin from "./pages/auth/AdminLogin";
 import Subjects from "./pages/admin/Subjects";
+import Topics from "./pages/admin/Topics";
 
 export default function App() {
   const { state } = useAuthContext();
@@ -43,6 +44,11 @@ export default function App() {
           <Route path="/admin/" element={state?.user?.isAdmin? <Categories token={state?.user?.token} /> :   <Navigate to="/" />} />
 
           <Route path="/admin/categories/:categoryId" element={state?.user?.isAdmin? <Subjects token={state?.user?.token} /> :   <Navigate to="/" />} />
+
+          <Route path="/admin/categories/:categoryId/subjects/:subjectId" element={state?.user?.isAdmin? <Topics token={state?.user?.token} /> :   <Navigate to="/" />} />        
+
+          {/* <Route path="/admin/categories/:categoryId/subjects/:subjectId/topics/:topicId" element={state?.user?.isAdmin? <Topics token={state?.user?.token} /> :   <Navigate to="/" />} />   */}
+
         <Route
           path="/profile"
           element={state.user ? <Profile /> : <Navigate to="/" />}
