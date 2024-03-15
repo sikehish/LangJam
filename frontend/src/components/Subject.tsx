@@ -55,7 +55,7 @@ function Subject({
 
   return (
     <div className="mb-4">
-      <Link to={`/admin/subjects/${subject._id}`}>
+      <Link to={`/admin/categories/${subject.category}/subjects/${subject._id}/`}>
       <div className="p-4 rounded-lg shadow-md bg-blue-500">
         <p className="text-white">{subject.name}</p>
       </div>

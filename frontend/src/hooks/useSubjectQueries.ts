@@ -23,7 +23,7 @@ export const useSubjectQueries = (queryClient: QueryClient, token: string, categ
     mutationFn: async (data: {name: string, message?: string}) => {
       const {name} = data
       console.log(data)
-      const response = await fetch(`/api/admin/categories/${categoryId}`, {
+      const response = await fetch(`/api/admin/subjects/${categoryId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export const useSubjectQueries = (queryClient: QueryClient, token: string, categ
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name: newName }),
+        body: JSON.stringify({ name: newName, categoryId: categoryId }),
       });
   
       const resData = await response.json();
@@ -73,8 +73,8 @@ export const useSubjectQueries = (queryClient: QueryClient, token: string, categ
   });
   
    const deleteSubjectMutation= useMutation({
-      mutationFn: async (categoryId: string) => {
-        const response = await fetch(`/api/admin/categories/${categoryId}`, {
+      mutationFn: async (subjectId: string) => {
+        const response = await fetch(`/api/admin/subjects/${subjectId}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${token}`,
