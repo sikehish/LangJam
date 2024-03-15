@@ -11,6 +11,7 @@ import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminLogin from "./pages/auth/AdminLogin";
+import Subjects from "./pages/admin/Subjects";
 
 export default function App() {
   const { state } = useAuthContext();
@@ -20,21 +21,28 @@ export default function App() {
     <BrowserRouter>
       <Navbar />
       <Routes>
+        
         <Route path="/" element={<Home />} />
+
         <Route
           path="/login"
           element={state.user ? <Navigate to="/" /> : <Login />}
         />
+
         <Route
           path="/signup"
           element={state.user ? <Navigate to="/" /> : <Signup />}
         />
+
         <Route path="/leaderboard" element={<Leaderboard />} />
+
         <Route
           path="/admin-login"
           element={state.user ? <Navigate to="/" /> : <AdminLogin />}
         />
           <Route path="/admin/" element={state?.user?.isAdmin? <Categories token={state?.user?.token} /> :   <Navigate to="/" />} />
+
+          <Route path="/admin/categories/:categoryId" element={state?.user?.isAdmin? <Subjects token={state?.user?.token} /> :   <Navigate to="/" />} />
         <Route
           path="/profile"
           element={state.user ? <Profile /> : <Navigate to="/" />}

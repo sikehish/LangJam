@@ -37,51 +37,53 @@ export const createCategory = asyncWrapper(async (req: Request, res: Response) =
 
 // Create a new subject under a category
 export const createSubject = asyncWrapper(async (req: Request, res: Response) => {
-  const { name, categoryId } = req.body;
+  const { name} = req.body;
+  const {id} = req.params //categoryId
 
-  if (!name || !categoryId) {
+  if (!name || !id) {
     res.status(400);
     throw new Error('Subject name and categoryId are required');
   }
 
-  const category = await Category.findById(categoryId);
+  const category = await Category.findById(id);
   if (!category) {
     res.status(404);
     throw new Error('Category not found');
   }
 
-  const checkSubject = await Subject.findOne({ name, category: categoryId });
+  const checkSubject = await Subject.findOne({ name, category: id });
   if (checkSubject) {
     res.status(400);
     throw new Error('Subject already exists under this category');
   }
 
-  const data = await Subject.create({ name, category: categoryId });
+  const data = await Subject.create({ name, category: id });
   res.status(201).json({ status: 'success', data });
 });
 
 // Create a new topic under a subject
 export const createTopic = asyncWrapper(async (req: Request, res: Response) => {
-  const { name, subjectId } = req.body;
+  const { name } = req.body;
+   const {id} = req.params //subjectId
 
-  if (!name || !subjectId) {
+  if (!name || !id) {
     res.status(400);
     throw new Error('Topic name and subjectId are required');
   }
 
-  const subject = await Subject.findById(subjectId);
+  const subject = await Subject.findById(id);
   if (!subject) {
     res.status(404);
     throw new Error('Subject not found');
   }
 
-  const checkTopic = await Topic.findOne({ name, subject: subjectId });
+  const checkTopic = await Topic.findOne({ name, subject: id });
   if (checkTopic) {
     res.status(400);
     throw new Error('Topic already exists under this subject');
   }
 
-  const data = await Topic.create({ name, subject: subjectId });
+  const data = await Topic.create({ name, subject: id });
   res.status(201).json({ status: 'success', data });
 });
 

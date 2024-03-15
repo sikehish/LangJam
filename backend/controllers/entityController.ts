@@ -15,12 +15,14 @@ export const getAllCategories = asyncWrapper(async (req: Request, res: Response)
 });
 
 export const getAllSubjects = asyncWrapper(async (req: Request, res: Response) => {
-  const data = await Subject.find();
+  const {id: categoryId}= req.params
+  const data = await Subject.find({category:categoryId});
   res.status(200).json({ status: 'success', data });
 });
 
 export const getAllTopics = asyncWrapper(async (req: Request, res: Response) => {
-  const data = await Topic.find();
+  const {id: subjectId}= req.params
+  const data = await Topic.find({subject: subjectId});
   res.status(200).json({ status: 'success', data });
 });
 

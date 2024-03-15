@@ -13,7 +13,7 @@ function Subject({
   subject,
   token,
 }: {
-  subject: { name: string; _id: string };
+  subject: { name: string; _id: string, category:string};
   token: string;
 }) {
   const queryClient = useQueryClient();
@@ -22,7 +22,7 @@ function Subject({
   const {
     editSubjectMutation,
     deleteSubjectMutation,
-  } = useSubjectQueries(queryClient, token);
+  } = useSubjectQueries(queryClient, token, subject.category);
 
   const handleEditSubmit = async (e: FormEvent) => {
     e.preventDefault()

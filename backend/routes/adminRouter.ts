@@ -20,8 +20,8 @@ const adminRouter = express.Router();
 
 // Creating entities
 adminRouter.post('/categories', checkAdminAuth, createCategory);
-adminRouter.post('/subjects', checkAdminAuth, createSubject);
-adminRouter.post('/topics', checkAdminAuth, createTopic);
+adminRouter.post('/subjects/:id', checkAdminAuth, createSubject);
+adminRouter.post('/topics/:id', checkAdminAuth, createTopic);
 adminRouter.post('/quizzes', checkAdminAuth, createQuiz);
 
 // Deleting entities

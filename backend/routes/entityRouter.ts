@@ -13,8 +13,8 @@ const entityRouter = express.Router();
 
 // Getting entities
 entityRouter.get('/categories', getAllCategories); //Categories can be viewed by non auth users
-entityRouter.get('/subjects', checkMixedAuth, getAllSubjects);
-entityRouter.get('/topics', checkMixedAuth, getAllTopics);
+entityRouter.get('/subjects/:id', checkMixedAuth, getAllSubjects);
+entityRouter.get('/topics/:id', checkMixedAuth, getAllTopics);
 entityRouter.get('/quizzes', checkMixedAuth, getAllQuizzes);
 
 export default entityRouter;

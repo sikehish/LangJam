@@ -1,11 +1,11 @@
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
-export const useSubjectQueries = (queryClient: QueryClient, token: string, subjectId: string) => {
+export const useSubjectQueries = (queryClient: QueryClient, token: string, categoryId: string) => {
   const {data: getSubjects} = useQuery({
-    queryKey: ['subjects', subjectId],
+    queryKey: ['subjects', categoryId],
     queryFn: async () => {
-      const response = await fetch('/api/entities/subjects', {
+      const response = await fetch(`/api/entities/subjects/${categoryId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -23,13 +23,13 @@ export const useSubjectQueries = (queryClient: QueryClient, token: string, subje
     mutationFn: async (data: {name: string, message?: string}) => {
       const {name} = data
       console.log(data)
-      const response = await fetch('/api/admin/subjects', {
+      const response = await fetch(`/api/admin/categories/${categoryId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, category:categoryId }),
       });
 
       const resData = await response.json();
@@ -37,7 +37,7 @@ export const useSubjectQueries = (queryClient: QueryClient, token: string, subje
       return resData
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['subjects', subjectId] });
+      queryClient.invalidateQueries({ queryKey: ['subjects', categoryId] });
       toast.success("Subject created succesfully")
     },
     onError: (error: Error) => {
@@ -49,7 +49,7 @@ export const useSubjectQueries = (queryClient: QueryClient, token: string, subje
   // Edit a subject
   const editSubjectMutation = useMutation({
     mutationFn: async (data: { subjectId: string; newName: string }) => {
-      const { subjectId, newName } = data; // Destructure subjectId and newName from data
+      const { subjectId,newName } = data; // Destructure categoryId and newName from data
       const response = await fetch(`/api/admin/subjects/${subjectId}`, {
         method: 'PATCH',
         headers: {
@@ -64,7 +64,7 @@ export const useSubjectQueries = (queryClient: QueryClient, token: string, subje
       return resData
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['subjects', subjectId] });
+      queryClient.invalidateQueries({ queryKey: ['subjects', categoryId] });
       toast.success("Subject edited succesfully")
     },
     onError: (error: Error) => {
@@ -73,8 +73,8 @@ export const useSubjectQueries = (queryClient: QueryClient, token: string, subje
   });
   
    const deleteSubjectMutation= useMutation({
-      mutationFn: async (subjectId: string) => {
-        const response = await fetch(`/api/admin/subjects/${subjectId}`, {
+      mutationFn: async (categoryId: string) => {
+        const response = await fetch(`/api/admin/categories/${categoryId}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -86,7 +86,7 @@ export const useSubjectQueries = (queryClient: QueryClient, token: string, subje
       return resData
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({queryKey: ['subjects', subjectId]});
+        queryClient.invalidateQueries({queryKey: ['subjects', categoryId]});
         toast.success("Subject deleted succesfully")
       },
       onError: (error: Error) => {

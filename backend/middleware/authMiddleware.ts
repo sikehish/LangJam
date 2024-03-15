@@ -58,6 +58,7 @@ export const checkAdminAuth = (req: Request, res: Response, next: NextFunction):
 
 export const checkMixedAuth = (req: Request, res: Response, next: NextFunction): Response | void => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
+  console.log("TOKEN ",token)
   if (!token) {
     return res.status(401).json({ status: "fail", message: 'Unauthorized access. Invalid Bearer token.' });
   }

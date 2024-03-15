@@ -3,17 +3,17 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useSubjectQueries } from "../../hooks/useSubjectQueries";
 import Subject from "../../components/Subject";
 import { CreateBtn } from '@/components/buttons/CreateBtn';
-import { useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 
 const Subjects: React.FC<{ token: string }> = ({ token }) => {
   const queryClient = useQueryClient();
-  const [params, setParams] = useSearchParams()
-  const { getSubjects, createSubjectMutation } = useSubjectQueries(queryClient, token);
+  const {categoryId} = useParams();
+  const { getSubjects, createSubjectMutation } = useSubjectQueries(queryClient, token, categoryId!);
 
   const renderSubjects = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {getSubjects?.data?.map((subject: { name: string; _id: string }) => (
+        {getSubjects?.data?.map((subject: { name: string; _id: string, category:string }) => (
           <Subject key={subject._id} subject={subject} token={token} />
         ))}
       </div>
@@ -28,7 +28,7 @@ const Subjects: React.FC<{ token: string }> = ({ token }) => {
       ) : (
         renderSubjects()
       )}
-      <CreateBtn saveMethod={createSubjectMutation} name="Subject" />
+      <CreateBtn saveMethod={createSubjectMutation} name="Subject"/>
     </div>
   );
 };
