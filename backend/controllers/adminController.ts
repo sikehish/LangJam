@@ -414,7 +414,6 @@ export const getAdminStats = asyncWrapper(async (req: Request, res: Response) =>
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = await response.text()
-    console.log(typeof text); // Logging the generated story
     const data = JSON.parse(text);
     console.log(data)
     res.status(200).json({ status: "success", data });
