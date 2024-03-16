@@ -28,7 +28,7 @@ const CreateQuiz: React.FC<{token:string}> = ({token}) => {
   const [category, setCategory] = useState("");
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
-  const [numberOfQuestions, setNumber] = useState("10");
+  const [numberOfQuestions, setNumber] = useState(10);
   const [difficulty, setDifficulty] = useState("");
   const { state, dispatch } = useAuthContext();
   const navigate = useNavigate();
@@ -86,6 +86,16 @@ const CreateQuiz: React.FC<{token:string}> = ({token}) => {
   };
 
   const generateQuestions = async () => {
+    if(!(subject && topic && category && difficulty && difficulty)){
+      toast.error("All fields neet to be entered")
+      return
+    }
+    if(numberOfQuestions<=-1){
+      toast.error("Number of questions needs to be greater than 0")
+      return
+    }
+
+
     const quizParams = {
       subject,
       topic,
@@ -153,11 +163,14 @@ const CreateQuiz: React.FC<{token:string}> = ({token}) => {
                 id="numberofqs"
                 type="number"
                 defaultValue={numberOfQuestions}
-                onChange={(e) => setNumber(e.target.value)}
+                onChange={(e) => {
+                  console.log(e.target.value)
+                  setNumber(+e.target.value)
+                }}
               />
             </div>
           )}
-          {category && subject && topic && numberOfQuestions && (
+          {(category && subject && topic && numberOfQuestions>0) && (
             <SelectInput
               label="Difficulty"
               options={[{ name: "Easy" }, { name: "Medium" }, { name: "Hard" }]}
@@ -167,8 +180,9 @@ const CreateQuiz: React.FC<{token:string}> = ({token}) => {
             />
           )}
         </CardContent>
-        <CardFooter className="flex justify-center mt-16 mb-8">
+        <CardFooter className="flex justify-center my-8">
           <Button
+          disabled={!(subject && topic && category && difficulty && difficulty && numberOfQuestions)}
             className="px-8 py-6 mx-4"
             onClick={() => {
               navigate("/admin/new-quiz/create", {
@@ -185,6 +199,7 @@ const CreateQuiz: React.FC<{token:string}> = ({token}) => {
             Create Quiz
           </Button>
           <Button
+          disabled={!(subject && topic && category && difficulty && difficulty && numberOfQuestions)}
             className="px-8 py-6 mx-4"
             onClick={(e) => generateQuestions()}
           >
