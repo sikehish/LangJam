@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import QuizCarousel from "@/components/QuizCarousel";
+import AdminQuizCarousel from "@/components/AdminQuizCarousel";
 
 const GenerateQuiz = ({ token }: { token: string }) => {
   const location = useLocation();
@@ -15,7 +15,7 @@ const GenerateQuiz = ({ token }: { token: string }) => {
           Number of Questions: {quizData?.numberOfQuestions}
         </p>
       </div>
-      {quizData && <QuizCarousel quizData={quizData} />}
+      {quizData && <AdminQuizCarousel quizData={quizData} />}
     </div>
   );
 };
