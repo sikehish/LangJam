@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useAuthContext } from "@/context/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import {
   Select,
   SelectContent,
@@ -23,8 +23,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Loader2 } from "lucide-react";
 
-const CreateQuiz: React.FC<{token:string}> = ({token}) => {
+const NewQuiz: React.FC<{token:string}> = ({token}) => {
   const [category, setCategory] = useState("");
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
@@ -85,44 +86,50 @@ const CreateQuiz: React.FC<{token:string}> = ({token}) => {
     return data;
   };
 
-  const generateQuestions = async () => {
-    if(!(subject && topic && category && difficulty && difficulty)){
-      toast.error("All fields neet to be entered")
-      return
+  const {mutate: generateQuestions,isPending: isLoading, data} = useMutation({
+    mutationFn: async () => {
+      if(!(subject && topic && category && difficulty && difficulty)){
+        throw Error("All fields neet to be entered")
+      }
+      if(numberOfQuestions<=-1){
+        throw Error("Number of questions needs to be greater than 0")
+      }
+      const quizParams = {
+        subject,
+        topic,
+        category,
+        difficulty,
+        numberOfQuestions,
+      };
+      const response = await fetch("/api/admin/ai-quiz-gen",{
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(quizParams),
+      });
+  
+      const data=await response.json()
+      if(!response.ok) throw Error(data?.message)
+      return data
     }
-    if(numberOfQuestions<=-1){
-      toast.error("Number of questions needs to be greater than 0")
-      return
-    }
+  ,
+    onSuccess: (data) => {
+      console.log(data)
+      navigate("/admin/new-quiz/generate",{
+        state:data?.data
+      })
+      toast.success("Generated quiz questions!")
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
 
-
-    const quizParams = {
-      subject,
-      topic,
-      category,
-      difficulty,
-      numberOfQuestions,
-    };
-    const response = await fetch("/api/admin/ai-quiz-gen",{
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(quizParams),
-    });
-
-    const data=await response.json()
-    if(data.status!="status"){
-      toast.error(data?.message)
-    }
-    else navigate("/admin/new-quiz/create",{
-      state:data?.data
-    })
-  };
-
+  // const generateQuestions = 
   return (
-    <div className="flex justify-center items-center h-full py-20 ">
+    <div className="flex justify-center items-center h-full pt-20">
       <Card className="w-[70%] lg:w-[50%] mx-0 bg-blue-50">
         <CardHeader className="text-center">
           <CardTitle>New Quiz Parameters</CardTitle>
@@ -131,7 +138,7 @@ const CreateQuiz: React.FC<{token:string}> = ({token}) => {
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-6 mb-8">
+        <CardContent className="space-y-6 mb-8 mt-4">
           <SelectInput
             label="Category"
             options={categoryQuery?.data?.data || []}
@@ -180,8 +187,9 @@ const CreateQuiz: React.FC<{token:string}> = ({token}) => {
             />
           )}
         </CardContent>
-        <CardFooter className="flex justify-center my-8">
+        <CardFooter className="flex justify-center my-4">
           <Button
+          variant={"outline"}
           disabled={!(subject && topic && category && difficulty && difficulty && numberOfQuestions)}
             className="px-8 py-6 mx-4"
             onClick={() => {
@@ -203,7 +211,8 @@ const CreateQuiz: React.FC<{token:string}> = ({token}) => {
             className="px-8 py-6 mx-4"
             onClick={(e) => generateQuestions()}
           >
-            Generate Quiz
+             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading ? "Generating... " : "Generate Quiz" }
           </Button>
         </CardFooter>
       </Card>
@@ -259,4 +268,4 @@ const SelectInput: React.FC<SelectInputProps> = ({
   );
 };
 
-export default CreateQuiz;
+export default NewQuiz;

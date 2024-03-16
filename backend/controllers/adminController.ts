@@ -407,9 +407,9 @@ export const generateQuiz = asyncWrapper(
     try {
       const { subject, topic, category, difficulty, numberOfQuestions } =
         req.body;
+        console.log(subject, topic, category, difficulty, numberOfQuestions)
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
       const prompt = `
     Generate a COMPLETE JSON object for a quiz with the following specifications:
     DO NOT USE MARKDOWN AND BACKTICKS
@@ -446,7 +446,6 @@ export const generateQuiz = asyncWrapper(
       const response = await result.response;
       const text = await response.text();
       const data = JSON.parse(text);
-      console.log(data);
       res.status(200).json({ status: "success", data });
     } catch (error) {
       res.status(404);
