@@ -55,7 +55,7 @@ export default function App() {
         />
 
         <Route
-          path="/admin/create-quiz"
+          path="/admin/new-quiz"
           element={
             state?.user?.isAdmin ? (
               <CreateQuiz token={state?.user?.token} />
