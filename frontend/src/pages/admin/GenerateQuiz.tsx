@@ -7,9 +7,9 @@ const GenerateQuiz = ({ token }: { token: string }) => {
   const quizData = location.state;
 
   return (
-    <div>
-      <div className="mx-0">
-        <h2 className="text-2xl font-bold mb-4">Quiz Information</h2>
+    <div className="w-[60%] mx-auto">
+      <div className="mx-0 text-center mt-12 mb-4">
+        <h2 className="text-2xl font-bold mb-4 pt-12">Quiz Information</h2>
         <p className="mb-2">Difficulty Level: {quizData?.difficultyLevel}</p>
         <p className="mb-4">
           Number of Questions: {quizData?.numberOfQuestions}

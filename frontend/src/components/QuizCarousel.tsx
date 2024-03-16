@@ -19,18 +19,18 @@ interface Props {
 }
 
 const QuizCarousel: React.FC<Props> = ({ quizData }) => {
-  const { difficultyLevel, numberOfQuestions, questions } = quizData;
+  const { questions } = quizData;
   return (
     <div className="p-4">
-      <Carousel
+      <Carousel 
         className="w-full max-w-lg mx-auto"
       >
         <CarouselContent>
           {questions.map((question, index) => (
             <CarouselItem key={index}>
-              <div className="bg-white shadow-md rounded-lg p-4">
-                <h3 className="text-lg font-semibold mb-2">Question {index + 1}</h3>
-                <p className="mb-2">{question.question}</p>
+              <div className="shadow-md rounded-lg p-4 bg-slate-100">
+              {/* <h3 className="text-lg font-semibold mb-2">Question {index + 1}</h3> */}
+                <p className="mb-2"> <h3 className="inline text-md font-semibold">{index + 1}.</h3> {question.question}</p>
                 <ul className="mb-2">
                   {question.choices.map((choice, choiceIndex) => (
                     <li key={choiceIndex} className="mb-1">
