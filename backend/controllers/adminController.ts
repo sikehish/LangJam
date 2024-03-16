@@ -375,6 +375,7 @@ export const getAdminStats = asyncWrapper(async (req: Request, res: Response) =>
 
  export const generateQuiz=asyncWrapper(async (req: Request, res: Response)=>{
   try {
+    const {domain, subject,topic, numOfQuestions, difficultyLevel }=req.body
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
@@ -382,12 +383,13 @@ export const getAdminStats = asyncWrapper(async (req: Request, res: Response) =>
     Generate a COMPLETE JSON object for a quiz with the following specifications:
     DO NOT USE MARKDOWN AND BACKTICKS
     
-    - Subject: JavaScript
-    - Topic: DOM
-    - NumberOfQuestions: 10
+    - Domain: ${domain}
+    - Subject: ${subject}
+    - Topic: ${topic}
+    - NumberOfQuestions: ${numOfQuestions}
     - Format: Multiple Choices for each Question
         - Crucially, ensure the correct option is distributed as randomly as possible across all available choices (A, B, C, D, etc.). Avoid any bias towards specific positions.
-    - DifficultyLevel: Medium
+    - DifficultyLevel: ${difficultyLevel}
     - Question Type: Include code snippets within questions
     - Structure: Each question in the JSON array must have:
         - Question: The text of the question
