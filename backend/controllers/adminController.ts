@@ -405,10 +405,10 @@ export const getAdminStats = asyncWrapper(
 export const generateQuiz = asyncWrapper(
   async (req: Request, res: Response) => {
     try {
-
       const { subject:subjectId, topic:topicId, category:categoryId, difficulty, numberOfQuestions } =
         req.body;
-        
+        console.log(subjectId, topicId, categoryId, difficulty, numberOfQuestions)
+
         const category = await Category.findById(categoryId);
         const subject = await Subject.findById(subjectId);
         const topic = await Topic.findById(topicId)
@@ -463,6 +463,7 @@ export const generateQuiz = asyncWrapper(
       res.status(200).json({ status: "success", data });
     } catch (error) {
       res.status(404);
+      console.log(error)
       throw new Error("An error occurred while generating the quiz.");
     }
   }

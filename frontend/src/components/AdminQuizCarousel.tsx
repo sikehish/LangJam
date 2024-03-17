@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from '@/components/ui/button';
-import { CircleX, RotateCw, Save } from "lucide-react";
+import { CircleX, Loader2, RotateCw, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
@@ -36,14 +36,16 @@ interface Props {
 }
 
 const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token }) => {
+  console.log(quizData)
   const { questions } = quizData;
+  console.log(subject, topic, category)
   const navigate=useNavigate()
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<
     number | null
   >(null);
   const [editedQuestions, setEditedQuestions] = useState<Question[]>(questions);
 
-  const {mutate: generateQuestions,isPending: isLoading} = useMutation({
+  const {mutate: reGenerateQuestions,isPending: isLoading} = useMutation({
     mutationFn: async () => {
       const quizParams= {
         subject,
@@ -64,26 +66,27 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
       const data=await response.json()
       if(!response.ok) throw Error(data?.message)
       return data
-    }
-  ,
+    },
     onSuccess: (data) => {
-      console.log(data)
+      console.log(data?.data?.questions, subject, topic,category)
+      toast.success("Regenerated quiz questions!")
+      setEditedQuestions(data?.data?.questions)
       navigate("/admin/new-quiz/generate",{
-        state:data?.data
+        state:{data: data,subject,topic,category} 
       })
-      toast.success("Regenarted quiz questions!")
     },
     onError: (error: Error) => {
       toast.error(error.message);
     },
   });
+  
 
   const {mutate: saveToDatabase,isPending: isSaving} = useMutation({
     mutationFn: async () => {
       const quizGen= {
         topic, difficulty: quizData?.difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions
       }
-      const response = await fetch("/api/admin/ai-quiz-gen",{
+      const response = await fetch("/api/admin/quizzes",{
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +103,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
     onSuccess: (data) => {
       console.log(data)
       navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)
-      toast.success("Regenarted quiz questions!")
+      toast.success("Regenerated quiz questions!")
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -162,9 +165,23 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
 
   return (
     <div className="p-4">
+
+      {editingQuestionIndex==null && <div className="flex flex-row items-center justify-center mb-5 mt-3">
+    <Button variant={"secondary"} className="mx-2 text-white bg-blue-500 hover:bg-blue-700" onClick={(e)=>saveToDatabase()}>
+    <Save className="mr-2 h-4 w-4" /> Save Quiz
+    </Button>
+    <Button variant={"ghost"} className="mx-2 bg-gray-200" onClick={(e)=>reGenerateQuestions()}>
+    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCw className="mr-2 h-4 w-4" />}
+    {isLoading ? "Regenerating... " : "Regenerate" }
+    </Button>
+    <Button variant={"destructive"} onClick={()=>navigate("/admin/new-quiz")} className="mx-2">
+    <CircleX className="mr-2 h-4 w-4" /> Abort
+    </Button>
+    </div>}
+
       <Carousel className="w-full max-w-lg mx-auto">
         <CarouselContent>
-          {editedQuestions.map((question, index) => (
+          {editedQuestions && editedQuestions.map((question, index) => (
             <CarouselItem key={index}>
               <div className="shadow-md rounded-lg p-4 bg-slate-100">
                 {editingQuestionIndex === index ? (
@@ -292,17 +309,6 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
-        {editingQuestionIndex==null && <div className="flex flex-row items-center justify-center mt-3">
-    <Button variant={"secondary"} className="mx-2 text-white bg-blue-500 hover:bg-blue-700" onClick={(e)=>saveToDatabase()}>
-      <Save className="mr-2 h-4 w-4" /> Save Quiz
-    </Button>
-      <Button variant={"ghost"} className="mx-2 bg-gray-200" onClick={(e)=>generateQuestions()}>
-      <RotateCw className="mr-2 h-4 w-4" /> Regenerate
-    </Button>
-    <Button variant={"destructive"} onClick={()=>navigate("/admin/new-quiz")} className="mx-2">
-      <CircleX className="mr-2 h-4 w-4" /> Abort
-    </Button>
-      </div>}
     </div>
   );
 };

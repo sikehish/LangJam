@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 const NewQuiz: React.FC<{token:string}> = ({token}) => {
   const [category, setCategory] = useState("");
@@ -34,7 +34,7 @@ const NewQuiz: React.FC<{token:string}> = ({token}) => {
   const { state, dispatch } = useAuthContext();
   const navigate = useNavigate();
 
-  // console.log(category,subject,topic)
+  console.log(category,subject,topic)
 
   const categoryQuery = useQuery({
     queryKey: ["categories"],
@@ -122,7 +122,7 @@ const NewQuiz: React.FC<{token:string}> = ({token}) => {
     onSuccess: (data) => {
       console.log(data)
       navigate("/admin/new-quiz/generate",{
-        state:data
+        state:{data,subject,topic,category} 
       })
       toast.success("Generated quiz questions!")
     },
@@ -135,6 +135,10 @@ const NewQuiz: React.FC<{token:string}> = ({token}) => {
   return (
     <div className="flex justify-center items-center h-full pt-20 mb-10">
       <Card className="w-[70%] lg:w-[50%] mx-0 bg-blue-50">
+      <ArrowLeft
+        className="cursor-pointer ml-2 mt-2 transition-transform transform hover:scale-110"
+        onClick={() => navigate("/admin")}
+      />
         <CardHeader className="text-center">
           <CardTitle>New Quiz Parameters</CardTitle>
           <CardDescription>

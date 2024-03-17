@@ -4,7 +4,8 @@ import AdminQuizCarousel from "@/components/AdminQuizCarousel";
 
 const GenerateQuiz = ({ token }: { token: string }) => {
   const location = useLocation();
-  const quizData = location.state;
+  const {data: quizData, subject, topic, category} = location.state;
+  console.log(quizData)
 
   return (
     <div className="w-[80%] lg:w-[60%] mx-auto mb-8">
@@ -15,7 +16,7 @@ const GenerateQuiz = ({ token }: { token: string }) => {
           Number of Questions: {quizData?.data?.numberOfQuestions}
         </p>
       </div>
-      {quizData && <AdminQuizCarousel token={token} quizData={quizData?.data} topic={quizData?.topic} subject={quizData?.subject} category={quizData?.category} />}
+      {quizData && <AdminQuizCarousel token={token} quizData={quizData?.data} topic={topic} subject={subject} category={category} />}
     </div>
   );
 };
