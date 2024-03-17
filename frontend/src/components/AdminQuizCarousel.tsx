@@ -6,6 +6,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
+import { toast } from "react-toastify";
 
 interface QuizData {
   difficultyLevel: string;
@@ -35,7 +36,27 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
     setEditingQuestionIndex(num);
   };
 
-  const handleSaveQuestion = () => {
+  const handleSaveQuestion = (index: number) => {
+    const {question,choices,correctOption,explanation}=editedQuestions[index]
+    if(correctOption<0 || correctOption>=choices.length){
+      toast.error("Enter correct opton number")
+      return
+    }
+    if(!(question.trim())){
+      toast.error("Question can't be empty")
+      return
+    }
+    if(!(explanation.trim())){
+      toast.error("Explanation can't be empty")
+      return
+    }
+    for(const [ind,choice] of choices.entries()){
+        if(choice.trim()==""){
+          toast.error(`Choice ${ind+1} can't be left empty`)
+          return
+        }
+    }
+
     setEditingQuestionIndex(null);
   };
 
@@ -46,10 +67,12 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
   const handleInputChange = (
     index: number,
     field: keyof Question,
-    value: string | number
+    value: string | number,
+    choiceIndex?: number
   ) => {
     const updatedQuestions = [...editedQuestions];
-    updatedQuestions[index] = {
+    if(choiceIndex!=undefined && typeof value=="string") updatedQuestions[index].choices[choiceIndex]=value
+    else updatedQuestions[index] = {
       ...updatedQuestions[index],
       [field]: value,
     };
@@ -73,7 +96,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
                       </label>
                       <div>
                         <button
-                          onClick={handleSaveQuestion}
+                          onClick={(e)=>{handleSaveQuestion(index)}}
                           className="bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded mr-2"
                         >
                           Save
@@ -98,12 +121,12 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
                     <p>
                       Choices:
                       {question.choices.map((choice, choiceIndex) => (
-                        <label className="flex flex-row my-2 w-full"><span className="mr-2">{choiceIndex+1})</span><input
+                        <label key={choiceIndex} className="flex flex-row my-2 w-full"><span className="mr-2">{choiceIndex+1})</span><input
                           key={choiceIndex}
                           type="text"
                           value={choice}
                           onChange={(e) =>
-                            handleInputChange(index, "choices", e.target.value)
+                            handleInputChange(index, "choices", e.target.value,choiceIndex)
                           }
                           className="w-full"
                           /></label>
@@ -167,6 +190,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
                                   checked={
                                     question.correctOption == choiceIndex
                                   }
+                                  onChange={(e)=>{}}
                                   className="form-radio h-5 w-5 text-indigo-600"
                                   disabled={editingQuestionIndex !== null}
                                 />
