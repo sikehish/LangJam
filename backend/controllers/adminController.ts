@@ -102,7 +102,7 @@ export const createQuiz = asyncWrapper(async (req: Request, res: Response) => {
     throw new Error("User isn't authorized");
   }
 
-  const { topic, difficultyLevel, numberOfQuestions, questions }: IQuiz =
+  const { topic, difficulty, numberOfQuestions, questions }: IQuiz =
     req.body;
 
   // Check if the topic exists
@@ -122,7 +122,7 @@ export const createQuiz = asyncWrapper(async (req: Request, res: Response) => {
   const quizData = {
     questions,
     topic,
-    difficultyLevel,
+    difficulty,
     numberOfQuestions,
   };
 
@@ -289,13 +289,13 @@ export const updateTopic = asyncWrapper(async (req: Request, res: Response) => {
 //Update Quiz
 export const updateQuiz = asyncWrapper(async (req: Request, res: Response) => {
   const { quizId } = req.params;
-  const { topic, difficultyLevel, numberOfQuestions, questions } = req.body;
+  const { topic, difficulty, numberOfQuestions, questions } = req.body;
 
   const updatedQuiz = await Quiz.findByIdAndUpdate(
     quizId,
     {
       topic,
-      difficultyLevel,
+      difficulty,
       numberOfQuestions,
       questions,
     },
@@ -405,33 +405,47 @@ export const getAdminStats = asyncWrapper(
 export const generateQuiz = asyncWrapper(
   async (req: Request, res: Response) => {
     try {
-      const { subject, topic, category, difficulty, numberOfQuestions } =
+
+      const { subject:subjectId, topic:topicId, category:categoryId, difficulty, numberOfQuestions } =
         req.body;
-        console.log(subject, topic, category, difficulty, numberOfQuestions)
+        
+        const category = await Category.findById(categoryId);
+        const subject = await Subject.findById(subjectId);
+        const topic = await Topic.findById(topicId)
+        
+        if(!category || !subject || !topic) throw new Error("Incorrect IDs")
+        
+        // Fetch category name
+        const categoryName =  category?.name 
+        const subjectName = subject?.name 
+        const topicName = topic?.name
+
+        console.log(categoryName,subjectName,topicName)
+  
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
       const prompt = `
     Generate a COMPLETE JSON object for a quiz with the following specifications:
     DO NOT USE MARKDOWN AND BACKTICKS
     
-    - Domain: ${category}
-    - Subject: ${subject}
-    - Topic: ${topic}
+    - Domain: ${categoryName}
+    - Subject: ${subjectName}
+    - Topic: ${topicName}
     - NumberOfQuestions: ${numberOfQuestions}
     - Format: Multiple Choices for each Question
         - Crucially, ensure the correct option is distributed as randomly as possible across all available choices (A, B, C, D, etc.). Avoid any bias towards specific positions.
-    - DifficultyLevel: ${difficulty}
+    - difficulty: ${difficulty}
     - Question Type: Include code snippets within questions
     - Structure: Each question in the JSON array must have:
         - Question: The text of the question
-        - DifficultyLevel of each Question
+        - difficulty of each Question
         - Choices: An array of multiple choices
         - CorrectOption: The index of the correct choice (0 for A, 1 for B, 2 for C, and so on)
         - Explanation: A clear explanation of the correct solution
         
 
         return response in JSON format {
-          difficultyLevel,
+          difficulty,
           numberOfQuestions,
           questions:[{
             question,

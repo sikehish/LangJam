@@ -13,7 +13,7 @@ interface IQuestion extends Document {
 export interface IQuiz extends Document {
   questions: IQuestion[];
   topic: Types.ObjectId | ITopic;
-  difficultyLevel: 'Easy' | 'Medium' | 'Hard';
+  difficulty: 'Easy' | 'Medium' | 'Hard';
   numberOfQuestions: number;
 }
 
@@ -40,7 +40,7 @@ const quizSchema = new Schema<IQuiz>({
     ref: 'Topic',
     required: true,
   },
-  difficultyLevel: {
+  difficulty: {
     type: String,
     enum: ['Easy', 'Medium', 'Hard'],
     required: true,
