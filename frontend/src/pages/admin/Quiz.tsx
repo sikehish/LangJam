@@ -44,12 +44,12 @@ const Quiz = ({ token }: { token: string }) => {
   return (
     <div className="w-[80%] lg:w-[60%] mx-auto mb-8">
       <div className="mx-0 text-center mt-8">
-        <label className="text-2xl font-bold mb-4 pt-12 flex flex-row items-center justify-center">Quiz:&nbsp;
+        <label className="text-lg font-bold mb-4 pt-12 flex flex-row items-center justify-center">Quiz Title:
           <Input
             type="text"
             value={editedTitle}
             onChange={handleTitleChange}
-            className="form-input mr-2 w-auto"
+            className="form-input mx-2 w-max"
             placeholder="Enter quiz title"
           />
         </label>
@@ -57,7 +57,7 @@ const Quiz = ({ token }: { token: string }) => {
           <select
             value={editedDifficulty}
             onChange={handleDifficultyChange}
-            className="form-select mr-2"
+            className="form-select mx-2 px-2 py-1 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
           >
             <option value="Easy">Easy</option>
             <option value="Medium">Medium</option>
