@@ -37,14 +37,16 @@ interface Props {
 }
 
 const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token, title }) => {
-  console.log(quizData)
+  // console.log(quizData)
   const { questions } = quizData;
-  console.log(subject, topic, category)
+  // console.log(subject, topic, category)
+  console.log(questions)
   const navigate=useNavigate()
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<
     number | null
   >(null);
   const [editedQuestions, setEditedQuestions] = useState<Question[]>(questions);
+  const [originalQuestions, setOriginalQuestions] = useState<Question[]>(questions); //Used to ahndle the cancellation of an edit in a question
 
   const {mutate: reGenerateQuestions,isPending: isLoading} = useMutation({
     mutationFn: async () => {
@@ -70,11 +72,11 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
       return data
     },
     onSuccess: (data) => {
-      console.log(data?.data?.questions, subject, topic,category)
+      // console.log(data?.data?.questions, subject, topic,category)
       toast.success("Regenerated quiz questions!")
       setEditedQuestions(data?.data?.questions)
       navigate("/admin/new-quiz/generate",{
-        state:{data: data,subject,topic, title} 
+        state:{data: data,subject,topic,category,title} 
       })
     },
     onError: (error: Error) => {
@@ -86,8 +88,9 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
   const {mutate: saveToDatabase,isPending: isSaving} = useMutation({
     mutationFn: async () => {
       const quizGen= {
-        topic, difficulty: quizData?.difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions, title
+        topic, difficulty: quizData?.difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions: editedQuestions, title
       }
+      // console.log(quizGen)
       const response = await fetch("/api/admin/quizzes",{
         method: "POST",
         headers: {
@@ -98,14 +101,14 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
       });
   
       const data=await response.json()
-      if(!response.ok) throw Error(data?.message)
+      if(!response.ok || data?.status=="error" || data?.status=="fail") throw Error(data?.message)
       return data
     }
   ,
     onSuccess: (data) => {
-      console.log(data)
+      // console.log(data)
       navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)
-      toast.success("Regenerated quiz questions!")
+      toast.success("New quiz generated and saved!")
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -139,12 +142,15 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
         return;
       }
     }
-
+    setOriginalQuestions(editedQuestions)
+    console.log("ON SAVE: ",editedQuestions)
     setEditingQuestionIndex(null);
   };
 
   const handleCancelEdit = () => {
+    console.log("ON CANCEL: ",originalQuestions)
     setEditingQuestionIndex(null);
+    setEditedQuestions(originalQuestions)
   };
 
   const handleInputChange = (
@@ -163,17 +169,19 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
       };
     }
     setEditedQuestions(updatedQuestions);
+    console.log("ON IP CHANGE: ",updatedQuestions)
   };
 
   return (
     <div className="p-4">
 
       {editingQuestionIndex==null && <div className="flex flex-row items-center justify-center mb-5 mt-3">
-    <Button variant={"secondary"} className="mx-2 text-white bg-blue-500 hover:bg-blue-700" onClick={(e)=>saveToDatabase()}>
-    <Save className="mr-2 h-4 w-4" /> Save Quiz
+    <Button variant={"secondary"} disabled={isSaving} className="mx-2 text-white bg-blue-500 hover:bg-blue-700" onClick={(e)=>saveToDatabase()}>
+    {isSaving ? <Loader2  className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" /> }
+    {isSaving ? "Saving... " : "Save Quiz" }
     </Button>
-    <Button variant={"ghost"} className="mx-2 bg-gray-200" onClick={(e)=>reGenerateQuestions()}>
-    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCw className="mr-2 h-4 w-4" />}
+    <Button variant={"ghost"} disabled={isLoading} className="mx-2 bg-gray-200" onClick={(e)=>reGenerateQuestions()}>
+    {isLoading ? <Loader2  className="mr-2 h-4 w-4 animate-spin" /> : <RotateCw className="mr-2 h-4 w-4" />}
     {isLoading ? "Regenerating... " : "Regenerate" }
     </Button>
     <Button variant={"destructive"} onClick={()=>navigate("/admin/new-quiz")} className="mx-2">
@@ -308,8 +316,8 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious disabled={editingQuestionIndex!==null} />
+        <CarouselNext disabled={editingQuestionIndex!==null} />
       </Carousel>
     </div>
   );

@@ -219,9 +219,9 @@ const NewQuiz: React.FC<{ token: string }> = ({ token }) => {
                 topic &&
                 category &&
                 difficulty &&
-                difficulty &&
+                title &&
                 numberOfQuestions
-              )
+              ) || isLoading
             }
             className="px-8 py-6 mx-4"
             onClick={() => {
@@ -232,6 +232,7 @@ const NewQuiz: React.FC<{ token: string }> = ({ token }) => {
                   category,
                   difficulty,
                   numberOfQuestions,
+                  title,
                 },
               });
             }}
@@ -245,7 +246,7 @@ const NewQuiz: React.FC<{ token: string }> = ({ token }) => {
                 topic &&
                 category &&
                 difficulty &&
-                difficulty &&
+                title &&
                 numberOfQuestions
               ) || isLoading
             }

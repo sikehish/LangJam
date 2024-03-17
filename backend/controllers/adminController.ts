@@ -119,13 +119,14 @@ export const createQuiz = asyncWrapper(async (req: Request, res: Response) => {
   }
 
   const checkTitle=await Quiz.find({topic, title: title?.trim()})
-  if(checkTitle.length){
+  if(checkTitle?.length){
     res.status(404);
     throw new Error("Title already exists");
   }
 
   // Validate the number of questions
-  if (questions.length !== numberOfQuestions) {
+  console.log(questions, numberOfQuestions)
+  if (questions?.length !== numberOfQuestions) {
     res.status(400);
     throw new Error("Number of questions does not match the specified count");
   }
