@@ -11,6 +11,7 @@ interface IQuestion extends Document {
 }
 
 export interface IQuiz extends Document {
+  title: string,
   questions: IQuestion[];
   topic: Types.ObjectId | ITopic;
   difficulty: 'Easy' | 'Medium' | 'Hard';
@@ -35,6 +36,11 @@ const questionSchema = new Schema<IQuestion>({
 
 const quizSchema = new Schema<IQuiz>({
   questions: [questionSchema],
+  title:{
+    type: String,
+    required: true,
+    unique: true
+  },
   topic: {
     type: Types.ObjectId,
     ref: 'Topic',

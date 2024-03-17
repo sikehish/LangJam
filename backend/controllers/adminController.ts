@@ -405,7 +405,7 @@ export const getAdminStats = asyncWrapper(
 export const generateQuiz = asyncWrapper(
   async (req: Request, res: Response) => {
     try {
-      const { subject:subjectId, topic:topicId, category:categoryId, difficulty, numberOfQuestions } =
+      const { subject:subjectId, topic:topicId, category:categoryId, difficulty, numberOfQuestions, title } =
         req.body;
         console.log(subjectId, topicId, categoryId, difficulty, numberOfQuestions)
 
@@ -413,7 +413,7 @@ export const generateQuiz = asyncWrapper(
         const subject = await Subject.findById(subjectId);
         const topic = await Topic.findById(topicId)
         
-        if(!category || !subject || !topic) throw new Error("Incorrect IDs")
+        if(!category || !subject || !topic || !title) throw new Error("Incorrect IDs")
         
         // Fetch category name
         const categoryName =  category?.name 
@@ -431,11 +431,12 @@ export const generateQuiz = asyncWrapper(
     - Domain: ${categoryName}
     - Subject: ${subjectName}
     - Topic: ${topicName}
+    - Quiz Title: ${title}
     - NumberOfQuestions: ${numberOfQuestions}
     - Format: Multiple Choices for each Question
         - Crucially, ensure the correct option is distributed as randomly as possible across all available choices (A, B, C, D, etc.). Avoid any bias towards specific positions.
     - difficulty: ${difficulty}
-    - Question Type: Include code snippets within questions
+    - Question Type: Include code snippets within questions wherever necessary(depending on the domain,subject,topic and the title)
     - Structure: Each question in the JSON array must have:
         - Question: The text of the question
         - difficulty of each Question

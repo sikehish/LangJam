@@ -32,10 +32,11 @@ interface Props {
    topic: string,
    subject: string,
    category: string,
-   token:string
+   token:string,
+   title: string
 }
 
-const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token }) => {
+const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token, title }) => {
   console.log(quizData)
   const { questions } = quizData;
   console.log(subject, topic, category)
@@ -52,7 +53,8 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
         topic,
         category,
         difficulty: quizData?.difficulty,
-        numberOfQuestions: quizData?.numberOfQuestions
+        numberOfQuestions: quizData?.numberOfQuestions,
+        title
       }
       const response = await fetch("/api/admin/ai-quiz-gen",{
         method: "POST",
@@ -72,7 +74,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
       toast.success("Regenerated quiz questions!")
       setEditedQuestions(data?.data?.questions)
       navigate("/admin/new-quiz/generate",{
-        state:{data: data,subject,topic,category} 
+        state:{data: data,subject,topic, title} 
       })
     },
     onError: (error: Error) => {
@@ -84,7 +86,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
   const {mutate: saveToDatabase,isPending: isSaving} = useMutation({
     mutationFn: async () => {
       const quizGen= {
-        topic, difficulty: quizData?.difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions
+        topic, difficulty: quizData?.difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions, title
       }
       const response = await fetch("/api/admin/quizzes",{
         method: "POST",
