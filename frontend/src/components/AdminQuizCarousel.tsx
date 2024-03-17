@@ -42,7 +42,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
             <CarouselItem key={index}>
               <div className="shadow-md rounded-lg p-4 bg-slate-100">
                 <div className="flex justify-between mb-4">
-                  <h3 className="inline text-md font-semibold">{index + 1}.</h3>
+                  <h3 className="inline text-lg font-semibold">Question {index + 1}</h3>
                   {editingQuestionIndex === index ? (
                     <div>
                       <button
@@ -76,6 +76,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
                           type="radio"
                           name={`question_${index}`}
                           value={choiceIndex}
+                          checked={question.correctOption==choiceIndex}
                           className="form-radio h-5 w-5 text-indigo-600"
                           disabled={editingQuestionIndex !== null}
                         />
@@ -84,7 +85,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
                     </li>
                   ))}
                 </ul>
-                <p className="mb-2">Correct Option: {question.correctOption}</p>
+                <p className="mb-2">Correct Option: {question.correctOption+1}</p>
                 <p>Explanation: {question.explanation}</p>
               </div>
             </CarouselItem>

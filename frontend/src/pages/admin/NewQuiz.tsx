@@ -129,7 +129,7 @@ const NewQuiz: React.FC<{token:string}> = ({token}) => {
 
   // const generateQuestions = 
   return (
-    <div className="flex justify-center items-center h-full pt-20">
+    <div className="flex justify-center items-center h-full pt-20 mb-10">
       <Card className="w-[70%] lg:w-[50%] mx-0 bg-blue-50">
         <CardHeader className="text-center">
           <CardTitle>New Quiz Parameters</CardTitle>
@@ -207,7 +207,7 @@ const NewQuiz: React.FC<{token:string}> = ({token}) => {
             Create Quiz
           </Button>
           <Button
-          disabled={!(subject && topic && category && difficulty && difficulty && numberOfQuestions)}
+          disabled={!(subject && topic && category && difficulty && difficulty && numberOfQuestions) || isLoading}
             className="px-8 py-6 mx-4"
             onClick={(e) => generateQuestions()}
           >
