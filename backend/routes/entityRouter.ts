@@ -4,6 +4,7 @@ import {
   getAllSubjects,
   getAllTopics,
   getAllQuizzes,
+  getQuiz,
 
 } from '../controllers/entityController'; // Import your controllers
 
@@ -16,5 +17,6 @@ entityRouter.get('/categories', getAllCategories); //Categories can be viewed by
 entityRouter.get('/subjects/:id', checkMixedAuth, getAllSubjects);
 entityRouter.get('/topics/:id', checkMixedAuth, getAllTopics);
 entityRouter.get('/quizzes/:id', checkMixedAuth, getAllQuizzes);
+entityRouter.get('/quiz/:id', checkMixedAuth, getQuiz);
 
 export default entityRouter;

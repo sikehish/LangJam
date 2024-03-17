@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { useQuizQueries } from "@/hooks/useQuizQueries";
 import { IQuiz } from "@/pages/admin/Quizzes";
 
-function Quiz({
+function QuizTile({
   quiz,
   token,
   categoryId,
@@ -75,4 +75,4 @@ function Quiz({
   );
 }
 
-export default Quiz;
+export default QuizTile;

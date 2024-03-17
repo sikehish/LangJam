@@ -16,7 +16,7 @@ const GenerateQuiz = ({ token }: { token: string }) => {
           Number of Questions: {quizData?.data?.numberOfQuestions}
         </p>
       </div>
-      {quizData && <AdminQuizCarousel token={token} quizData={quizData?.data} topic={topic} subject={subject} category={category} title={title}/>}
+      {quizData && <AdminQuizCarousel token={token} quizData={quizData?.data} topic={topic} subject={subject} category={category} title={title} mode={"generate-view"} difficulty={quizData?.data?.difficulty}/>}
     </div>
   );
 };

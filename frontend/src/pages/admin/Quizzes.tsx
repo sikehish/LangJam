@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import Quiz from '@/components/Quiz';
 import { useQuizQueries } from '@/hooks/useQuizQueries';
 import { Button } from '@/components/ui/button';
+import QuizTile from '@/components/QuizTile';
 
 export interface IQuiz {
     _id: string,
@@ -32,7 +32,7 @@ const Quizzes: React.FC<{ token: string }> = ({ token }) => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {getQuizzes?.data?.map((quiz:IQuiz) => (
-          <Quiz key={quiz._id} quiz={quiz} token={token} categoryId={categoryId!} subjectId={subjectId!}/>
+          <QuizTile key={quiz._id} quiz={quiz} token={token} categoryId={categoryId!} subjectId={subjectId!}/>
         ))}
       </div>
     );

@@ -31,3 +31,9 @@ export const getAllQuizzes = asyncWrapper(async (req: Request, res: Response) =>
   const data = await Quiz.find({topic: topicId});
   res.status(200).json({ status: 'success', data });
 });
+
+export const getQuiz = asyncWrapper(async (req: Request, res: Response) => {
+  const {id: quizId}= req.params
+  const data = await Quiz.findById(quizId);
+  res.status(200).json({ status: 'success', data });
+});

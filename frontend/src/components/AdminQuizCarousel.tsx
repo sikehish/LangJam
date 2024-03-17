@@ -33,10 +33,13 @@ interface Props {
    subject: string,
    category: string,
    token:string,
-   title: string
+   title: string,
+   mode: string,
+   quizId?: string,
+   difficulty: string
 }
 
-const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token, title }) => {
+const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token, title, mode, quizId, difficulty }) => {
   // console.log(quizData)
   const { questions } = quizData;
   // console.log(subject, topic, category)
@@ -54,7 +57,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
         subject,
         topic,
         category,
-        difficulty: quizData?.difficulty,
+        difficulty,
         numberOfQuestions: quizData?.numberOfQuestions,
         title
       }
@@ -88,17 +91,29 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
   const {mutate: saveToDatabase,isPending: isSaving} = useMutation({
     mutationFn: async () => {
       const quizGen= {
-        topic, difficulty: quizData?.difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions: editedQuestions, title
+        topic, difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions: editedQuestions, title
       }
       // console.log(quizGen)
-      const response = await fetch("/api/admin/quizzes",{
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(quizGen),
-      });
+      let response 
+      if(mode=="generate-view"){
+        response=await fetch("/api/admin/quizzes",{
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(quizGen),
+        });
+      }else{
+        response=await fetch(`/api/admin/quizzes/${quizId}`,{
+          method: "PATCH",
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(quizGen),
+        });
+      }
   
       const data=await response.json()
       if(!response.ok || data?.status=="error" || data?.status=="fail") throw Error(data?.message)
@@ -175,19 +190,27 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
   return (
     <div className="p-4">
 
-      {editingQuestionIndex==null && <div className="flex flex-row items-center justify-center mb-5 mt-3">
-    <Button variant={"secondary"} disabled={isSaving} className="mx-2 text-white bg-blue-500 hover:bg-blue-700" onClick={(e)=>saveToDatabase()}>
-    {isSaving ? <Loader2  className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" /> }
-    {isSaving ? "Saving... " : "Save Quiz" }
-    </Button>
-    <Button variant={"ghost"} disabled={isLoading} className="mx-2 bg-gray-200" onClick={(e)=>reGenerateQuestions()}>
-    {isLoading ? <Loader2  className="mr-2 h-4 w-4 animate-spin" /> : <RotateCw className="mr-2 h-4 w-4" />}
-    {isLoading ? "Regenerating... " : "Regenerate" }
-    </Button>
-    <Button variant={"destructive"} onClick={()=>navigate("/admin/new-quiz")} className="mx-2">
-    <CircleX className="mr-2 h-4 w-4" /> Abort
-    </Button>
-    </div>}
+{editingQuestionIndex==null && 
+    (<div className="flex flex-row items-center justify-center mb-5 mt-3">
+        <Button variant={"secondary"} disabled={isSaving} className="mx-2 text-white bg-blue-500 hover:bg-blue-700" onClick={(e)=>saveToDatabase()}>
+            {isSaving ? <Loader2  className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" /> }
+            {isSaving ? "Saving... " : "Save Quiz" }
+        </Button>
+        {mode=="generate-view" && <Button variant={"ghost"} disabled={isLoading} className="mx-2 bg-gray-200" onClick={(e)=>reGenerateQuestions()}>
+            {isLoading ? <Loader2  className="mr-2 h-4 w-4 animate-spin" /> : <RotateCw className="mr-2 h-4 w-4" />}
+            {isLoading ? "Regenerating... " : "Regenerate" }
+        </Button>}
+        {mode=="generate-view" ? (
+            <Button variant={"destructive"} onClick={()=>navigate("/admin/new-quiz")} className="mx-2">
+                <CircleX className="mr-2 h-4 w-4" /> Abort
+            </Button>
+        ) : (
+            <Button variant={"destructive"} onClick={()=> navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)} className="mx-2">
+                <CircleX className="mr-2 h-4 w-4" /> Return
+            </Button>
+        )}
+    </div>)}
+
 
       <Carousel className="w-full max-w-lg mx-auto">
         <CarouselContent>

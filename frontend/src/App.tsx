@@ -17,6 +17,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import NewQuiz from "./pages/admin/NewQuiz";
 import GenerateQuiz from "./pages/admin/GenerateQuiz";
 import Quizzes from "./pages/admin/Quizzes";
+import Quiz from "./pages/admin/Quiz";
 
 export default function App() {
   const { state } = useAuthContext();
@@ -111,9 +112,9 @@ export default function App() {
           }
         />
 
-        
-
         <Route path="/admin/categories/:categoryId/subjects/:subjectId/topics/:topicId" element={state?.user?.isAdmin? <Quizzes token={state?.user?.token} /> :   <Navigate to="/" />} />  
+
+        <Route path="/admin/categories/:categoryId/subjects/:subjectId/topics/:topicId/quizzes/:quizId" element={state?.user?.isAdmin? <Quiz token={state?.user?.token} /> :   <Navigate to="/" />} />  
 
         <Route
           path="/profile"
