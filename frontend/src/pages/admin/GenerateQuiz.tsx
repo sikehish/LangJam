@@ -7,8 +7,8 @@ const GenerateQuiz = ({ token }: { token: string }) => {
   const quizData = location.state;
 
   return (
-    <div className="w-[80%] lg:w-[60%] mx-auto">
-      <div className="mx-0 text-center mt-8 mb-4">
+    <div className="w-[80%] lg:w-[60%] mx-auto mb-8">
+      <div className="mx-0 text-center mt-8">
         <h2 className="text-2xl font-bold mb-4 pt-12">Quiz Information</h2>
         <p className="mb-2">Difficulty Level: {quizData?.difficultyLevel}</p>
         <p className="mb-4">
