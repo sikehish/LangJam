@@ -102,14 +102,26 @@ export const createQuiz = asyncWrapper(async (req: Request, res: Response) => {
     throw new Error("User isn't authorized");
   }
 
-  const { topic, difficulty, numberOfQuestions, questions }: IQuiz =
+  const { title, topic, difficulty, numberOfQuestions, questions }: IQuiz =
     req.body;
 
   // Check if the topic exists
   const checkTopic = await Topic.findById(topic);
+
   if (!checkTopic) {
     res.status(404);
     throw new Error("Topic not found");
+  }
+
+  if (!title) {
+    res.status(404);
+    throw new Error("Title cannot be empty");
+  }
+
+  const checkTitle=await Quiz.find({topic, title: title?.trim()})
+  if(checkTitle.length){
+    res.status(404);
+    throw new Error("Title already exists");
   }
 
   // Validate the number of questions
@@ -124,6 +136,7 @@ export const createQuiz = asyncWrapper(async (req: Request, res: Response) => {
     topic,
     difficulty,
     numberOfQuestions,
+    title
   };
 
   const quiz = await Quiz.create(quizData);
@@ -211,7 +224,7 @@ export const updateCategory = asyncWrapper(
     const updatedCategory = await Category.findByIdAndUpdate(
       categoryId,
       { name },
-      { new: true }
+      { new: true,runValidators: true }
     );
 
     if (!updatedCategory) {
@@ -243,7 +256,7 @@ export const updateSubject = asyncWrapper(
     const updatedSubject = await Subject.findByIdAndUpdate(
       subjectId,
       { name /*, category: categoryId*/ },
-      { new: true }
+      { new: true,runValidators: true }
     );
 
     if (!updatedSubject) {
@@ -274,7 +287,7 @@ export const updateTopic = asyncWrapper(async (req: Request, res: Response) => {
   const updatedTopic = await Topic.findByIdAndUpdate(
     topicId,
     { name /*,subject: subjectId*/ },
-    { new: true }
+    { new: true, runValidators: true }
   );
   //
 
@@ -289,7 +302,7 @@ export const updateTopic = asyncWrapper(async (req: Request, res: Response) => {
 //Update Quiz
 export const updateQuiz = asyncWrapper(async (req: Request, res: Response) => {
   const { quizId } = req.params;
-  const { topic, difficulty, numberOfQuestions, questions } = req.body;
+  const { topic, difficulty, numberOfQuestions, questions, title } = req.body;
 
   const updatedQuiz = await Quiz.findByIdAndUpdate(
     quizId,
@@ -298,8 +311,9 @@ export const updateQuiz = asyncWrapper(async (req: Request, res: Response) => {
       difficulty,
       numberOfQuestions,
       questions,
+      title
     },
-    { new: true }
+    { new: true, runValidators: true  }
   );
 
   if (!updatedQuiz) {

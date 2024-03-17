@@ -27,6 +27,7 @@ export const getAllTopics = asyncWrapper(async (req: Request, res: Response) => 
 });
 
 export const getAllQuizzes = asyncWrapper(async (req: Request, res: Response) => {
-  const data = await Quiz.find();
+  const {id: topicId}= req.params
+  const data = await Quiz.find({topic: topicId});
   res.status(200).json({ status: 'success', data });
 });

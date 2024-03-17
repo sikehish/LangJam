@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useSubjectQueries } from "../../hooks/useSubjectQueries";
-import Subject from "../../components/Subject";
-import { CreateBtn } from '@/components/buttons/CreateBtn';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import Quiz from '@/components/Quiz';
-import { useTopicQueries } from '@/hooks/useTopicQueries';
+import { useQuizQueries } from '@/hooks/useQuizQueries';
 import { Button } from '@/components/ui/button';
 
 export interface IQuiz {
@@ -28,13 +25,13 @@ export interface Question {
 const Quizzes: React.FC<{ token: string }> = ({ token }) => {
     const navigate=useNavigate()
   const queryClient = useQueryClient();
-  const {subjectId, categoryId} = useParams();
-  const { getTopics, createTopicMutation } = useTopicQueries(queryClient, token, subjectId!);
+  const {topicId, subjectId, categoryId} = useParams();
+  const { getQuizzes } = useQuizQueries(queryClient, token, topicId!);
 
   const renderQuizzes = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {getTopics?.data?.map((quiz:IQuiz) => (
+        {getQuizzes?.data?.map((quiz:IQuiz) => (
           <Quiz key={quiz._id} quiz={quiz} token={token} categoryId={categoryId!} subjectId={subjectId!}/>
         ))}
       </div>
@@ -44,7 +41,7 @@ const Quizzes: React.FC<{ token: string }> = ({ token }) => {
   return (
     <div className="container mx-auto pt-10">
       <h1 className="text-3xl font-bold mb-4">Quizzes</h1>
-      {!getTopics?.data?.length ? (
+      {!getQuizzes?.data?.length ? (
         <p>No Quizzes stored yet!</p>
       ) : (
         renderQuizzes()

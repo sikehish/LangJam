@@ -70,32 +70,6 @@ function Quiz({
         <Button variant={"ghost"} onClick={handleDelete}>
                 <FaTrash className="text-red-800" />
               </Button>
-          <Popover modal={true} open={isEditClicked} onOpenChange={setEditClicked}>
-            <PopoverTrigger asChild>
-              <Button variant={"ghost"}>
-                <FaEdit />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="grid gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium leading-none">Quiz Title</h4>
-                </div>
-                <div className="grid gap-2">
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="cname">Quiz Title</Label>
-                    <Input
-                      id="cname"
-                      defaultValue={quiz.title}
-                      className="col-span-2 h-8"
-                      onChange={(e) => setEditedQuizTitle(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <Button type="submit" onClick={handleEditSubmit}>Save</Button>
-              </div>
-            </PopoverContent>
-          </Popover>
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ const adminRouter = express.Router();
 adminRouter.post('/categories', checkAdminAuth, createCategory);
 adminRouter.post('/subjects/:id', checkAdminAuth, createSubject);
 adminRouter.post('/topics/:id', checkAdminAuth, createTopic);
-adminRouter.post('/quizzes', checkAdminAuth, createQuiz);
+adminRouter.post('/quizzes/', checkAdminAuth, createQuiz);
 
 // Deleting entities
 adminRouter.delete('/categories/:categoryId', checkAdminAuth, deleteCategory);
