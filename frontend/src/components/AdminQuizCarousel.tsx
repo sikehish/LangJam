@@ -7,6 +7,8 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 import { toast } from "react-toastify";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 interface QuizData {
   difficultyLevel: string;
@@ -37,24 +39,26 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
   };
 
   const handleSaveQuestion = (index: number) => {
-    const {question,choices,correctOption,explanation}=editedQuestions[index]
-    if(correctOption<0 || correctOption>=choices.length){
-      toast.error("Enter correct opton number")
-      return
+    const { question, choices, correctOption, explanation } = editedQuestions[
+      index
+    ];
+    if (isNaN(correctOption) || correctOption < 0 || correctOption >= choices.length) {
+      toast.error("Enter correct option number");
+      return;
     }
-    if(!(question.trim())){
-      toast.error("Question can't be empty")
-      return
+    if (!(question.trim())) {
+      toast.error("Question can't be empty");
+      return;
     }
-    if(!(explanation.trim())){
-      toast.error("Explanation can't be empty")
-      return
+    if (!(explanation.trim())) {
+      toast.error("Explanation can't be empty");
+      return;
     }
-    for(const [ind,choice] of choices.entries()){
-        if(choice.trim()==""){
-          toast.error(`Choice ${ind+1} can't be left empty`)
-          return
-        }
+    for (const [ind, choice] of choices.entries()) {
+      if (choice.trim() === "") {
+        toast.error(`Choice ${ind + 1} can't be left empty`);
+        return;
+      }
     }
 
     setEditingQuestionIndex(null);
@@ -71,11 +75,14 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
     choiceIndex?: number
   ) => {
     const updatedQuestions = [...editedQuestions];
-    if(choiceIndex!=undefined && typeof value=="string") updatedQuestions[index].choices[choiceIndex]=value
-    else updatedQuestions[index] = {
-      ...updatedQuestions[index],
-      [field]: value,
-    };
+    if (choiceIndex !== undefined && typeof value === "string") {
+      updatedQuestions[index].choices[choiceIndex] = value;
+    } else {
+      updatedQuestions[index] = {
+        ...updatedQuestions[index],
+        [field]: value,
+      };
+    }
     setEditedQuestions(updatedQuestions);
   };
 
@@ -96,7 +103,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
                       </label>
                       <div>
                         <button
-                          onClick={(e)=>{handleSaveQuestion(index)}}
+                          onClick={() => handleSaveQuestion(index)}
                           className="bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded mr-2"
                         >
                           Save
@@ -109,8 +116,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
                         </button>
                       </div>
                     </div>
-                    <input
-                      type="text"
+                    <Textarea
                       value={question.question}
                       onChange={(e) =>
                         handleInputChange(index, "question", e.target.value)
@@ -121,46 +127,47 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
                     <p>
                       Choices:
                       {question.choices.map((choice, choiceIndex) => (
-                        <label key={choiceIndex} className="flex flex-row my-2 w-full"><span className="mr-2">{choiceIndex+1})</span><input
-                          key={choiceIndex}
-                          type="text"
-                          value={choice}
-                          onChange={(e) =>
-                            handleInputChange(index, "choices", e.target.value,choiceIndex)
-                          }
-                          className="w-full"
-                          /></label>
+                        <label key={choiceIndex} className="flex flex-row my-2 w-full">
+                          <span className="mr-2">{choiceIndex + 1})</span>
+                          <Textarea 
+                            value={choice}
+                            onChange={(e) =>
+                              handleInputChange(
+                                index,
+                                "choices",
+                                e.target.value,
+                                choiceIndex
+                              )
+                            }
+                            className="w-full min-h-min"
+                          />
+                        </label>
                       ))}
                     </p>
                     <label>
                       Correct Option:
                       <input
                         type="number"
-                        value={question.correctOption+1}
+                        value={question.correctOption + 1}
                         onChange={(e) =>
                           handleInputChange(
                             index,
                             "correctOption",
-                            parseInt(e.target.value)-1
+                            parseInt(e.target.value) - 1
                           )
                         }
                         className="form-input mt-1 block w-full"
                       />
                     </label>
                     <label>
-                      Explanation:
-                      <input
-                        type="text"
-                        value={question.explanation}
-                        onChange={(e) =>
-                          handleInputChange(
-                            index,
-                            "explanation",
-                            e.target.value
-                          )
-                        }
-                        className="form-input mt-1 block w-full"
-                      />
+                    Explanation:
+                    <Textarea
+                      value={question.explanation}
+                      onChange={(e) =>
+                        handleInputChange(index, "explanation", e.target.value)
+                      }
+                      className="form-input mt-1 block w-full min-h-min"
+                    />
                     </label>
                   </div>
                 ) : (
@@ -179,28 +186,29 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
                       </div>
                     </div>
                     <p>{question.question}</p>
-                        <ul className="mb-2">
-                          {question.choices.map((choice, choiceIndex) => (
-                            <li key={choiceIndex} className="mb-1">
-                              <label className="inline-flex items-center">
-                                <input
-                                  type="radio"
-                                  name={`question_${index}`}
-                                  value={choiceIndex}
-                                  checked={
-                                    question.correctOption == choiceIndex
-                                  }
-                                  onChange={(e)=>{}}
-                                  className="form-radio h-5 w-5 text-indigo-600"
-                                  disabled={editingQuestionIndex !== null}
-                                />
-                                <span className="ml-2">{choice}</span>
-                              </label>
-                            </li>
-                          ))}
+                    <ul className="mb-2">
+                      {question.choices.map((choice, choiceIndex) => (
+                        <li key={choiceIndex} className="mb-1">
+                          <label className="inline-flex items-center">
+                            <input
+                              type="radio"
+                              name={`question_${index}`}
+                              value={choiceIndex}
+                              checked={question.correctOption == choiceIndex}
+                              onChange={(e) => {}}
+                              className="form-radio h-5 w-5 text-indigo-600"
+                              disabled={editingQuestionIndex !== null}
+                            />
+                            <span className="ml-2">{choice}</span>
+                          </label>
+                        </li>
+                      ))}
                     </ul>
-                    <p>Correct Option: {question.correctOption+1}</p>
-                    <p>Explanation: {question.explanation}</p>
+                    <p>Correct Option: {question.correctOption + 1}</p>
+                    <p>
+                      <span className="underline">Explanation:</span>{" "}
+                      {question.explanation}
+                    </p>
                     <button onClick={() => handleEditQuestion(index)}>
                       Edit
                     </button>
