@@ -12,9 +12,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from '@/components/ui/button';
 import { CircleX, RotateCw, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 interface QuizData {
-  difficultyLevel: string;
+  difficulty: string;
   numberOfQuestions: number;
   questions: Question[];
 }
@@ -28,15 +29,84 @@ interface Question {
 
 interface Props {
   quizData: QuizData;
+   topic: string,
+   subject: string,
+   category: string,
+   token:string
 }
 
-const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
+const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token }) => {
   const { questions } = quizData;
   const navigate=useNavigate()
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<
     number | null
   >(null);
   const [editedQuestions, setEditedQuestions] = useState<Question[]>(questions);
+
+  const {mutate: generateQuestions,isPending: isLoading} = useMutation({
+    mutationFn: async () => {
+      const quizParams= {
+        subject,
+        topic,
+        category,
+        difficulty: quizData?.difficulty,
+        numberOfQuestions: quizData?.numberOfQuestions
+      }
+      const response = await fetch("/api/admin/ai-quiz-gen",{
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(quizParams),
+      });
+  
+      const data=await response.json()
+      if(!response.ok) throw Error(data?.message)
+      return data
+    }
+  ,
+    onSuccess: (data) => {
+      console.log(data)
+      navigate("/admin/new-quiz/generate",{
+        state:data?.data
+      })
+      toast.success("Regenarted quiz questions!")
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const {mutate: saveToDatabase,isPending: isSaving} = useMutation({
+    mutationFn: async () => {
+      const quizGen= {
+        topic, difficulty: quizData?.difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions
+      }
+      const response = await fetch("/api/admin/ai-quiz-gen",{
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(quizGen),
+      });
+  
+      const data=await response.json()
+      if(!response.ok) throw Error(data?.message)
+      return data
+    }
+  ,
+    onSuccess: (data) => {
+      console.log(data)
+      navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)
+      toast.success("Regenarted quiz questions!")
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
 
   const handleEditQuestion = (num: number) => {
     setEditingQuestionIndex(num);
@@ -223,10 +293,10 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
         <CarouselNext />
       </Carousel>
         {editingQuestionIndex==null && <div className="flex flex-row items-center justify-center mt-3">
-    <Button variant={"secondary"} className="mx-2 text-white bg-blue-500 hover:bg-blue-700">
+    <Button variant={"secondary"} className="mx-2 text-white bg-blue-500 hover:bg-blue-700" onClick={(e)=>saveToDatabase()}>
       <Save className="mr-2 h-4 w-4" /> Save Quiz
     </Button>
-      <Button variant={"ghost"} className="mx-2 bg-gray-200">
+      <Button variant={"ghost"} className="mx-2 bg-gray-200" onClick={(e)=>generateQuestions()}>
       <RotateCw className="mr-2 h-4 w-4" /> Regenerate
     </Button>
     <Button variant={"destructive"} onClick={()=>navigate("/admin/new-quiz")} className="mx-2">

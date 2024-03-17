@@ -34,6 +34,8 @@ const NewQuiz: React.FC<{token:string}> = ({token}) => {
   const { state, dispatch } = useAuthContext();
   const navigate = useNavigate();
 
+  // console.log(category,subject,topic)
+
   const categoryQuery = useQuery({
     queryKey: ["categories"],
     queryFn: () => fetchCategories(),
@@ -86,9 +88,9 @@ const NewQuiz: React.FC<{token:string}> = ({token}) => {
     return data;
   };
 
-  const {mutate: generateQuestions,isPending: isLoading, data} = useMutation({
+  const {mutate: generateQuestions,isPending: isLoading} = useMutation({
     mutationFn: async () => {
-      if(!(subject && topic && category && difficulty && difficulty)){
+      if(!(subject && topic && category && difficulty && numberOfQuestions)){
         throw Error("All fields neet to be entered")
       }
       if(numberOfQuestions<=-1){
@@ -101,6 +103,8 @@ const NewQuiz: React.FC<{token:string}> = ({token}) => {
         difficulty,
         numberOfQuestions,
       };
+
+      console.log(quizParams)
       const response = await fetch("/api/admin/ai-quiz-gen",{
         method: "POST",
         headers: {
@@ -118,7 +122,7 @@ const NewQuiz: React.FC<{token:string}> = ({token}) => {
     onSuccess: (data) => {
       console.log(data)
       navigate("/admin/new-quiz/generate",{
-        state:data?.data
+        state:data
       })
       toast.success("Generated quiz questions!")
     },
