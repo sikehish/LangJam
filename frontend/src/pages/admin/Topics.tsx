@@ -12,7 +12,7 @@ const Topics: React.FC<{ token: string }> = ({ token }) => {
   const {subjectId, categoryId} = useParams();
   const { getTopics, createTopicMutation } = useTopicQueries(queryClient, token, subjectId!);
 
-  const renderSubjects = () => {
+  const renderTopics = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {getTopics?.data?.map((topic: { name: string; _id: string, subject:string }) => (
@@ -28,7 +28,7 @@ const Topics: React.FC<{ token: string }> = ({ token }) => {
       {!getTopics?.data?.length ? (
         <p>No Topics stored yet!</p>
       ) : (
-        renderSubjects()
+        renderTopics()
       )}
       <CreateBtn saveMethod={createTopicMutation} name="Topic"/>
     </div>

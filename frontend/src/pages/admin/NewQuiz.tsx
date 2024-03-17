@@ -91,7 +91,7 @@ const NewQuiz: React.FC<{ token: string }> = ({ token }) => {
 
   const { mutate: generateQuestions, isPending: isLoading } = useMutation({
     mutationFn: async () => {
-      if (!(subject && topic && category && difficulty && numberOfQuestions)) {
+      if (!(subject && topic && category && difficulty && numberOfQuestions && title)) {
         throw Error("All fields neet to be entered");
       }
       if (numberOfQuestions <= -1) {

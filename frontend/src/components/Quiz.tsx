@@ -1,5 +1,4 @@
 import { FormEvent, useState } from "react";
-import { useSubjectQueries } from "../hooks/useSubjectQueries";
 import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,59 +7,62 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { toast } from "react-toastify";
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Import edit and delete icons
 import { Link } from "react-router-dom";
-import { useTopicQueries } from "@/hooks/useTopicQueries";
+import { useQuizQueries } from "@/hooks/useQuizQueries";
+import { IQuiz } from "@/pages/admin/Quizzes";
 
-function Topic({
-  topic,
+function Quiz({
+  quiz,
   token,
   categoryId,
+  subjectId
 }: {
-    topic: { name: string; _id: string, subject:string},
+    quiz: IQuiz,
   token: string,
-  categoryId: string
+  categoryId: string,
+  subjectId: string
 }) {
   const queryClient = useQueryClient();
-  const [editedTopicName, setEditedTopicName] = useState(topic?.name);
+  const [editedQuizTitle, setEditedQuizTitle] = useState(quiz?.title);
   const [isEditClicked, setEditClicked] = useState(false);
   const {
-    editTopicMutation,
-    deleteTopicMutation,
-  } = useTopicQueries(queryClient, token, topic.subject);
+    editQuizMutation,
+    deleteQuizMutation,
+  } = useQuizQueries(queryClient, token, quiz.topic);
 
   const handleEditSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!editedTopicName) return;
-      console.log(editedTopicName)
+    if (!editedQuizTitle) return;
+      console.log(editedQuizTitle)
     try {
-        editTopicMutation.mutate({
-        topicId: topic._id,
-        newName: editedTopicName,
+        editQuizMutation.mutate({
+        quizId: quiz._id,
+        newTitle: editedQuizTitle,
       });
-      setEditedTopicName(""); 
+      setEditedQuizTitle(""); 
       setEditClicked(false);
     } catch (error) {
-      console.error("Error editing topic:", error);
-      toast.error("Failed to edit topic!");
+      console.error("Error editing quiz:", error);
+      toast.error("Failed to edit quiz!");
     }
   };
 
   const handleDelete = async (e: React.MouseEvent) => {
     try {
-      const result: boolean=confirm(`Are you sure you want to delete the ${editedTopicName} topic?`)
+      const result: boolean=confirm(`Are you sure you want to delete the ${editedQuizTitle} quiz?`)
       if(result){
-        deleteTopicMutation.mutate(topic._id);
-      }else toast.error(`${editedTopicName}: Delete event aborted`)
+        deleteQuizMutation.mutate(quiz._id);
+      }else toast.error(`${editedQuizTitle}: Delete event aborted`)
     } catch (error) {
-      console.error("Error editing topic:", error);
-      toast.error("Failed to edit topic!");
+      console.error("Error deleting quiz:", error);
+      toast.error("Failed to delete quiz!");
     }
   };
 
   return (
     <div className="mb-4">
-      <Link to={`/admin/categories/${categoryId}/subjects/${topic.subject}/topics/${topic._id}`}>
+      <Link to={`/admin/categories/${categoryId}/subjects/${subjectId}/topics/${quiz.topic}/quizzes/${quiz._id}`}>
       <div className="p-4 rounded-lg shadow-md bg-blue-500">
-        <p className="text-white">{topic.name}</p>
+        <p className="text-white">{quiz.title}</p>
       </div>
       </Link>
       <div className="flex">
@@ -77,16 +79,16 @@ function Topic({
             <PopoverContent className="w-80">
               <div className="grid gap-4">
                 <div className="space-y-2">
-                  <h4 className="font-medium leading-none">Topic Name</h4>
+                  <h4 className="font-medium leading-none">Quiz Title</h4>
                 </div>
                 <div className="grid gap-2">
                   <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="cname">Topic Name</Label>
+                    <Label htmlFor="cname">Quiz Title</Label>
                     <Input
                       id="cname"
-                      defaultValue={topic.name} // Set default value to current name
+                      defaultValue={quiz.title}
                       className="col-span-2 h-8"
-                      onChange={(e) => setEditedTopicName(e.target.value)}
+                      onChange={(e) => setEditedQuizTitle(e.target.value)}
                     />
                   </div>
                 </div>
@@ -99,4 +101,4 @@ function Topic({
   );
 }
 
-export default Topic;
+export default Quiz;
