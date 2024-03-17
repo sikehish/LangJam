@@ -9,6 +9,9 @@ import {
 import { toast } from "react-toastify";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from '@/components/ui/button';
+import { CircleX, RotateCw, Save } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface QuizData {
   difficultyLevel: string;
@@ -29,6 +32,7 @@ interface Props {
 
 const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
   const { questions } = quizData;
+  const navigate=useNavigate()
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<
     number | null
   >(null);
@@ -209,9 +213,6 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
                       <span className="underline">Explanation:</span>{" "}
                       {question.explanation}
                     </p>
-                    <button onClick={() => handleEditQuestion(index)}>
-                      Edit
-                    </button>
                   </div>
                 )}
               </div>
@@ -221,6 +222,17 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData }) => {
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
+        {editingQuestionIndex==null && <div className="flex flex-row items-center justify-center mt-3">
+    <Button variant={"secondary"} className="mx-2 text-white bg-blue-500 hover:bg-blue-700">
+      <Save className="mr-2 h-4 w-4" /> Save Quiz
+    </Button>
+      <Button variant={"ghost"} className="mx-2 bg-gray-200">
+      <RotateCw className="mr-2 h-4 w-4" /> Regenerate
+    </Button>
+    <Button variant={"destructive"} onClick={()=>navigate("/admin/new-quiz")} className="mx-2">
+      <CircleX className="mr-2 h-4 w-4" /> Abort
+    </Button>
+      </div>}
     </div>
   );
 };
