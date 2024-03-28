@@ -133,7 +133,6 @@ const NewQuiz: React.FC<{ token: string }> = ({ token }) => {
     },
   });
 
-  // const generateQuestions =
   return (
     <div className="flex justify-center items-center h-full pt-20 mb-10">
       <Card className="w-[70%] lg:w-[50%] mx-0 bg-blue-50">

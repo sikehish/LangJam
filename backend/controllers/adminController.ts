@@ -415,8 +415,8 @@ export const getAdminStats = asyncWrapper(
 );
 
 //----------------------------------------------------------
-// Quiz Generation using GenAI
 
+// Quiz Generation using GenAI
 export const generateQuiz = asyncWrapper(
   async (req: Request, res: Response) => {
     try {
@@ -440,42 +440,49 @@ export const generateQuiz = asyncWrapper(
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
       const prompt = `
-    Generate a COMPLETE JSON object for a quiz with the following specifications:
-    DO NOT USE MARKDOWN AND BACKTICKS
-    
-    - Domain: ${categoryName}
-    - Subject: ${subjectName}
-    - Topic: ${topicName}
-    - Quiz Title: ${title}
-    - NumberOfQuestions: ${numberOfQuestions}
-    - Format: Multiple Choices for each Question
-        - Crucially, ensure the correct option is distributed as randomly as possible across all available choices (A, B, C, D, etc.). Avoid any bias towards specific positions.
-    - difficulty: ${difficulty}
-    - Question Type: Include code snippets within questions wherever necessary(depending on the domain,subject,topic and the title)
-    - Structure: Each question in the JSON array must have:
-        - Question: The text of the question
-        - difficulty of each Question
-        - Choices: An array of multiple choices
-        - CorrectOption: The index of the correct choice (0 for A, 1 for B, 2 for C, and so on)
-        - Explanation: A clear explanation of the correct solution
-        
+      Generate a COMPLETE JSON object for a quiz with the following specifications:
+      DO NOT USE MARKDOWN AND BACKTICKS.
+      
+      - Domain: ${categoryName}
+      - Subject: ${subjectName}
+      - Topic: ${topicName}
+      - Quiz Title: ${title}
+      - NumberOfQuestions: ${numberOfQuestions}
+      - Format: Multiple Choices for each Question
+          - Crucially, ensure the correct option is distributed as randomly as possible across all available choices (A, B, C, D, etc.). Avoid any bias towards specific positions.
+      - difficulty: ${difficulty}
+      - Question Type: Include code snippets within questions wherever necessary(depending on the domain,subject,topic and the title)
+      - Structure: Each question in the JSON array must have:
+          - Question: The text of the question
+          - difficulty of each Question
+          - Choices: An array of multiple choices
+          - CorrectOption: The index of the correct choice (0 for A, 1 for B, 2 for C, and so on)
+          - Explanation: A clear explanation of the correct solution
+      
+      Additionally, provide relevant educational content or information related to the quiz topic to help users learn and understand the relevant topic such that the users would be able to answer most questions. 
+      
+      return response in JSON format {
+        content,
+        difficulty,
+        numberOfQuestions,
+        questions:[{
+          question,
+          choices,
+          correctOption,
+          explanation
+        }]
+      }
 
-        return response in JSON format {
-          difficulty,
-          numberOfQuestions,
-          questions:[{
-            question,
-            choices,
-            correctOption,
-            explanation
-          }]
-        }
-        `;
+      PLEASE DO NOT USE BACKTICKS(along with "json"), THAT YOU NORMALLY USE. JUST GENERATE AND RETURN THE JSON OBJECT.
+      `;
+      
 
       const result = await model.generateContent(prompt);
       const response = await result.response;
-      const text = await response.text();
+      const text = await response.text().replace(/^```json\s+|\s+```$/g, '');;
+      console.log(text)
       const data = JSON.parse(text);
+      console.log(data)
       res.status(200).json({ status: "success", data });
     } catch (error) {
       res.status(404);

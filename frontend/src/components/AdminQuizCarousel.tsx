@@ -18,6 +18,7 @@ interface QuizData {
   difficulty: string;
   numberOfQuestions: number;
   questions: Question[];
+  content: string;
 }
 
 interface Question {
@@ -40,15 +41,12 @@ interface Props {
 }
 
 const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token, title, mode, quizId, difficulty }) => {
-  // console.log(quizData)
-  const { questions } = quizData;
-  // console.log(subject, topic, category)
-  console.log(questions)
+  const { questions, content } = quizData;
   const navigate=useNavigate()
-  const [editingQuestionIndex, setEditingQuestionIndex] = useState<
-    number | null
-  >(null);
+  const [editingQuestionIndex, setEditingQuestionIndex] = useState<number | null | "intro">(null);
   const [editedQuestions, setEditedQuestions] = useState<Question[]>(questions);
+  const [editedContent, setEditedContent]=useState<string>(content)
+  const [originalContent, setOriginalContent]=useState<string>(content)
   const [originalQuestions, setOriginalQuestions] = useState<Question[]>(questions); //Used to ahndle the cancellation of an edit in a question
 
   const {mutate: reGenerateQuestions,isPending: isLoading} = useMutation({
@@ -75,9 +73,9 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
       return data
     },
     onSuccess: (data) => {
-      // console.log(data?.data?.questions, subject, topic,category)
       toast.success("Regenerated quiz questions!")
       setEditedQuestions(data?.data?.questions)
+      console.log(data?.data)
       navigate("/admin/new-quiz/generate",{
         state:{data: data,subject,topic,category,title} 
       })
@@ -86,14 +84,12 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
       toast.error(error.message);
     },
   });
-  
 
   const {mutate: saveToDatabase,isPending: isSaving} = useMutation({
     mutationFn: async () => {
       const quizGen= {
-        topic, difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions: editedQuestions, title
+        topic, difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions: editedQuestions, title, content: editedContent
       }
-      // console.log(quizGen)
       let response 
       if(mode=="generate-view"){
         response=await fetch("/api/admin/quizzes",{
@@ -121,7 +117,6 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
     }
   ,
     onSuccess: (data) => {
-      // console.log(data)
       navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)
       toast.success("New quiz generated and saved!")
     },
@@ -130,15 +125,12 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
     },
   });
 
-
   const handleEditQuestion = (num: number) => {
     setEditingQuestionIndex(num);
   };
 
   const handleSaveQuestion = (index: number) => {
-    const { question, choices, correctOption, explanation } = editedQuestions[
-      index
-    ];
+    const { question, choices, correctOption, explanation } = editedQuestions[index];
     if (isNaN(correctOption) || correctOption < 0 || correctOption >= choices.length) {
       toast.error("Enter correct option number");
       return;
@@ -158,12 +150,10 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
       }
     }
     setOriginalQuestions(editedQuestions)
-    console.log("ON SAVE: ",editedQuestions)
     setEditingQuestionIndex(null);
   };
 
   const handleCancelEdit = () => {
-    console.log("ON CANCEL: ",originalQuestions)
     setEditingQuestionIndex(null);
     setEditedQuestions(originalQuestions)
   };
@@ -184,13 +174,11 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
       };
     }
     setEditedQuestions(updatedQuestions);
-    console.log("ON IP CHANGE: ",updatedQuestions)
   };
 
   return (
     <div className="p-4">
-
-{editingQuestionIndex==null && 
+    {editingQuestionIndex==null && 
     (<div className="flex flex-row items-center justify-center mb-5 mt-3">
         <Button variant={"secondary"} disabled={isSaving} className="mx-2 text-white bg-blue-500 hover:bg-blue-700" onClick={(e)=>saveToDatabase()}>
             {isSaving ? <Loader2  className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" /> }
@@ -210,14 +198,63 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
             </Button>
         )}
     </div>)}
-
-
       <Carousel className="w-full max-w-lg mx-auto">
         <CarouselContent>
+          {/* Introduction Card */}
+          <CarouselItem key="intro">
+            <div className="shadow-md rounded-lg p-4 bg-slate-100">
+              <h2 className="text-lg font-semibold mb-2">Introduction</h2>
+              {editingQuestionIndex === "intro" ? (
+                <div>
+                  <Textarea
+                    value={editedContent}
+                    onChange={(e) => setEditedContent(e.target.value)}
+                    id="editContent"
+                    className="form-input mt-1 block w-full"
+                  />
+                  <div className="flex justify-end mt-2">
+                    <Button
+                      onClick={() => {
+                        setEditedContent(originalContent)
+                        setEditingQuestionIndex(null)
+                      }}
+                      className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-3 rounded mr-2"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={(e) => {
+                        setOriginalContent(editedContent)
+                        setEditingQuestionIndex(null);
+                      }}
+                      className="bg-green-500 hover:bg-green-600 text-white py-2 px-3 rounded"
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <p>{editedContent}</p>
+                  <div className="flex justify-end mt-2">
+                    <Button
+                      onClick={() => setEditingQuestionIndex("intro")}
+                      className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded"
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CarouselItem>
+
+          {/* Question Cards */}
           {editedQuestions && editedQuestions.map((question, index) => (
             <CarouselItem key={index}>
               <div className="shadow-md rounded-lg p-4 bg-slate-100">
                 {editingQuestionIndex === index ? (
+                  // Edit Mode
                   <div>
                     <div className="flex justify-between mb-4">
                       <label htmlFor="editlabel">
@@ -240,6 +277,8 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                         </button>
                       </div>
                     </div>
+                    {/* Input fields for editing */}
+                    {/* Code Snippet Input */}
                     <Textarea
                       value={question.question}
                       onChange={(e) =>
@@ -248,6 +287,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                       id="editlabel"
                       className="form-input mt-1 block w-full"
                     />
+                    {/* Choices Input */}
                     <p>
                       Choices:
                       {question.choices.map((choice, choiceIndex) => (
@@ -268,6 +308,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                         </label>
                       ))}
                     </p>
+                    {/* Correct Option Input */}
                     <label>
                       Correct Option:
                       <input
@@ -283,6 +324,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                         className="form-input mt-1 block w-full"
                       />
                     </label>
+                    {/* Explanation Input */}
                     <label>
                     Explanation:
                     <Textarea
@@ -295,6 +337,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                     </label>
                   </div>
                 ) : (
+                  // Display Mode
                   <div>
                     <div className="flex justify-between mb-4">
                       <h3 className="inline text-lg font-semibold">
