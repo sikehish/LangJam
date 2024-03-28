@@ -16,6 +16,7 @@ export interface IQuiz extends Document {
   topic: Types.ObjectId | ITopic;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   numberOfQuestions: number;
+  content: string
 }
 
 const questionSchema = new Schema<IQuestion>({
@@ -36,6 +37,10 @@ const questionSchema = new Schema<IQuestion>({
 
 const quizSchema = new Schema<IQuiz>({
   questions: [questionSchema],
+  content:{
+    type: String,
+    required: true
+  },
   title:{
     type: String,
     required: true,

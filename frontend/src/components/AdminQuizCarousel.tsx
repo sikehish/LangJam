@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from '@/components/ui/button';
 import { CircleX, Loader2, RotateCw, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface QuizData {
   difficulty: string;
@@ -42,7 +42,7 @@ interface Props {
 
 const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token, title, mode, quizId, difficulty }) => {
   const { questions, content } = quizData;
-  console.log("CONTENT: ", content)
+  const queryClient=useQueryClient()
   const navigate=useNavigate()
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<number | null | "intro">(null);
   const [editedQuestions, setEditedQuestions] = useState<Question[]>(questions);
@@ -120,7 +120,12 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
   ,
     onSuccess: (data) => {
       navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)
-      toast.success("New quiz generated and saved!")
+      if(mode=="generate-view")  toast.success("New quiz generated and saved!")
+      else{
+        queryClient.invalidateQueries({ queryKey: ['quizzes', topic] });
+        queryClient.refetchQueries({ queryKey: ['quizzes', topic] });
+        toast.success("Quiz modified and saved!")
+    }
     },
     onError: (error: Error) => {
       toast.error(error.message);

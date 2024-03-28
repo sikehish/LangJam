@@ -102,7 +102,7 @@ export const createQuiz = asyncWrapper(async (req: Request, res: Response) => {
     throw new Error("User isn't authorized");
   }
 
-  const { title, topic, difficulty, numberOfQuestions, questions }: IQuiz =
+  const { title, topic, difficulty, numberOfQuestions, questions, content }: IQuiz =
     req.body;
 
   // Check if the topic exists
@@ -113,9 +113,14 @@ export const createQuiz = asyncWrapper(async (req: Request, res: Response) => {
     throw new Error("Topic not found");
   }
 
-  if (!title) {
+  if (!title.trim()) {
     res.status(404);
     throw new Error("Title cannot be empty");
+  }
+
+  if(!content.trim()){
+    res.status(404);
+    throw new Error("Content cannot be empty");
   }
 
   const checkTitle=await Quiz.find({topic, title: title?.trim()})
@@ -125,7 +130,6 @@ export const createQuiz = asyncWrapper(async (req: Request, res: Response) => {
   }
 
   // Validate the number of questions
-  console.log(questions, numberOfQuestions)
   if (questions?.length !== numberOfQuestions) {
     res.status(400);
     throw new Error("Number of questions does not match the specified count");
@@ -137,7 +141,8 @@ export const createQuiz = asyncWrapper(async (req: Request, res: Response) => {
     topic,
     difficulty,
     numberOfQuestions,
-    title
+    title, 
+    content
   };
 
   const quiz = await Quiz.create(quizData);
@@ -303,11 +308,12 @@ export const updateTopic = asyncWrapper(async (req: Request, res: Response) => {
 //Update Quiz
 export const updateQuiz = asyncWrapper(async (req: Request, res: Response) => {
   const { quizId } = req.params;
-  const { topic, difficulty, numberOfQuestions, questions, title } = req.body;
+  const { topic, difficulty, numberOfQuestions, questions, title , content} = req.body;
 
   const updatedQuiz = await Quiz.findByIdAndUpdate(
     quizId,
     {
+      content,
       topic,
       difficulty,
       numberOfQuestions,
