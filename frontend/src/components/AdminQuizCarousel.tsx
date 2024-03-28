@@ -42,6 +42,7 @@ interface Props {
 
 const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token, title, mode, quizId, difficulty }) => {
   const { questions, content } = quizData;
+  console.log("CONTENT: ", content)
   const navigate=useNavigate()
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<number | null | "intro">(null);
   const [editedQuestions, setEditedQuestions] = useState<Question[]>(questions);
@@ -49,6 +50,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
   const [originalContent, setOriginalContent]=useState<string>(content)
   const [originalQuestions, setOriginalQuestions] = useState<Question[]>(questions); //Used to ahndle the cancellation of an edit in a question
 
+  console.log(editedContent)
   const {mutate: reGenerateQuestions,isPending: isLoading} = useMutation({
     mutationFn: async () => {
       const quizParams= {
@@ -75,9 +77,9 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
     onSuccess: (data) => {
       toast.success("Regenerated quiz questions!")
       setEditedQuestions(data?.data?.questions)
-      console.log(data?.data)
+      setEditedContent(data?.data?.content)
       navigate("/admin/new-quiz/generate",{
-        state:{data: data,subject,topic,category,title} 
+        state:{data,subject,topic,category,title} 
       })
     },
     onError: (error: Error) => {

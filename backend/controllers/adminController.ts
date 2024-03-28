@@ -476,13 +476,14 @@ export const generateQuiz = asyncWrapper(
       PLEASE DO NOT USE BACKTICKS(along with "json"), THAT YOU NORMALLY USE. JUST GENERATE AND RETURN THE JSON OBJECT.
       `;
       
+      
 
       const result = await model.generateContent(prompt);
       const response = await result.response;
-      const text = await response.text().replace(/^```json\s+|\s+```$/g, '');;
-      console.log(text)
+      const text = await response.text().replace(/^```json\s+|\s+```$/gi, '');
+      console.log("ERR: ",text)
       const data = JSON.parse(text);
-      console.log(data)
+      // console.log(data)
       res.status(200).json({ status: "success", data });
     } catch (error) {
       res.status(404);
