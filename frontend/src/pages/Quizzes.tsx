@@ -5,6 +5,7 @@ import { useQuizQueries } from '@/hooks/useQuizQueries';
 import { Button } from '@/components/ui/button';
 import QuizTile from '@/components/QuizTile';
 import { ArrowLeft } from 'lucide-react';
+import { useAuthContext } from '@/context/AuthContext';
 
 export interface IQuiz {
     _id: string,
@@ -24,6 +25,7 @@ export interface Question {
   
 
 const Quizzes: React.FC<{ token: string }> = ({ token }) => {
+  const {state}=useAuthContext()
     const navigate=useNavigate()
   const queryClient = useQueryClient();
   const {topicId, subjectId, categoryId} = useParams();
@@ -43,7 +45,7 @@ const Quizzes: React.FC<{ token: string }> = ({ token }) => {
     <div className="container mx-auto pt-10">
        <ArrowLeft
           className="cursor-pointer ml-2 mb-3 transition-transform transform hover:scale-110"
-          onClick={() => navigate(`/admin/categories/${categoryId}/subjects/${subjectId}`)}
+          onClick={() => navigate(`/categories/${categoryId}/subjects/${subjectId}`)}
           />
       <h1 className="text-3xl font-bold mb-4">Quizzes</h1>
       {!getQuizzes?.data?.length ? (
@@ -51,9 +53,9 @@ const Quizzes: React.FC<{ token: string }> = ({ token }) => {
       ) : (
         renderQuizzes()
       )}
-     <Button onClick={()=>navigate("/admin/new-quiz")}>
+     {token && state?.user?.isAdmin && <Button onClick={()=>navigate("/admin/new-quiz")}>
         New Quiz
-     </Button>
+     </Button>}
     </div>
   );
 };

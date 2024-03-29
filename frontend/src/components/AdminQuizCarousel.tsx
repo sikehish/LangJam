@@ -124,7 +124,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
     queryClient.invalidateQueries({ queryKey:['quiz', quizId]});
     toast.success("Quiz modified and saved!")
   }
-  navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)
+  navigate(`/categories/${category}/subjects/${subject}/topics/${topic}`)
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -199,7 +199,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                 <CircleX className="mr-2 h-4 w-4" /> Abort
             </Button>
         ) : (
-            <Button variant={"destructive"} onClick={()=> navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)} className="mx-2">
+            <Button variant={"destructive"} onClick={()=> navigate(`/categories/${category}/subjects/${subject}/topics/${topic}`)} className="mx-2">
                 <CircleX className="mr-2 h-4 w-4" /> Return
             </Button>
         )}
@@ -345,7 +345,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                 ) : (
                   // Display Mode
                   <div>
-                    <div className="flex justify-between mb-4">
+                    <div className="flex justify-between mb-2">
                       <h3 className="inline text-lg font-semibold">
                         Question {index + 1}
                       </h3>
@@ -359,7 +359,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                       </div>
                     </div>
                     <p>{question.question}</p>
-                    <ul className="mb-2">
+                    <ul className="my-4">
                       {question.choices.map((choice, choiceIndex) => (
                         <li key={choiceIndex} className="mb-1">
                           <label className="inline-flex items-center">

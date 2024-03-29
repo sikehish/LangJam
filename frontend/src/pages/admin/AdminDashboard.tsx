@@ -42,7 +42,7 @@ const AdminDashboard: React.FC<{ token: string }> = ({ token }) => {
         ))}
       </div>
       <div className="flex justify-center mt-16 mb-8">
-        <Button className="px-8 py-6 mx-4" onClick={() => { navigate('/admin/categories') }}>View Categories</Button>
+        <Button className="px-8 py-6 mx-4" onClick={() => { navigate('/categories') }}>View Categories</Button>
         <Button className="px-8 py-6 mx-4" onClick={() => { navigate('/admin/new-quiz') }}>New Quiz</Button>
       </div>
     </div>

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCategoryQueries } from "../../hooks/useCategoryQueries";
-import Category from "../../components/Category";
+import { useCategoryQueries } from "../hooks/useCategoryQueries";
+import Category from "../components/Category";
 import { CreateBtn } from '@/components/buttons/CreateBtn';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '@/context/AuthContext';
 
 const Categories: React.FC<{ token: string }> = ({ token }) => {
   const queryClient = useQueryClient();
+  const {state}=useAuthContext()
   const navigate=useNavigate()
   const { getCategories, createCategoryMutation } = useCategoryQueries(queryClient, token);
 
@@ -33,7 +35,7 @@ const Categories: React.FC<{ token: string }> = ({ token }) => {
       ) : (
         renderCategories()
       )}
-      <CreateBtn saveMethod={createCategoryMutation} name="Category" />
+     {token && state?.user?.isAdmin && <CreateBtn saveMethod={createCategoryMutation} name="Category" />}
     </div>
   );
 };

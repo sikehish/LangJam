@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Import edit and delete icons
 import { Link } from "react-router-dom";
 import { useTopicQueries } from "@/hooks/useTopicQueries";
+import { useAuthContext } from "@/context/AuthContext";
 
 function Topic({
   topic,
@@ -19,6 +20,7 @@ function Topic({
   token: string,
   categoryId: string
 }) {
+  const {state}=useAuthContext()
   const queryClient = useQueryClient();
   const [editedTopicName, setEditedTopicName] = useState(topic?.name);
   const [isEditClicked, setEditClicked] = useState(false);
@@ -58,12 +60,12 @@ function Topic({
 
   return (
     <div className="mb-4">
-      <Link to={`/admin/categories/${categoryId}/subjects/${topic.subject}/topics/${topic._id}`}>
+      <Link to={`/categories/${categoryId}/subjects/${topic.subject}/topics/${topic._id}`}>
       <div className="p-4 rounded-lg shadow-md bg-blue-500">
         <p className="text-white">{topic.name}</p>
       </div>
       </Link>
-      <div className="flex">
+      {token && state?.user?.isAdmin && <div className="flex">
         {/* <button onClick={} className="mr-2"><FaTrash /></button> */}
         <Button variant={"ghost"} onClick={handleDelete}>
                 <FaTrash className="text-red-800" />
@@ -94,7 +96,7 @@ function Topic({
               </div>
             </PopoverContent>
           </Popover>
-      </div>
+      </div>}
     </div>
   );
 }

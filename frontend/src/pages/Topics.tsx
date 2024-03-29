@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useSubjectQueries } from "../../hooks/useSubjectQueries";
-import Subject from "../../components/Subject";
+import { useSubjectQueries } from "../hooks/useSubjectQueries";
+import Subject from "../components/Subject";
 import { CreateBtn } from '@/components/buttons/CreateBtn';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import Topic from '@/components/Topic';
 import { useTopicQueries } from '@/hooks/useTopicQueries';
 import { ArrowLeft } from 'lucide-react';
+import { useAuthContext } from '@/context/AuthContext';
 
 const Topics: React.FC<{ token: string }> = ({ token }) => {
   const queryClient = useQueryClient();
   const navigate=useNavigate()
+  const {state}=useAuthContext()
   const {subjectId, categoryId} = useParams();
   const { getTopics, createTopicMutation } = useTopicQueries(queryClient, token, subjectId!);
 
@@ -28,7 +30,7 @@ const Topics: React.FC<{ token: string }> = ({ token }) => {
     <div className="container mx-auto pt-10">
       <ArrowLeft
           className="cursor-pointer ml-2 mb-3 transition-transform transform hover:scale-110"
-          onClick={() => navigate(`/admin/categories/${categoryId}`)}
+          onClick={() => navigate(`/categories/${categoryId}`)}
           />
       <h1 className="text-3xl font-bold mb-4">Topics</h1>
       {!getTopics?.data?.length ? (
@@ -36,7 +38,7 @@ const Topics: React.FC<{ token: string }> = ({ token }) => {
       ) : (
         renderTopics()
       )}
-      <CreateBtn saveMethod={createTopicMutation} name="Topic"/>
+      {token && state?.user?.isAdmin && <CreateBtn saveMethod={createTopicMutation} name="Topic"/>}
     </div>
   );
 };

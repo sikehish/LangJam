@@ -8,7 +8,8 @@ import { toast } from "react-toastify";
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Import edit and delete icons
 import { Link } from "react-router-dom";
 import { useQuizQueries } from "@/hooks/useQuizQueries";
-import { IQuiz } from "@/pages/admin/Quizzes";
+import { useAuthContext } from "@/context/AuthContext";
+import { IQuiz } from "@/pages/Quizzes";
 
 function QuizTile({
   quiz,
@@ -21,6 +22,7 @@ function QuizTile({
   categoryId: string,
   subjectId: string
 }) {
+  const {state}=useAuthContext()
   const queryClient = useQueryClient();
   const [editedQuizTitle, setEditedQuizTitle] = useState(quiz?.title);
   const [isEditClicked, setEditClicked] = useState(false);
@@ -60,17 +62,17 @@ function QuizTile({
 
   return (
     <div className="mb-4">
-      <Link to={`/admin/categories/${categoryId}/subjects/${subjectId}/topics/${quiz.topic}/quizzes/${quiz._id}`}>
+      <Link to={`/categories/${categoryId}/subjects/${subjectId}/topics/${quiz.topic}/quizzes/${quiz._id}`}>
       <div className="p-4 rounded-lg shadow-md bg-blue-500">
         <p className="text-white">{quiz.title}</p>
       </div>
       </Link>
-      <div className="flex">
+      {token && state?.user?.isAdmin && <div className="flex">
         {/* <button onClick={} className="mr-2"><FaTrash /></button> */}
         <Button variant={"ghost"} onClick={handleDelete}>
                 <FaTrash className="text-red-800" />
               </Button>
-      </div>
+      </div>}
     </div>
   );
 }

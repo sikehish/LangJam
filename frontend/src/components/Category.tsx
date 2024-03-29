@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { toast } from "react-toastify";
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Import edit and delete icons
 import { Link } from "react-router-dom";
+import { useAuthContext } from "@/context/AuthContext";
 
 function Category({
   category,
@@ -17,6 +18,7 @@ function Category({
   token: string;
 }) {
   const queryClient = useQueryClient();
+  const { state } = useAuthContext();
   const [editedCategoryName, setEditedCategoryName] = useState(category?.name);
   const [isEditClicked, setEditClicked] = useState(false);
   const {
@@ -57,12 +59,12 @@ function Category({
 
   return (
     <div className="mb-4">
-      <Link to={`/admin/categories/${category._id}`}>
+      <Link to={`/categories/${category._id}`}>
       <div className="p-4 rounded-lg shadow-md bg-blue-500">
         <p className="text-white">{category.name}</p>
       </div>
       </Link>
-      <div className="flex">
+      {token && state?.user?.isAdmin && <div className="flex">
         {/* <button onClick={} className="mr-2"><FaTrash /></button> */}
         <Button variant={"ghost"} onClick={handleDelete}>
                 <FaTrash className="text-red-800" />
@@ -93,7 +95,7 @@ function Category({
               </div>
             </PopoverContent>
           </Popover>
-      </div>
+      </div>}
     </div>
   );
 }

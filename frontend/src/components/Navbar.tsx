@@ -43,8 +43,8 @@ const Navbar: React.FC = () => {
           <Link to="/" className="text-white hover:text-blue-200 cursor-pointer">
             Home
           </Link>
-          <Link to="/languages" className="text-white hover:text-blue-200 cursor-pointer">
-            Languages
+          <Link to="/categories" className="text-white hover:text-blue-200 cursor-pointer">
+            Categories
           </Link>
           <Link to="/leaderboard" className="text-white hover:text-blue-200 cursor-pointer">
             Leaderboard

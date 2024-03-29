@@ -38,6 +38,7 @@ const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, conte
   const [originalContent, setOriginalContent]=useState<string>(content)
   const [originalQuestions, setOriginalQuestions] = useState<Question[]>(questions); //Used to ahndle the cancellation of an edit in a question
 
+  console.log(questions)
 
 
   const {mutate: saveToDatabase,isPending: isSaving} = useMutation({
@@ -63,7 +64,7 @@ const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, conte
   ,
     onSuccess: (data) => {
        toast.success("New quiz generated and saved!")
-        navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)
+        navigate(`/categories/${category}/subjects/${subject}/topics/${topic}`)
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -130,7 +131,7 @@ const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, conte
             {isSaving ? "Saving... " : "Save Quiz" }
         </Button>
         
-            <Button variant={"destructive"} onClick={()=> navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)} className="mx-2">
+            <Button variant={"destructive"} onClick={()=> navigate(`/categories/${category}/subjects/${subject}/topics/${topic}`)} className="mx-2">
                 <CircleX className="mr-2 h-4 w-4" /> Return
             </Button>
     </div>)}
@@ -275,7 +276,7 @@ const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, conte
                 ) : (
                   // Display Mode
                   <div>
-                    <div className="flex justify-between mb-4">
+                    <div className="flex justify-between">
                       <h3 className="inline text-lg font-semibold">
                         Question {index + 1}
                       </h3>
@@ -289,7 +290,7 @@ const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, conte
                       </div>
                     </div>
                     <p>{question.question}</p>
-                    <ul className="mb-2">
+                    <ul className="my-4">
                       {question.choices.map((choice, choiceIndex) => (
                         <li key={choiceIndex} className="mb-1">
                           <label className="inline-flex items-center">

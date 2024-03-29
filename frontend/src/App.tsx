@@ -1,24 +1,23 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthContext } from "./context/AuthContext";
 import Home from "./pages/Home";
-import Categories from "./pages/admin/Categories";
-import Leaderboard from "./pages/Leaderboard";
-import Languages from "./pages/Languages";
+import Categories from "./pages/Categories";
+import Leaderboard from "./pages/user/Leaderboard";
 import Login from "./pages/auth/Login";
-import Profile from "./pages/Profile";
+import Profile from "./pages/user/Profile";
 import Signup from "./pages/auth/Signup";
 import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminLogin from "./pages/auth/AdminLogin";
-import Subjects from "./pages/admin/Subjects";
-import Topics from "./pages/admin/Topics";
+import Subjects from "./pages/Subjects";
+import Topics from "./pages/Topics";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import NewQuiz from "./pages/admin/NewQuiz";
 import GenerateQuiz from "./pages/admin/GenerateQuiz";
-import Quizzes from "./pages/admin/Quizzes";
-import Quiz from "./pages/admin/Quiz";
-import CreateQuiz from "./pages/admin/CreateQuiz";
+import Quizzes from "./pages/Quizzes";
+import Quiz from "./pages/Quiz";
+import CreateQuiz from "./pages/CreateQuiz";
 
 export default function App() {
   const { state } = useAuthContext();
@@ -81,9 +80,9 @@ export default function App() {
         />
 
         <Route
-          path="/admin/categories"
+          path="/categories"
           element={
-            state?.user?.isAdmin ? (
+            state?.user ? (
               <Categories token={state?.user?.token} />
             ) : (
               <Navigate to="/" />
@@ -92,9 +91,9 @@ export default function App() {
         />
 
         <Route
-          path="/admin/categories/:categoryId"
+          path="/categories/:categoryId"
           element={
-            state?.user?.isAdmin ? (
+            state?.user ? (
               <Subjects token={state?.user?.token} />
             ) : (
               <Navigate to="/" />
@@ -103,9 +102,9 @@ export default function App() {
         />
 
         <Route
-          path="/admin/categories/:categoryId/subjects/:subjectId"
+          path="/categories/:categoryId/subjects/:subjectId"
           element={
-            state?.user?.isAdmin ? (
+            state?.user ? (
               <Topics token={state?.user?.token} />
             ) : (
               <Navigate to="/" />
@@ -113,20 +112,17 @@ export default function App() {
           }
         />
 
-        <Route path="/admin/categories/:categoryId/subjects/:subjectId/topics/:topicId" element={state?.user?.isAdmin? <Quizzes token={state?.user?.token} /> :   <Navigate to="/" />} />  
+        <Route path="/categories/:categoryId/subjects/:subjectId/topics/:topicId" element={state?.user? <Quizzes token={state?.user?.token} /> :   <Navigate to="/" />} />  
 
-        <Route path="/admin/categories/:categoryId/subjects/:subjectId/topics/:topicId/quizzes/:quizId" element={state?.user?.isAdmin? <Quiz token={state?.user?.token} /> :   <Navigate to="/" />} />  
+        <Route path="/categories/:categoryId/subjects/:subjectId/topics/:topicId/quizzes/:quizId" element={state?.user ? <Quiz token={state?.user?.token} /> :   <Navigate to="/" />} />  
 
           <Route path="/admin/new-quiz/create"  element={state?.user?.isAdmin? <CreateQuiz token={state?.user?.token} /> :   <Navigate to="/" />} />
 
         <Route
           path="/profile"
-          element={state.user ? <Profile /> : <Navigate to="/" />}
+          element={state?.user && !state?.user?.isAdmin ? <Profile /> : <Navigate to="/" />}
         />
-        <Route
-          path="/languages"
-          element={state.user ? <Languages /> : <Navigate to="/login" />}
-        />
+
       </Routes>
       <ToastContainer position="top-right" />
     </BrowserRouter>
