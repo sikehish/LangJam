@@ -13,35 +13,23 @@ import { Button } from '@/components/ui/button';
 import { CircleX, Loader2, RotateCw, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Question } from "@/pages/admin/Quizzes";
 
-interface QuizData {
-  difficulty: string;
-  numberOfQuestions: number;
-  questions: Question[];
-  content: string;
-}
-
-interface Question {
-  question: string;
-  choices: string[];
-  correctOption: number;
-  explanation: string;
-}
 
 interface Props {
-  quizData: QuizData;
    topic: string,
    subject: string,
    category: string,
    token:string,
    title: string,
-   mode: string,
    quizId?: string,
-   difficulty: string
+   difficulty: string,
+   questions: Question[],
+   content: string,
+   numberOfQuestions: number
 }
 
-const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token, title, mode, quizId, difficulty }) => {
-  const { questions, content } = quizData;
+const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, content,subject, topic, category,token, title,difficulty }) => {
   const queryClient=useQueryClient()
   const navigate=useNavigate()
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<number | null | "intro">(null);
@@ -50,50 +38,16 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
   const [originalContent, setOriginalContent]=useState<string>(content)
   const [originalQuestions, setOriginalQuestions] = useState<Question[]>(questions); //Used to ahndle the cancellation of an edit in a question
 
-  const {mutate: reGenerateQuestions,isPending: isLoading} = useMutation({
-    mutationFn: async () => {
-      const quizParams= {
-        subject,
-        topic,
-        category,
-        difficulty,
-        numberOfQuestions: quizData?.numberOfQuestions,
-        title
-      }
-      const response = await fetch("/api/admin/ai-quiz-gen",{
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(quizParams),
-      });
-  
-      const data=await response.json()
-      if(!response.ok) throw Error(data?.message)
-      return data
-    },
-    onSuccess: (data) => {
-      toast.success("Regenerated quiz questions!")
-      setEditedQuestions(data?.data?.questions)
-      setEditedContent(data?.data?.content)
-      navigate("/admin/new-quiz/generate",{
-        state:{data,subject,topic,category,title} 
-      })
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
+
 
   const {mutate: saveToDatabase,isPending: isSaving} = useMutation({
     mutationFn: async () => {
       const quizGen= {
-        topic, difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions: editedQuestions, title, content: editedContent
+        topic, difficulty, numberOfQuestions, questions: editedQuestions, title, content: editedContent
       }
-      let response 
-      if(mode=="generate-view"){
-        response=await fetch("/api/admin/quizzes",{
+
+
+        const response=await fetch("/api/admin/quizzes",{
           method: "POST",
           headers: {
             'Content-Type': 'application/json',
@@ -101,16 +55,6 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
           },
           body: JSON.stringify(quizGen),
         });
-      }else{
-        response=await fetch(`/api/admin/quizzes/${quizId}`,{
-          method: "PATCH",
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(quizGen),
-        });
-      }
   
       const data=await response.json()
       if(!response.ok || data?.status=="error" || data?.status=="fail") throw Error(data?.message)
@@ -118,13 +62,8 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
     }
   ,
     onSuccess: (data) => {
-      console.log(mode)
-      if(mode=="generate-view")  toast.success("New quiz generated and saved!")
-      else{
-    queryClient.invalidateQueries({ queryKey:['quiz', quizId]});
-    toast.success("Quiz modified and saved!")
-  }
-  navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)
+       toast.success("New quiz generated and saved!")
+        navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -190,19 +129,10 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
             {isSaving ? <Loader2  className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" /> }
             {isSaving ? "Saving... " : "Save Quiz" }
         </Button>
-        {mode=="generate-view" && <Button variant={"ghost"} disabled={isLoading} className="mx-2 bg-gray-200" onClick={(e)=>reGenerateQuestions()}>
-            {isLoading ? <Loader2  className="mr-2 h-4 w-4 animate-spin" /> : <RotateCw className="mr-2 h-4 w-4" />}
-            {isLoading ? "Regenerating... " : "Regenerate" }
-        </Button>}
-        {mode=="generate-view" ? (
-            <Button variant={"destructive"} onClick={()=>navigate("/admin/new-quiz")} className="mx-2">
-                <CircleX className="mr-2 h-4 w-4" /> Abort
-            </Button>
-        ) : (
+        
             <Button variant={"destructive"} onClick={()=> navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)} className="mx-2">
                 <CircleX className="mr-2 h-4 w-4" /> Return
             </Button>
-        )}
     </div>)}
       <Carousel className="w-full max-w-lg mx-auto">
         <CarouselContent>
@@ -395,4 +325,4 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
   );
 };
 
-export default AdminQuizCarousel;
+export default CreateQuizCarousel;
