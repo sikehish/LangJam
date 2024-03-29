@@ -50,7 +50,6 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
   const [originalContent, setOriginalContent]=useState<string>(content)
   const [originalQuestions, setOriginalQuestions] = useState<Question[]>(questions); //Used to ahndle the cancellation of an edit in a question
 
-  console.log(editedContent)
   const {mutate: reGenerateQuestions,isPending: isLoading} = useMutation({
     mutationFn: async () => {
       const quizParams= {
@@ -119,13 +118,14 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
     }
   ,
     onSuccess: (data) => {
-      navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)
+      console.log(mode)
       if(mode=="generate-view")  toast.success("New quiz generated and saved!")
       else{
-        queryClient.invalidateQueries({ queryKey: ['quizzes', topic] });
-        queryClient.refetchQueries({ queryKey: ['quizzes', topic] });
-        toast.success("Quiz modified and saved!")
-    }
+    queryClient.invalidateQueries({ queryKey:['quiz', quizId]});
+    toast.success("Quiz modified and saved!")
+  }
+  setEditedContent
+  navigate(`/admin/categories/${category}/subjects/${subject}/topics/${topic}`)
     },
     onError: (error: Error) => {
       toast.error(error.message);
