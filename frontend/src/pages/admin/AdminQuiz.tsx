@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import AdminQuizCarousel from '@/components/AdminQuizCarousel';
 import { Input } from '@/components/ui/input';
 
-const UserQuiz = ({ token }: { token: string }) => {
+const AdminQuiz = ({ token }: { token: string }) => {
   const { subjectId, topicId, categoryId, quizId } = useParams();
 
   const { data: quizData } = useQuery({
@@ -86,4 +86,4 @@ const UserQuiz = ({ token }: { token: string }) => {
   
 };
 
-export default UserQuiz;
+export default AdminQuiz;
