@@ -11,7 +11,6 @@ interface Attempt {
   isCorrect: boolean; 
 }
 
-
 interface UserDocument extends Document {
   name: string;
   email: string;
@@ -19,16 +18,15 @@ interface UserDocument extends Document {
   isAdmin?: boolean;
   createToken(verify?: boolean): string;
   attempts: Attempt[];
+  xp: number; // Add XP field to UserDocument
 }
 
-
 const attemptSchema = new Schema<Attempt>({
-  quizId: { type: Schema.Types.ObjectId, ref:"Quiz" ,required: true }, // Use Schema.Types.ObjectId here
-  questionId: { type: Schema.Types.ObjectId,ref:"Question", required: true }, // Use Schema.Types.ObjectId here
+  quizId: { type: Schema.Types.ObjectId, ref: "Quiz", required: true },
+  questionId: { type: Schema.Types.ObjectId, ref: "Question", required: true },
   chosenOption: { type: Number, required: true },
   isCorrect: { type: Boolean, required: true }
 });
-
 
 const userSchema = new Schema<UserDocument>({
   name: {
@@ -55,20 +53,39 @@ const userSchema = new Schema<UserDocument>({
     type: Boolean,
     default: true
   },
-  attempts: [attemptSchema] // Array of attempts
+  attempts: [attemptSchema],
+  xp: {
+    type: Number,
+    default: 0 
+  }
 },{
   timestamps: true
 });
 
-
-// Method to record a user's attempt at answering a question
+// Method to record a user's attempt at answering a question and update XP
 userSchema.methods.recordAttempt = async function (
   this: UserDocument,
   quizId: Types.ObjectId,
   questionId: Types.ObjectId,
   chosenOption: number,
-  isCorrect: boolean
+  isCorrect: boolean,
+  difficulty: 'Easy' | 'Medium' | 'Hard' // Add difficulty parameter
 ) {
+  let xpEarned = 0;
+  if (isCorrect) {
+    switch (difficulty) {
+      case 'Easy':
+        xpEarned = 5;
+        break;
+      case 'Medium':
+        xpEarned = 10;
+        break;
+      case 'Hard':
+        xpEarned = 20;
+        break;
+    }
+  }
+  this.xp += xpEarned;
   this.attempts.push({ quizId, questionId, chosenOption, isCorrect });
   await this.save();
 };
