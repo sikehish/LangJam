@@ -3,9 +3,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCategoryQueries } from "../../hooks/useCategoryQueries";
 import Category from "../../components/Category";
 import { CreateBtn } from '@/components/buttons/CreateBtn';
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Categories: React.FC<{ token: string }> = ({ token }) => {
   const queryClient = useQueryClient();
+  const navigate=useNavigate()
   const { getCategories, createCategoryMutation } = useCategoryQueries(queryClient, token);
 
   const renderCategories = () => {
@@ -20,6 +23,10 @@ const Categories: React.FC<{ token: string }> = ({ token }) => {
 
   return (
     <div className="container mx-auto pt-10">
+      <ArrowLeft
+          className="cursor-pointer ml-2 mb-3 transition-transform transform hover:scale-110"
+          onClick={() => navigate(`/admin`)}
+          />
       <h1 className="text-3xl font-bold mb-4">Categories</h1>
       {!getCategories?.data?.length ? (
         <p>No categories stored yet!</p>

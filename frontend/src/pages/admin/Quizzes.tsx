@@ -4,6 +4,7 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuizQueries } from '@/hooks/useQuizQueries';
 import { Button } from '@/components/ui/button';
 import QuizTile from '@/components/QuizTile';
+import { ArrowLeft } from 'lucide-react';
 
 export interface IQuiz {
     _id: string,
@@ -33,13 +34,17 @@ const Quizzes: React.FC<{ token: string }> = ({ token }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {getQuizzes?.data?.map((quiz:IQuiz) => (
           <QuizTile key={quiz._id} quiz={quiz} token={token} categoryId={categoryId!} subjectId={subjectId!}/>
-        ))}
+          ))}
       </div>
     );
   };
 
   return (
     <div className="container mx-auto pt-10">
+       <ArrowLeft
+          className="cursor-pointer ml-2 mb-3 transition-transform transform hover:scale-110"
+          onClick={() => navigate(`/admin/categories/${categoryId}/subjects/${subjectId}`)}
+          />
       <h1 className="text-3xl font-bold mb-4">Quizzes</h1>
       {!getQuizzes?.data?.length ? (
         <p>No Quizzes stored yet!</p>
