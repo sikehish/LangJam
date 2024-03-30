@@ -300,6 +300,7 @@ export const attemptQuestion = asyncWrapper(async (req: Request, res: Response) 
   }
 
   const isCorrect = question.correctOption === chosenOption;
+    console.log(question.correctOption, chosenOption)
 
   user.recordAttempt(quizId, questionId, chosenOption, isCorrect, quiz?.difficulty);
 

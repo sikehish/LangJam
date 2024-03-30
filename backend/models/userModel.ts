@@ -110,14 +110,10 @@ userSchema.methods.recordAttempt = async function (
   }
   this.xp += xpEarned;
 
-  // Initialize attempts if it is undefined
   if (this.attempts === undefined) this.attempts = new Map<string, Attempt>();
 
-  // Update attempts Map
   this.attempts.set(questionId.toString(), { quizId, chosenOption, isCorrect });
-  console.log('Updated attempts:', this.attempts);
 
-  // Update quizAttempts Map
   if (!this.quizAttempts) this.quizAttempts = new Map<string, QuizAttempt>();
   if (!this.quizAttempts.has(quizId.toString())) {
     this.quizAttempts.set(quizId.toString(), { questionsAttempted: 1, questionsCorrect: isCorrect ? 1 : 0 });
