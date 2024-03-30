@@ -1,14 +1,24 @@
-import mongoose, { Document, Model, Schema, Types } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import { isEmail, isStrongPassword } from "validator"
 
 export interface Attempt {
-  quizId: Types.ObjectId; 
-  questionId: Types.ObjectId; 
-  chosenOption: number; 
-  isCorrect: boolean; 
+  quizId: Types.ObjectId;
+  chosenOption: number;
+  isCorrect: boolean;
+}
+
+interface Attempts {
+  [questionId: string]: Attempt; // Key = questionId(string)
+}
+
+interface QuizAttempts {
+  [quizId: string]: {
+    questionsAttempted: number;
+    questionsCorrect: number;
+  };
 }
 
 export interface UserDocument extends Document {
@@ -17,14 +27,20 @@ export interface UserDocument extends Document {
   password: string;
   isAdmin?: boolean;
   createToken(verify?: boolean): string;
-  attempts: Attempt[];
-  xp: number; 
-  recordAttempt(quizId: Types.ObjectId, questionId: Types.ObjectId, chosenOption: number, isCorrect: boolean, difficulty: "Easy" | "Medium" | "Hard"): void;
+  attempts: Attempts; 
+  quizAttempts: QuizAttempts
+  xp: number;
+  recordAttempt(
+    quizId: Types.ObjectId,
+    questionId: Types.ObjectId,
+    chosenOption: number,
+    isCorrect: boolean,
+    difficulty: 'Easy' | 'Medium' | 'Hard'
+  ): void;
 }
 
 const attemptSchema = new Schema<Attempt>({
   quizId: { type: Schema.Types.ObjectId, ref: "Quiz", required: true },
-  questionId: { type: Schema.Types.ObjectId, ref: "Question", required: true },
   chosenOption: { type: Number, required: true },
   isCorrect: { type: Boolean, required: true }
 });
@@ -54,7 +70,17 @@ const userSchema = new Schema<UserDocument>({
     type: Boolean,
     default: true
   },
-  attempts: [attemptSchema],
+  attempts: {
+    type: Map,
+    of: attemptSchema 
+  },
+  quizAttempts: {
+    type: Map,
+    of: {
+      questionsAttempted: { type: Number, default: 0 },
+      questionsCorrect: { type: Number, default: 0 }
+    }
+  },
   xp: {
     type: Number,
     default: 0 
@@ -70,7 +96,7 @@ userSchema.methods.recordAttempt = async function (
   questionId: Types.ObjectId,
   chosenOption: number,
   isCorrect: boolean,
-  difficulty: 'Easy' | 'Medium' | 'Hard' // Add difficulty parameter
+  difficulty: 'Easy' | 'Medium' | 'Hard'
 ) {
   let xpEarned = 0;
   if (isCorrect) {
@@ -87,11 +113,24 @@ userSchema.methods.recordAttempt = async function (
     }
   }
   this.xp += xpEarned;
-  this.attempts.push({ quizId, questionId, chosenOption, isCorrect });
+
+  // Set the attempt using the questionId as the key
+  this.attempts[questionId.toString()] = { quizId, chosenOption, isCorrect };
+
+  if (!this.quizAttempts[quizId.toString()]) {
+    this.quizAttempts[quizId.toString()] = { questionsAttempted: 1, questionsCorrect: isCorrect ? 1 : 0 };
+  } else {
+    this.quizAttempts[quizId.toString()].questionsAttempted++;
+    if (isCorrect) {
+      this.quizAttempts[quizId.toString()].questionsCorrect++;
+    }
+  }
+
   await this.save();
 };
 
-//Using pre middleware function to utilise the data validation used in the schema https://mongoosejs.com/docs/validation.html
+// Using pre middleware function to utilise the data validation used in the schema
+// https://mongoosejs.com/docs/validation.html
 userSchema.pre<UserDocument>('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);

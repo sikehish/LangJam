@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface QuizData {
+    _id?: string;
   difficulty?: string;
   numberOfQuestions: number;
   questions: Question[];
@@ -22,6 +23,7 @@ interface QuizData {
 }
 
 interface Question {
+ _id?: string;
   question: string;
   choices: string[];
   correctOption: number;
@@ -44,19 +46,20 @@ const UserQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,
   const queryClient=useQueryClient()
   const navigate=useNavigate()
   const [attemptQuestionIndex, setAttemptQuestionIndex] = useState<number | null>(null);
+  const [attemptChoiceIndex, setAttemptChoiceIndex] = useState<number | null>(null);
 
-  const {mutate: saveToDatabase,isPending: isSaving} = useMutation({
+  const {mutate: saveAttempt,isPending: isSaving} = useMutation({
     mutationFn: async () => {
-      const quizGen= {
-        topic, difficulty, numberOfQuestions: quizData?.numberOfQuestions, questions, title, content
+      const quesData= {
+       quizId, questionId: questions[attemptQuestionIndex!]?._id, attemptChoiceIndex
       }
-      const response=await fetch("/api/admin/quizzes",{
+      const response=await fetch("/api/user/attempt-question",{
           method: "POST",
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(quizGen),
+          body: JSON.stringify(quesData),
         });
         
         const data=await response.json()
@@ -92,7 +95,7 @@ const UserQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,
 
           {questions && questions.map((question, index) => (
             <CarouselItem key={index}>
-              <div className="shadow-md rounded-lg p-4 bg-slate-100">
+              <form className="shadow-md rounded-lg p-4 bg-slate-100" onSubmit={(e)=>saveAttempt()}>
                   <div>
                     <div className="flex justify-between mb-2">
                       <h3 className="inline text-lg font-semibold">
@@ -110,23 +113,28 @@ const UserQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,
                               type="radio"
                               name={`question_${index}`}
                               value={choiceIndex}
-                              checked={question.correctOption == choiceIndex}
-                              onChange={(e) => {}}
+                              onChange={(e) => {
+                                setAttemptChoiceIndex(choiceIndex)
+                              }}
                               className="form-radio h-5 w-5 text-indigo-600"
-                              disabled={attemptQuestionIndex !== null}
                             />
                             <span className="ml-2">{choice}</span>
                           </label>
                         </li>
                       ))}
                     </ul>
-                    <p>Correct Option: {question.correctOption + 1}</p>
+                    {/* <p>Correct Option: {question.correctOption + 1}</p> */}
+                    <div className="flex flex-row justify-center items-center">
+                    {attemptQuestionIndex!==null ? <>
+                    <p>Correct answer!</p>
                     <p>
                       <span className="underline">Explanation:</span>{" "}
                       {question.explanation}
                     </p>
+                    </> : <button type="submit" className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Answer!</button>}
                   </div>
-              </div>
+                    </div>
+              </form>
             </CarouselItem>
           ))}
         </CarouselContent>

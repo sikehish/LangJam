@@ -271,7 +271,7 @@ export const resetPasswordController=asyncWrapper(async (req,res)=>{
 })
 
 
-export const attemptQuiz = asyncWrapper(async (req: Request, res: Response) => {
+export const attemptQuestion = asyncWrapper(async (req: Request, res: Response) => {
   const { quizId, questionId, chosenOption } = req.body;
   const userId = ((req as AuthReq)?.user); 
 
