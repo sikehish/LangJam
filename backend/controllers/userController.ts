@@ -319,3 +319,17 @@ export const getAttemptedQuestions =asyncWrapper(async (req: Request, res: Respo
     const attemptedQuestions = user.attempts || {}; 
     res.status(200).json({ status:"success", data:{attemptedQuestions}});
 })
+
+export const getAttemptedQuizDetails =asyncWrapper(async (req: Request, res: Response) => {
+  const userId = (req as AuthReq)?.user; 
+  const user = await User.findById(userId);
+  const {quizId} = req.params
+  console.log("ahhahahh ", quizId)
+  if (!user) {
+     res.status(404)
+     throw new Error('User not found')
+  }
+  console.log(user)
+  const attemptedQuizDetails = (quizId && user.quizAttempts.get(quizId) )? user.quizAttempts.get(quizId) : {}; 
+  res.status(200).json({ status:"success", data:{attemptedQuizDetails}});
+})

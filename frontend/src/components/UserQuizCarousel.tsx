@@ -127,7 +127,8 @@ const UserQuizCarousel: React.FC<Props> = ({
       return data?.data;
     },
     onSuccess: (data) => {
-      console.log(data);
+        queryClient.invalidateQueries({queryKey:['quizDetails', quizId]})
+        queryClient.refetchQueries({queryKey:['quizDetails', quizId]})
       setIsSubmitting(false);
       if (data?.isCorrect) toast.success("That's right!");
       else toast.error("OOPS! Better luck next time!");

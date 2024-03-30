@@ -5,10 +5,25 @@ import UserQuizCarousel from '@/components/UserQuizCarousel';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft } from 'lucide-react';
 import { attemptQuestion } from '../../../../backend/controllers/userController';
-
 const UserQuiz = ({ token }: { token: string }) => {
   const { subjectId, topicId, categoryId, quizId } = useParams();
   const navigate=useNavigate()
+
+  const { data: quizDetails } = useQuery({
+    queryKey: ['quizDetails', quizId],
+    queryFn: async () => {
+      const response = await fetch(`/api/users/attempted-quiz-details/${quizId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Unable to fetch quiz details');
+      }
+      return response.json();
+    }
+  });
 
   const { data } = useQuery({
     queryKey: ['quiz', quizId],
@@ -26,8 +41,9 @@ const UserQuiz = ({ token }: { token: string }) => {
     }
   });
 
-
   const { title, questions, difficulty, numberOfQuestions, content } = data?.data ?? {};
+  const { questionsAttempted, questionsCorrect}= quizDetails?.data?.attemptedQuizDetails ?? {}
+  console.log(quizDetails?.data?.attemptedQuizDetails)
 
   return (
     <div className="w-[80%] lg:w-[60%] mx-auto mb-8">
@@ -38,9 +54,11 @@ const UserQuiz = ({ token }: { token: string }) => {
           /> */}
         <h2 className="text-2xl font-bold mb-4 pt-12">Quiz Title: <span className="underline">{title}</span></h2>
         <p className="mb-2">Difficulty Level: {difficulty}</p>
-         <p className="mb-4">
+         {questionsAttempted ? <p className="mb-4">
+          Questions attempted: {questionsAttempted}/{questions.length} | Correct answers : {questionsCorrect}
+        </p>  : <p className="mb-4">
           Number of Questions: {numberOfQuestions}
-        </p> 
+        </p>}
       </div>
       <div className='flex flex-row justify-center items-center mb-4'>
 <button
