@@ -26,35 +26,7 @@ const UserQuiz = ({ token }: { token: string }) => {
     }
   });
 
-  const [attemptedQuestions, setAttemptedQuestions] = useState<{
-    [questionId: string]: { isCorrect: boolean; chosenOption: number };
-  } | null>(null); // Track attempted questions
 
-  useEffect(() => {
-    // Fetch user's attempted questions from profile and update state
-    const fetchAttemptedQuestions = async () => {
-      try {
-        const response = await fetch("/api/users/attempted-questions", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(
-            data?.message || "Failed to fetch attempted questions"
-          );
-        }
-        setAttemptedQuestions(data?.data?.attemptedQuestions);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchAttemptedQuestions();
-  }, [token]);
-  
   const { title, questions, difficulty, numberOfQuestions, content } = data?.data ?? {};
 
   return (
@@ -66,9 +38,9 @@ const UserQuiz = ({ token }: { token: string }) => {
           /> */}
         <h2 className="text-2xl font-bold mb-4 pt-12">Quiz Title: <span className="underline">{title}</span></h2>
         <p className="mb-2">Difficulty Level: {difficulty}</p>
-        <p className="mb-4">
+         <p className="mb-4">
           Number of Questions: {numberOfQuestions}
-        </p>
+        </p> 
       </div>
       <div className='flex flex-row justify-center items-center mb-4'>
 <button
@@ -86,8 +58,6 @@ const UserQuiz = ({ token }: { token: string }) => {
         title={title}
         quizId={quizId}
         difficulty={difficulty}
-        setAttemptedQuestions={setAttemptedQuestions}
-        attemptedQuestions={attemptedQuestions}
         />
       }
     </div>
