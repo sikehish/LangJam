@@ -10,6 +10,8 @@ import Admin, { AdminSchema } from '../models/adminModel';
 import { sendMail } from '../utils/mailFunc';
 import { requestReset, passwordReset } from '../services/passwords';
 import { AuthReq } from '../typings';
+import Quiz from '../models/quizModel';
+import { UserDocument } from '../models/userModel';
 
 
 export const userSignup=asyncWrapper(async (req, res) => {
@@ -267,3 +269,39 @@ export const resetPasswordController=asyncWrapper(async (req,res)=>{
     const newDoc=await passwordReset(uid, token, password, confirmPassword)
     res.status(200).json({status:"success", data: newDoc})
 })
+
+
+export const attemptQuiz = asyncWrapper(async (req: Request, res: Response) => {
+  const { quizId, questionId, chosenOption } = req.body;
+  const userId = ((req as AuthReq)?.user); 
+
+  const quiz = await Quiz.findById(quizId);
+  if (!quiz) {
+     res.status(404)
+     throw new Error('Quiz not found');
+  }
+
+  if (chosenOption < 0 || chosenOption >= quiz.questions.length) {
+     res.status(400)
+     throw new Error('Invalid chosen option')
+  }
+
+
+  const user: UserDocument | null = await User.findById(userId);
+  if (!user) {
+    res.status(404)
+    throw new Error('User not found')
+  }
+
+  const question = quiz.questions.find(q => q._id.toString() === questionId);
+  if (!question) {
+    res.status(404)
+    throw new Error('Question not found')
+  }
+
+  const isCorrect = question.correctOption === chosenOption;
+
+  user.recordAttempt(quizId, questionId, chosenOption, isCorrect, quiz?.difficulty);
+
+  res.status(200).json({ status:"success", data:{isCorrect} });
+});

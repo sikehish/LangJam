@@ -4,21 +4,22 @@ import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import { isEmail, isStrongPassword } from "validator"
 
-interface Attempt {
+export interface Attempt {
   quizId: Types.ObjectId; 
   questionId: Types.ObjectId; 
   chosenOption: number; 
   isCorrect: boolean; 
 }
 
-interface UserDocument extends Document {
+export interface UserDocument extends Document {
   name: string;
   email: string;
   password: string;
   isAdmin?: boolean;
   createToken(verify?: boolean): string;
   attempts: Attempt[];
-  xp: number; // Add XP field to UserDocument
+  xp: number; 
+  recordAttempt(quizId: Types.ObjectId, questionId: Types.ObjectId, chosenOption: number, isCorrect: boolean, difficulty: "Easy" | "Medium" | "Hard"): void;
 }
 
 const attemptSchema = new Schema<Attempt>({
