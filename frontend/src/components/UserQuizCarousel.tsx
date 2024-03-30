@@ -14,6 +14,7 @@ import { CircleX, Loader2, RotateCw, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "@/context/AuthContext";
+import { attemptQuestion } from '../../../backend/controllers/userController';
 
 interface QuizData {
   _id?: string;
@@ -32,15 +33,18 @@ interface Question {
 }
 
 interface Props {
-  quizData: QuizData;
-  subject: string;
-  topic: string;
-  category: string;
-  token: string;
-  title: string;
-  quizId?: string;
-  difficulty: string;
-}
+    quizData: QuizData;
+    subject: string;
+    topic: string;
+    category: string;
+    token: string;
+    title: string;
+    quizId?: string;
+    difficulty: string;
+    attemptedQuestions: { [questionId: string]: { isCorrect: boolean; chosenOption: number } } | null;
+    setAttemptedQuestions: React.Dispatch<React.SetStateAction<{ [questionId: string]: { isCorrect: boolean; chosenOption: number } } | null>>;
+  }
+  
 
 const UserQuizCarousel: React.FC<Props> = ({
   quizData,
@@ -51,39 +55,14 @@ const UserQuizCarousel: React.FC<Props> = ({
   title,
   quizId,
   difficulty,
+  setAttemptedQuestions,
+  attemptedQuestions
 }) => {
   const { questions, content } = quizData;
   const queryClient = useQueryClient();
   const { state } = useAuthContext();
   const navigate = useNavigate();
-  const [attemptedQuestions, setAttemptedQuestions] = useState<{
-    [questionId: string]: { isCorrect: boolean; chosenOption: number };
-  } | null>(null); // Track attempted questions
-
-  useEffect(() => {
-    // Fetch user's attempted questions from profile and update state
-    const fetchAttemptedQuestions = async () => {
-      try {
-        const response = await fetch("/api/users/attempted-questions", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(
-            data?.message || "Failed to fetch attempted questions"
-          );
-        }
-        setAttemptedQuestions(data?.data?.attemptedQuestions);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchAttemptedQuestions();
-  }, [token]);
+  
 
   // const [attemptQuestionIndex, setAttemptQuestionIndex] = useState<number | null>(null);
   const [attemptChoiceIndex, setAttemptChoiceIndex] = useState<number | null>(
@@ -144,12 +123,13 @@ const UserQuizCarousel: React.FC<Props> = ({
     if (
       attemptChoiceIndex !== null &&
       attemptedQuestions &&
-      !attemptedQuestions[questions[index]?._id || ""]
+      questions[index]?._id &&
+      !attemptedQuestions[questions[index]._id!]
     ) {
       saveAttempt({index, correctOption});
-    }
+    } else  toast.error("Please select an option!")
   };
-  console.log(attemptedQuestions);
+
   return (
     <div className="p-4">
       <Carousel className="w-full max-w-lg mx-auto">
@@ -167,7 +147,7 @@ const UserQuizCarousel: React.FC<Props> = ({
             questions.map((question, index) => (
               <CarouselItem key={index}>
                 <form
-                  className="shadow-md rounded-lg p-4 bg-slate-100"
+                  className={`shadow-md rounded-lg p-4 ${question?._id && (attemptedQuestions[question._id]?.isCorrect ? "bg-green-50" : attemptedQuestions[question._id]?.isCorrect==false ? "bg-red-50" :  "bg-slate-100" )  }`}
                   onSubmit={(e) =>
                     handleSubmitAttempt(e, index, question.correctOption)
                   }
@@ -218,7 +198,26 @@ const UserQuizCarousel: React.FC<Props> = ({
                         </li>
                       ))}
                     </ul>
-                    <div className="flex flex-row justify-center items-center">
+                     </div>
+                     <div className="flex justify-center items-center">
+                {!attemptedQuestions[question._id || ""] && (
+                    <button
+                    type="submit"
+                    className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? (
+                              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                              ) : (
+                                  "Answer!"
+                                  )}
+                        </button>
+                      )}
+                      </div>
+                </form>
+                    
+
+                    {question?._id && attemptedQuestions[question._id] && <div  className={`flex flex-row justify-center items-center shadow-md rounded-lg p-4 mt-7 ${(attemptedQuestions[question._id]?.isCorrect ? "bg-green-100" : "bg-red-100")  }`}>
                       {question._id && attemptedQuestions[question._id] && (
                         <div>
                           {attemptedQuestions[question._id].isCorrect ? (
@@ -232,23 +231,9 @@ const UserQuizCarousel: React.FC<Props> = ({
                           </p>
                         </div>
                       )}
-
-                      {!attemptedQuestions[question._id || ""] && (
-                        <button
-                          type="submit"
-                          className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                          disabled={isSubmitting}
-                        >
-                          {isSubmitting ? (
-                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                          ) : (
-                            "Answer!"
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </form>
+                      
+                      </div>}
+                      
               </CarouselItem>
             ))}
         </CarouselContent>
