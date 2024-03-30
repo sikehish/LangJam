@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import AdminQuizCarousel from "@/components/AdminQuizCarousel";
+import AdminQuizCarousel from "@/components/admin/AdminQuizCarousel";
 
 const GenerateQuiz = ({ token }: { token: string }) => {
   const location = useLocation();

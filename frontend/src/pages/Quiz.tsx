@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import AdminQuizCarousel from '@/components/AdminQuizCarousel';
 import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/context/AuthContext';
 import AdminQuiz from './admin/AdminQuiz';

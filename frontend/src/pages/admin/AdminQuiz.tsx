@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import AdminQuizCarousel from '@/components/AdminQuizCarousel';
+import AdminQuizCarousel from '@/components/admin/AdminQuizCarousel';
 import { Input } from '@/components/ui/input';
 
 const AdminQuiz = ({ token }: { token: string }) => {

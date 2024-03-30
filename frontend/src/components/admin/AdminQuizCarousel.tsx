@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface QuizData {
-  difficulty: string;
+  difficulty?: string;
   numberOfQuestions: number;
   questions: Question[];
   content: string;

@@ -1,4 +1,4 @@
-import CreateQuizCarousel from '@/components/CreateQuizCarousel';
+import CreateQuizCarousel from '@/components/admin/CreateQuizCarousel';
 import React from 'react'
 import { useLocation } from 'react-router-dom'
 import { Question } from './Quizzes';

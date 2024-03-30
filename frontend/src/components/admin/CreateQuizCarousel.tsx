@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { CircleX, Loader2, RotateCw, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Question } from "@/pages/admin/Quizzes";
+import { Question } from '../../pages/Quizzes';
 
 
 interface Props {
