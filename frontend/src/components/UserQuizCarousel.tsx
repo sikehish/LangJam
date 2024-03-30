@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -13,9 +13,10 @@ import { Button } from '@/components/ui/button';
 import { CircleX, Loader2, RotateCw, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuthContext } from "@/context/AuthContext";
 
 interface QuizData {
-    _id?: string;
+  _id?: string;
   difficulty?: string;
   numberOfQuestions: number;
   questions: Question[];
@@ -23,7 +24,7 @@ interface QuizData {
 }
 
 interface Question {
- _id?: string;
+  _id?: string;
   question: string;
   choices: string[];
   correctOption: number;
@@ -32,28 +33,58 @@ interface Question {
 
 interface Props {
   quizData: QuizData;
-   topic: string,
-   subject: string,
-   category: string,
-   token:string,
-   title: string,
-   quizId?: string,
-   difficulty: string
+  subject: string,
+  topic: string,
+  category: string,
+  token:string,
+  title: string,
+  quizId?: string,
+  difficulty: string
 }
 
-const UserQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token, title, quizId, difficulty }) => {
-  const { questions, content } = quizData;
-  const queryClient=useQueryClient()
-  const navigate=useNavigate()
-  const [attemptQuestionIndex, setAttemptQuestionIndex] = useState<number | null>(null);
-  const [attemptChoiceIndex, setAttemptChoiceIndex] = useState<number | null>(null);
-
-  const {mutate: saveAttempt,isPending: isSaving} = useMutation({
-    mutationFn: async () => {
-      const quesData= {
-       quizId, questionId: questions[attemptQuestionIndex!]?._id, attemptChoiceIndex
-      }
-      const response=await fetch("/api/user/attempt-question",{
+const UserQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category, token, title, quizId, difficulty }) => {
+    const { questions, content } = quizData;
+    const queryClient = useQueryClient();
+    const { state } = useAuthContext();
+    const navigate = useNavigate();
+    const [attemptedQuestions, setAttemptedQuestions] = useState<{ [questionId: string]: boolean } | null>(null); // Track attempted questions
+  
+    useEffect(() => {
+      // Fetch user's attempted questions from profile and update state
+      const fetchAttemptedQuestions = async () => {
+        try {
+          const response = await fetch("/api/users/attempted-questions", {
+            method: "GET",
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data?.message || 'Failed to fetch attempted questions');
+          }
+          setAttemptedQuestions(data?.data?.attemptedQuestions);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchAttemptedQuestions();
+    }, [token]);
+  
+    // const [attemptQuestionIndex, setAttemptQuestionIndex] = useState<number | null>(null);
+    const [attemptChoiceIndex, setAttemptChoiceIndex] = useState<number | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
+    const { mutate: saveAttempt, isPending: isSaving } = useMutation({
+      mutationFn: async (index: number) => {
+        setIsSubmitting(true);
+        const quesData = {
+          quizId,
+          questionId: questions[index!]?._id,
+          chosenOption: attemptChoiceIndex
+        }
+        const response = await fetch("/api/users/attempt-question", {
           method: "POST",
           headers: {
             'Content-Type': 'application/json',
@@ -61,48 +92,51 @@ const UserQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,
           },
           body: JSON.stringify(quesData),
         });
-        
-        const data=await response.json()
-        if(!response.ok || data?.status=="error" || data?.status=="fail") throw Error(data?.message)
+  
+        const data = await response.json()
+        if (!response.ok || data?.status == "error" || data?.status == "fail") throw Error(data?.message)
+        setAttemptedQuestions(prev => ({ ...prev, [questions[index!]?._id || '']: true })); // Update attempted questions
         return data
-    }
-  ,
-    onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey:['quiz', quizId]});
-        toast.success("Quiz modified and saved!")
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
-
-
-
-  return (
-    <div className="p-4">
-
-      <Carousel className="w-full max-w-lg mx-auto">
-        <CarouselContent>
-          <CarouselItem key="intro">
-            <div className="shadow-md rounded-lg p-4 bg-slate-100">
-              <h2 className="text-lg font-semibold mb-2">Introduction</h2>
-             
+      },
+      onSuccess: (data) => {
+        setIsSubmitting(false);
+        if (data?.isCorrect) toast.success("That's right!")
+        else toast.error("OOPS! Better luck next time!")
+        setAttemptChoiceIndex(null)
+      },
+      onError: (error: Error) => {
+        setIsSubmitting(false);
+        toast.error(error.message);
+      },
+    });
+  
+    const handleSubmitAttempt = (e: React.FormEvent,index: number ) => {
+      e.preventDefault();
+      if (attemptChoiceIndex!==null && attemptedQuestions && !attemptedQuestions[questions[index]?._id || '']) {
+        saveAttempt(index);
+      }
+    };
+  
+    return (
+      <div className="p-4">
+        <Carousel className="w-full max-w-lg mx-auto">
+          <CarouselContent>
+            <CarouselItem key="intro">
+              <div className="shadow-md rounded-lg p-4 bg-slate-100">
+                <h2 className="text-lg font-semibold mb-2">Introduction</h2>
                 <div>
                   <p>{content}</p>
                 </div>
-            </div>
-          </CarouselItem>
-
-          {questions && questions.map((question, index) => (
-            <CarouselItem key={index}>
-              <form className="shadow-md rounded-lg p-4 bg-slate-100" onSubmit={(e)=>saveAttempt()}>
+              </div>
+            </CarouselItem>
+            {attemptedQuestions && questions && questions.map((question, index) => (
+              <CarouselItem key={index}>
+                <form className="shadow-md rounded-lg p-4 bg-slate-100" onSubmit={(e)=>handleSubmitAttempt(e,index)}>
                   <div>
                     <div className="flex justify-between mb-2">
                       <h3 className="inline text-lg font-semibold">
                         Question {index + 1}
                       </h3>
-                      <div>
-                      </div>
                     </div>
                     <p>{question.question}</p>
                     <ul className="my-4">
@@ -117,32 +151,40 @@ const UserQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,
                                 setAttemptChoiceIndex(choiceIndex)
                               }}
                               className="form-radio h-5 w-5 text-indigo-600"
+                              disabled={attemptedQuestions[question._id || '']}
                             />
                             <span className="ml-2">{choice}</span>
                           </label>
                         </li>
                       ))}
                     </ul>
-                    {/* <p>Correct Option: {question.correctOption + 1}</p> */}
                     <div className="flex flex-row justify-center items-center">
-                    {attemptQuestionIndex!==null ? <>
-                    <p>Correct answer!</p>
-                    <p>
-                      <span className="underline">Explanation:</span>{" "}
-                      {question.explanation}
-                    </p>
-                    </> : <button type="submit" className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Answer!</button>}
-                  </div>
+                      {attemptedQuestions[question._id || ''] && (
+                        <>
+                          <p>Correct answer!</p>
+                          <p>
+                            <span className="underline">Explanation:</span>{" "}
+                            {question.explanation}
+                          </p>
+                        </>
+                      )}
+                      {!attemptedQuestions[question._id || ''] && (
+                        <button type="submit" className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" disabled={isSubmitting}>
+                          {isSubmitting ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : "Answer!"}
+                        </button>
+                      )}
                     </div>
-              </form>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious disabled={attemptQuestionIndex!==null} />
-        <CarouselNext disabled={attemptQuestionIndex!==null} />
-      </Carousel>
-    </div>
-  );
-};
-
-export default UserQuizCarousel;
+                  </div>
+                </form>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious/>
+          <CarouselNext />
+        </Carousel>
+      </div>
+    );
+  };
+  
+  export default UserQuizCarousel;
+  

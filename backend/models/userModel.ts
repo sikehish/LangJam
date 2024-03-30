@@ -4,22 +4,20 @@ import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import { isEmail, isStrongPassword } from "validator"
 
-export interface Attempt {
+type Attempt = {
   quizId: Types.ObjectId;
   chosenOption: number;
   isCorrect: boolean;
+};
+
+type Attempts = Map<string, Attempt>;
+
+interface QuizAttempt {
+  questionsAttempted: number;
+  questionsCorrect: number;
 }
 
-interface Attempts {
-  [questionId: string]: Attempt; // Key = questionId(string)
-}
-
-interface QuizAttempts {
-  [quizId: string]: {
-    questionsAttempted: number;
-    questionsCorrect: number;
-  };
-}
+type QuizAttempts = Map<string, QuizAttempt>;
 
 export interface UserDocument extends Document {
   name: string;
@@ -88,8 +86,6 @@ const userSchema = new Schema<UserDocument>({
 },{
   timestamps: true
 });
-
-// Method to record a user's attempt at answering a question and update XP
 userSchema.methods.recordAttempt = async function (
   this: UserDocument,
   quizId: Types.ObjectId,
@@ -114,20 +110,35 @@ userSchema.methods.recordAttempt = async function (
   }
   this.xp += xpEarned;
 
-  // Set the attempt using the questionId as the key
-  this.attempts[questionId.toString()] = { quizId, chosenOption, isCorrect };
+  // Initialize attempts if it is undefined
+  if (this.attempts === undefined) this.attempts = new Map<string, Attempt>();
 
-  if (!this.quizAttempts[quizId.toString()]) {
-    this.quizAttempts[quizId.toString()] = { questionsAttempted: 1, questionsCorrect: isCorrect ? 1 : 0 };
+  // Update attempts Map
+  this.attempts.set(questionId.toString(), { quizId, chosenOption, isCorrect });
+  console.log('Updated attempts:', this.attempts);
+
+  // Update quizAttempts Map
+  if (!this.quizAttempts) this.quizAttempts = new Map<string, QuizAttempt>();
+  if (!this.quizAttempts.has(quizId.toString())) {
+    this.quizAttempts.set(quizId.toString(), { questionsAttempted: 1, questionsCorrect: isCorrect ? 1 : 0 });
   } else {
-    this.quizAttempts[quizId.toString()].questionsAttempted++;
+    const quizAttempt = this.quizAttempts.get(quizId.toString())!;
+    quizAttempt.questionsAttempted++;
     if (isCorrect) {
-      this.quizAttempts[quizId.toString()].questionsCorrect++;
+      quizAttempt.questionsCorrect++;
     }
+    this.quizAttempts.set(quizId.toString(), quizAttempt);
   }
 
-  await this.save();
+  // Save the updated user document
+  try {
+    await this.save();
+    console.log('User document saved successfully:', this);
+  } catch (error) {
+    console.error('Error saving user document:', error);
+  }
 };
+
 
 // Using pre middleware function to utilise the data validation used in the schema
 // https://mongoosejs.com/docs/validation.html

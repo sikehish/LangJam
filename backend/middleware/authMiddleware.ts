@@ -27,6 +27,7 @@ export const checkAuth = (req: Request, res: Response, next: NextFunction): Resp
 
     const { id } = decodedToken;
     ((req as unknown) as AuthReq).user = id;
+    
     next();
   } catch (error) {
     console.log(error);
