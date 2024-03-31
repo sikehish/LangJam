@@ -54,7 +54,7 @@ const UserQuiz = ({ token }: { token: string }) => {
           /> */}
         <h2 className="text-2xl font-bold mb-4 pt-12">Quiz Title: <span className="underline">{title}</span></h2>
         <p className="mb-2">Difficulty Level: {difficulty}</p>
-         {questionsAttempted ? <p className="mb-4">
+         {questions && questionsAttempted ? <p className="mb-4">
           Questions attempted: {questionsAttempted}/{questions.length} | Correct answers : {questionsCorrect}
         </p>  : <p className="mb-4">
           Number of Questions: {numberOfQuestions}
