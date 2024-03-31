@@ -12,6 +12,7 @@ import { requestReset, passwordReset } from '../services/passwords';
 import { AuthReq } from '../typings';
 import Quiz from '../models/quizModel';
 import { UserDocument } from '../models/userModel';
+import { getQuizzesAttempted, getQuizzesCompleted, getQuizzesNotAttempted } from '../utils/filterMethods';
 
 
 export const userSignup=asyncWrapper(async (req, res) => {
@@ -333,3 +334,40 @@ export const getAttemptedQuizDetails =asyncWrapper(async (req: Request, res: Res
   const attemptedQuizDetails = (quizId && user.quizAttempts.get(quizId) )? user.quizAttempts.get(quizId) : {}; 
   res.status(200).json({ status:"success", data:{attemptedQuizDetails}});
 })
+
+export const getFilteredQuizzes = asyncWrapper(async (req: Request, res: Response) => {
+  const userId = (req as AuthReq)?.user;
+  const user = await User.findById(userId);
+
+  if (!user) {
+    res.status(404)
+    throw new Error('User not found')
+    return;
+  }
+
+  const { filter } = req.query;
+  let filteredQuizzes;
+
+  if (!filter) {
+    res.status(400)
+   throw new Error('Filter parameter is required')
+  }
+
+  switch (filter) {
+    case 'yetto':
+      filteredQuizzes = await getQuizzesNotAttempted(user);
+      break;
+    case 'completed':
+      filteredQuizzes = await getQuizzesCompleted(user);
+      break;
+    case 'attempted':
+      filteredQuizzes = await getQuizzesAttempted(user);
+      break;
+    default:
+      res.status(400)
+      throw new Error("Invalid filter value")
+  }
+
+  res.status(200).json({ status: 'success', data: filteredQuizzes });
+});
+
