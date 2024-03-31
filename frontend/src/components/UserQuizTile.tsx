@@ -11,7 +11,7 @@ import { useQuizQueries } from "@/hooks/useQuizQueries";
 import { useAuthContext } from "@/context/AuthContext";
 import { IQuiz } from "@/pages/Quizzes";
 
-function QuizTile({
+function UserQuizTile({
   quiz,
   token,
   categoryId,
@@ -67,14 +67,8 @@ function QuizTile({
         <p className="text-white">{quiz.title}</p>
       </div>
       </Link>
-      {token && state?.user?.isAdmin && <div className="flex">
-        {/* <button onClick={} className="mr-2"><FaTrash /></button> */}
-        <Button variant={"ghost"} onClick={handleDelete}>
-                <FaTrash className="text-red-800" />
-              </Button>
-      </div>}
     </div>
   );
 }
 
-export default QuizTile;
+export default UserQuizTile;

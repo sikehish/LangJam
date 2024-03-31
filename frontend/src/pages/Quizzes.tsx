@@ -3,9 +3,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuizQueries } from '@/hooks/useQuizQueries';
 import { Button } from '@/components/ui/button';
-import QuizTile from '@/components/QuizTile';
 import { ArrowLeft } from 'lucide-react';
 import { useAuthContext } from '@/context/AuthContext';
+import AdminQuizTile from '@/components/admin/AdminQuizTile';
 
 export interface IQuiz {
     _id: string,
@@ -35,7 +35,7 @@ const Quizzes: React.FC<{ token: string }> = ({ token }) => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {getQuizzes?.data?.map((quiz:IQuiz) => (
-          <QuizTile key={quiz._id} quiz={quiz} token={token} categoryId={categoryId!} subjectId={subjectId!}/>
+          <AdminQuizTile key={quiz._id} quiz={quiz} token={token} categoryId={categoryId!} subjectId={subjectId!}/>
           ))}
       </div>
     );

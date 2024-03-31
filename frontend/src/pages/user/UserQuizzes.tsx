@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import QuizTile from '@/components/QuizTile';
 import { ArrowLeft } from 'lucide-react';
 import { useAuthContext } from '@/context/AuthContext';
 import { SelectComponent } from '@/components/SelectComponent';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import UserQuizTile from '@/components/UserQuizTile';
 
 export interface IQuiz {
   _id: string;
@@ -55,7 +55,7 @@ const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {quizzes.map((quiz: IQuiz) => (
-          <QuizTile
+          <UserQuizTile
             key={quiz._id}
             quiz={quiz}
             token={token}
