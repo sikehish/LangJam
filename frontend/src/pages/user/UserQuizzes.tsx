@@ -1,34 +1,17 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useAuthContext } from '@/context/AuthContext';
 import { SelectComponent } from '@/components/SelectComponent';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import UserQuizTile from '@/components/UserQuizTile';
-
-export interface IQuiz {
-  _id: string;
-  difficulty: string;
-  numberOfQuestions: number;
-  title: string;
-  topic: string; //topicId is a string
-  questions: Question[];
-}
-
-export interface Question {
-  question: string;
-  choices: string[];
-  correctOption: number;
-  explanation: string;
-}
+import { IQuiz } from '../Quizzes';
 
 const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
   const { state } = useAuthContext();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { topicId, subjectId, categoryId } = useParams();
-  const [filter, setFilter] = useState('yetto');
+  const [filter, setFilter] = useState('attempted');
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['quizzes', filter],
@@ -42,13 +25,18 @@ const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
         throw new Error('Unable to fetch quizzes');
       }
       const data = await response.json();
-      if (data?.status === "error" || data?.status === "fail") {
-        throw new Error(data?.message || 'Unknown error occurred');
-      }
+      if (data?.status === 'error' || data?.status === 'fail') {
+          throw new Error(data?.message || 'Unknown error occurred');
+        }
+        //   if(!((data?.data)?.length)){
+  //     if(filter=="yetto") setFilter("attempted")
+  //     else if(filter=="completed") setFilter("yetto")
+  //     else setFilter("completed")
+  //   }
       return data;
     },
   });
-  
+
   const quizzes = data?.data || [];
 
   const renderQuizzes = () => {
@@ -61,6 +49,7 @@ const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
             token={token}
             categoryId={categoryId!}
             subjectId={subjectId!}
+            filter={filter}
           />
         ))}
       </div>
@@ -69,15 +58,24 @@ const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
 
   return (
     <div className="container mx-auto pt-10">
-      <ArrowLeft
-        className="cursor-pointer ml-2 mb-3 transition-transform transform hover:scale-110"
-        onClick={() => navigate(`/categories/${categoryId}/subjects/${subjectId}`)}
-      />
-      <div className="flex flex-row space-x-10">
+        <ArrowLeft
+          className="cursor-pointer mr-2 transform transition-transform hover:scale-110"
+          onClick={() => navigate(`/categories/${categoryId}/subjects/${subjectId}`)}
+        />
+      <div className="flex flex-row justify-between mt-4">
         <h1 className="text-3xl font-bold mb-4">Quizzes</h1>
-        <SelectComponent setFilter={setFilter} />
+        <SelectComponent setFilter={setFilter} filter={filter} />
       </div>
-      {!quizzes.length ? <p>No Quizzes stored yet!</p> : renderQuizzes()}
+      {isLoading && <p className="mt-4">Loading...</p>}
+      {isError && <p className="mt-4 text-red-500">Error fetching quizzes.</p>}
+      {!isLoading && quizzes.length === 0 && (
+        <p className="mt-4">
+          {filter === 'yetto' ? 'Fresh quizzes coming your way!' :
+          filter === 'attempted' ? 'You haven\'t attempted any quizzes so far :(' :
+          'You haven\'t completed any quizzes so far :('}
+        </p>
+      )}
+      {!isLoading && quizzes.length > 0 && renderQuizzes()}
     </div>
   );
 };

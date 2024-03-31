@@ -10,17 +10,19 @@ import { Link } from "react-router-dom";
 import { useQuizQueries } from "@/hooks/useQuizQueries";
 import { useAuthContext } from "@/context/AuthContext";
 import { IQuiz } from "@/pages/Quizzes";
+import { CircleCheckBig, CirclePlus, CircleSlash, Paintbrush2 } from "lucide-react";
 
 function UserQuizTile({
   quiz,
   token,
   categoryId,
-  subjectId
+  subjectId, filter
 }: {
     quiz: IQuiz,
   token: string,
   categoryId: string,
-  subjectId: string
+  subjectId: string,
+  filter: string
 }) {
   const {state}=useAuthContext()
   const queryClient = useQueryClient();
@@ -61,13 +63,16 @@ function UserQuizTile({
   };
 
   return (
-    <div className="mb-4">
-      <Link to={`/categories/${categoryId}/subjects/${subjectId}/topics/${quiz.topic}/quizzes/${quiz._id}`}>
-      <div className="p-4 rounded-lg shadow-md bg-blue-500">
-        <p className="text-white">{quiz.title}</p>
-      </div>
-      </Link>
+    <div className="my-5">
+  <Link to={`/categories/${categoryId}/subjects/${subjectId}/topics/${quiz.topic}/quizzes/${quiz._id}`}>
+    <div className={`p-4 rounded-lg shadow-md ${filter=="yetto" && "bg-blue-500 "} ${filter=="attempted" && "bg-yellow-600"} ${filter=="completed" && "bg-green-500"} flex justify-between items-center`}>
+      <p className="text-white">{quiz.title}</p>
+      {filter=="yetto" && <CirclePlus className="text-yellow-400" />}
+      {filter=="attempted" && <CircleSlash className="text-yellow-50" />}
+      {filter=="completed" && <CircleCheckBig className="text-green-100" />}
     </div>
+  </Link>
+</div>
   );
 }
 
