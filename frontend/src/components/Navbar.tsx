@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className="bg-blue-800 p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-3xl font-extrabold text-white">LangJam</h1>
+        <Link to={"/"} className="text-3xl font-extrabold text-white">LangJam</Link>
         <div className="lg:hidden">
           <button onClick={toggleMenu} className="text-white p-2 focus:outline-none">
             <svg
