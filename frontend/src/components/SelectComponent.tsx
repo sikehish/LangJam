@@ -6,13 +6,13 @@ import {
     SelectLabel,
     SelectTrigger,
     SelectValue,
-  } from "@/components/ui/select"
-   
-  export function SelectComponent() {
+  } from "@/components/ui/select";
+  
+  export function SelectComponent({ setFilter }: { setFilter: (value: string) => void }) {
     return (
-      <Select defaultValue="yetto">
+      <Select defaultValue="yetto" onValueChange={value => setFilter(value)}>
         <SelectTrigger className="w-[180px] bg-gray-600 text-white">
-          <SelectValue placeholder="Select a fruit" />
+          <SelectValue placeholder="Quiz Filter" />
         </SelectTrigger>
         <SelectContent className="bg-gray-600 text-white">
           <SelectGroup>
@@ -22,5 +22,6 @@ import {
           </SelectGroup>
         </SelectContent>
       </Select>
-    )
+    );
   }
+  

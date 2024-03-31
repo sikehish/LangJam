@@ -13,7 +13,7 @@ userRouter.route('/reset-password').patch(resetPasswordController);
 userRouter.route("/attempt-question").post(checkAuth,attemptQuestion)
 userRouter.route("/attempted-questions").get(checkAuth,getAttemptedQuestions)
 userRouter.route("/attempted-quiz-details/:quizId").get(checkAuth,getAttemptedQuizDetails)
-userRouter.route("/quiz-filter").get(checkAuth,getFilteredQuizzes)
+userRouter.route("/quiz-filter/:topicId").get(checkAuth,getFilteredQuizzes)
 
 // Admin route
 userRouter.route('/admin-login').post(adminLogin);

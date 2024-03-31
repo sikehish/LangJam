@@ -338,36 +338,38 @@ export const getAttemptedQuizDetails =asyncWrapper(async (req: Request, res: Res
 export const getFilteredQuizzes = asyncWrapper(async (req: Request, res: Response) => {
   const userId = (req as AuthReq)?.user;
   const user = await User.findById(userId);
-
+  
   if (!user) {
-    res.status(404)
-    throw new Error('User not found')
-    return;
+    res.status(404);
+    throw new Error('User not found');
   }
-
+  
+  const {topicId} = req.params
   const { filter } = req.query;
-  let filteredQuizzes;
 
-  if (!filter) {
-    res.status(400)
-   throw new Error('Filter parameter is required')
+  if (!filter || !topicId) {
+    res.status(400);
+    throw new Error('Filter and topicId parameters are required');
   }
+
+  let filteredQuizzes;
 
   switch (filter) {
     case 'yetto':
-      filteredQuizzes = await getQuizzesNotAttempted(user);
+      filteredQuizzes = await getQuizzesNotAttempted(user, topicId);
       break;
     case 'completed':
-      filteredQuizzes = await getQuizzesCompleted(user);
+      filteredQuizzes = await getQuizzesCompleted(user, topicId);
       break;
     case 'attempted':
-      filteredQuizzes = await getQuizzesAttempted(user);
+      filteredQuizzes = await getQuizzesAttempted(user, topicId);
       break;
     default:
-      res.status(400)
-      throw new Error("Invalid filter value")
+      res.status(400);
+      throw new Error('Invalid filter value');
   }
+
+  // console.log("FILTER: ",filteredQuizzes)
 
   res.status(200).json({ status: 'success', data: filteredQuizzes });
 });
-
