@@ -15,7 +15,7 @@ userRouter.route("/attempted-questions").get(checkAuth,getAttemptedQuestions)
 userRouter.route("/attempted-quiz-details/:quizId").get(checkAuth,getAttemptedQuizDetails)
 userRouter.route("/quiz-filter/:topicId").get(checkAuth,getFilteredQuizzes)
 userRouter.route("/leaderboard").get(getLeaderboard)
-userRouter.route("/user-rank/:userId").get(checkAuth, getRank)
+userRouter.route("/user-rank").get(checkAuth, getRank)
 
 // Admin route
 userRouter.route('/admin-login').post(adminLogin);

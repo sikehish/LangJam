@@ -40,7 +40,7 @@ export default function App() {
           element={state.user ? <Navigate to="/" /> : <Signup />}
         />
 
-        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/leaderboard" element={<Leaderboard token={state?.user?.token || null} />} />
 
         <Route
           path="/admin-login"
