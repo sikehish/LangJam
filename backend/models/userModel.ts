@@ -153,4 +153,5 @@ userSchema.methods.createToken = function (this: UserDocument, verify = false): 
 
 const User = mongoose.model<UserDocument>('User', userSchema);
 
+
 export default User;

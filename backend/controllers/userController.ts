@@ -373,3 +373,21 @@ export const getFilteredQuizzes = asyncWrapper(async (req: Request, res: Respons
 
   res.status(200).json({ status: 'success', data: filteredQuizzes });
 });
+
+
+export const getLeaderboard = asyncWrapper(async (req, res) => {
+  const leaderboard = await User.find({}, 'name xp').sort({ xp: -1 }).limit(10); // Get top 10 users based on XP
+  res.status(200).json({ status: 'success', data: leaderboard });
+})
+
+export const getRank = asyncWrapper(async (req, res) => {
+  // const userId = (req as AuthReq)?.user;
+  const { userId } = req.params;
+  const user = await User.findById(userId);
+  if (!user) {
+    res.status(404)
+    throw new Error("User not found")
+  }
+  const userRank = await User.countDocuments({ xp: { $gt: user?.xp ?? 0 } }) + 1;
+  res.status(200).json({ status: 'success', data: { user, rank: userRank } });
+})
