@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "@/context/AuthContext";
 import { attemptQuestion } from '../../../backend/controllers/userController';
+import Confetti from "./Confetti";
 
 interface QuizData {
   _id?: string;
@@ -55,6 +56,7 @@ const UserQuizCarousel: React.FC<Props> = ({
   difficulty
 }) => {
   const { questions, content } = quizData;
+  const [isConfettiVisible, setIsConfettiVisible] = useState(false);
   const queryClient = useQueryClient();
   const { state } = useAuthContext();
   const navigate = useNavigate();
@@ -97,6 +99,7 @@ const UserQuizCarousel: React.FC<Props> = ({
 
   const { mutate: saveAttempt, isPending: isSaving } = useMutation({
     mutationFn: async (variables:{index: number, correctOption: number}) => {
+      
         setIsSubmitting(true);
         const { index, correctOption } = variables;
       const quesData = {
@@ -130,7 +133,10 @@ const UserQuizCarousel: React.FC<Props> = ({
         queryClient.invalidateQueries({queryKey:['quizDetails', quizId]})
         queryClient.refetchQueries({queryKey:['quizDetails', quizId]})
       setIsSubmitting(false);
-      if (data?.isCorrect) toast.success("That's right!");
+      if (data?.isCorrect) {
+        toast.success("That's right!");
+        setIsConfettiVisible(true)
+      }
       else toast.error("OOPS! Better luck next time!");
       setAttemptChoiceIndex(null);
     },
@@ -151,13 +157,14 @@ const UserQuizCarousel: React.FC<Props> = ({
       attemptedQuestions &&
       questions[index]?._id &&
       !attemptedQuestions[questions[index]._id!]
-    ) {
-      saveAttempt({index, correctOption});
-    } else  toast.error("Please select an option!")
-  };
-
-  return (
-    <div className="p-4">
+      ) {
+        saveAttempt({index, correctOption});
+      } else  toast.error("Please select an option!")
+    };
+    
+    return (
+      <div className="p-4">
+      {isConfettiVisible && <Confetti setIsConfettiVisible={setIsConfettiVisible} />}
       <Carousel className="w-full max-w-lg mx-auto">
         <CarouselContent>
           <CarouselItem key="intro">
@@ -263,8 +270,8 @@ const UserQuizCarousel: React.FC<Props> = ({
               </CarouselItem>
             ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        {!isConfettiVisible && <CarouselPrevious />}
+        {!isConfettiVisible && <CarouselNext />}
       </Carousel>
     </div>
   );
