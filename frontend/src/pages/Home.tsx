@@ -57,7 +57,7 @@ const Home = () => {
                   .
                 </motion.p>
                 <Link
-                  to="/languages"
+                  to="/categories"
                   className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full transition duration-300 ease-in-out hover:transform hover:scale-105"
                 >
                   Get Started

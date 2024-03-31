@@ -30,7 +30,7 @@ function useLogin(): LoginHook {
         localStorage.setItem("langJam-user", JSON.stringify((data as LoginResponse).data));
       dispatch({ type: "LOGIN", payload: (data as LoginResponse).data });
       toast.success("Successfully logged in!");
-      navigate("/languages");
+      navigate("/categories");
   },
 })
   return { login, error, isLoading, isSucc };

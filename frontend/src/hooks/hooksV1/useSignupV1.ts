@@ -48,7 +48,7 @@ function useSignup() {
       setIsLoading(false);
       setError(null);
       toast.success("Successfully signed up!");
-      navigate("/languages");
+      navigate("/categories");
     }
   };
 

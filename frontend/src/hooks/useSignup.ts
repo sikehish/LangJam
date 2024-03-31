@@ -19,7 +19,7 @@ function useSignup() {
       console.log(data)
         dispatch({ type: "SIGNUP"});
         toast.success("Successfully signed up!");
-        navigate("/languages");
+        navigate("/categories");
     },
 })
   return { signup, error, isLoading, isSucc };
