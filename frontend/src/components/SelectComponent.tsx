@@ -16,7 +16,7 @@ export function SelectComponent({ setFilter, filter }: { setFilter: (value: stri
       </SelectTrigger>
       <SelectContent className="bg-gray-600 text-white">
         <SelectGroup>
-          <SelectItem value="incomplete">Attempted</SelectItem>
+          <SelectItem value="incomplete">Incomplete</SelectItem>
           <SelectItem value="yetto">Yet to attempt</SelectItem>
           <SelectItem value="completed">Completed</SelectItem>
         </SelectGroup>

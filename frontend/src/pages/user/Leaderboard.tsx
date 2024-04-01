@@ -57,11 +57,11 @@ const Leaderboard = ({ token }: { token: string | null }) => {
         ))}
       </ul>
       {!rankError && state?.user && token && userRank?.data?.rank && userRank?.data?.rank > leaderboard?.data?.length && (
-        <div className="mt-16">
-          <div className="border-b border-black mb-4" />
-          <div className="p-4 rounded-lg shadow-md bg-blue-200 mt-4">
+        <div className="mt-16 mb-8">
+          <div className="border-b border-black mb-4 md:w-[50%] mx-auto" />
+          <div className="p-4 rounded-lg shadow-md bg-blue-200 mt-4 md:w-[50%] mx-auto flex justify-between items-center">
             <p className="text-lg">{userRank?.data?.rank}. {userRank?.data?.name}</p>
-            <p>{userRank?.data?.xp} ⚡</p>
+            <p className='flex bg-blue-400 bg-opacity-20 px-3 py-1.5 rounded-xl shadow-md shadow-blue-400'><span className='text-lg'>{userRank?.data?.xp}</span> <Sparkles className="text-yellow-600 pl-1 fill-yellow-400" /></p>
           </div>
         </div>
       )}

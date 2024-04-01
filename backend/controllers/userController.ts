@@ -361,7 +361,7 @@ export const getFilteredQuizzes = asyncWrapper(async (req: Request, res: Respons
     case 'completed':
       filteredQuizzes = await getQuizzesCompleted(user, topicId);
       break;
-    case 'attempted':
+    case 'incomplete':
       filteredQuizzes = await getQuizzesIncomplete(user, topicId);
       break;
     default:
