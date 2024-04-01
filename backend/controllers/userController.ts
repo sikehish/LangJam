@@ -12,7 +12,7 @@ import { requestReset, passwordReset } from '../services/passwords';
 import { AuthReq } from '../typings';
 import Quiz from '../models/quizModel';
 import { UserDocument } from '../models/userModel';
-import { getQuizzesAttempted, getQuizzesCompleted, getQuizzesNotAttempted } from '../utils/filterMethods';
+import { getQuizzesIncomplete, getQuizzesCompleted, getQuizzesNotAttempted } from '../utils/filterMethods';
 
 
 export const userSignup=asyncWrapper(async (req, res) => {
@@ -362,7 +362,7 @@ export const getFilteredQuizzes = asyncWrapper(async (req: Request, res: Respons
       filteredQuizzes = await getQuizzesCompleted(user, topicId);
       break;
     case 'attempted':
-      filteredQuizzes = await getQuizzesAttempted(user, topicId);
+      filteredQuizzes = await getQuizzesIncomplete(user, topicId);
       break;
     default:
       res.status(400);

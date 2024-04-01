@@ -11,7 +11,7 @@ const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
   const { state } = useAuthContext();
   const navigate = useNavigate();
   const { topicId, subjectId, categoryId } = useParams();
-  const [filter, setFilter] = useState('attempted');
+  const [filter, setFilter] = useState('incomplete');
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['quizzes', filter],
@@ -29,7 +29,7 @@ const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
           throw new Error(data?.message || 'Unknown error occurred');
         }
         //   if(!((data?.data)?.length)){
-  //     if(filter=="yetto") setFilter("attempted")
+  //     if(filter=="yetto") setFilter("incomplete")
   //     else if(filter=="completed") setFilter("yetto")
   //     else setFilter("completed")
   //   }
@@ -71,7 +71,7 @@ const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
       {!isLoading && quizzes.length === 0 && (
         <p className="mt-4">
           {filter === 'yetto' ? 'Fresh quizzes coming your way!' :
-          filter === 'attempted' ? 'You haven\'t attempted any quizzes so far :(' :
+          filter === 'incomplete' ? 'You have no incomplete quizzes so far!' :
           'You haven\'t completed any quizzes so far :('}
         </p>
       )}

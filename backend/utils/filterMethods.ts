@@ -24,13 +24,13 @@ export async function getQuizzesCompleted(user: UserDocument, topicId: string) {
     return quizzesCompleted;
 }
 
-export async function getQuizzesAttempted(user: UserDocument, topicId: string) {
+export async function getQuizzesIncomplete(user: UserDocument, topicId: string) {
     const quizzes: IQuiz[] = await Quiz.find({ topic: topicId });
     if(!user.quizAttempts) return []
-    const quizzesAttempted = quizzes.filter((quiz) => {
+    const quizzesIncomplete = quizzes.filter((quiz) => {
         const quizId = quiz._id.toString();
         const quizAttempt = user.quizAttempts.get(quizId);
         return quizAttempt && quizAttempt.questionsAttempted > 0 && quizAttempt.questionsAttempted < quiz.questions.length;
     });
-    return quizzesAttempted;
+    return quizzesIncomplete;
 }

@@ -65,10 +65,10 @@ function UserQuizTile({
   return (
     <div className="my-5">
   <Link to={`/categories/${categoryId}/subjects/${subjectId}/topics/${quiz.topic}/quizzes/${quiz._id}`}>
-    <div className={`p-4 rounded-lg shadow-md ${filter=="yetto" && "bg-blue-500 "} ${filter=="attempted" && "bg-yellow-600"} ${filter=="completed" && "bg-green-500"} flex justify-between items-center`}>
+    <div className={`p-4 rounded-lg shadow-md ${filter=="yetto" && "bg-blue-500 "} ${filter=="incomplete" && "bg-yellow-600"} ${filter=="completed" && "bg-green-500"} flex justify-between items-center`}>
       <p className="text-white">{quiz.title}</p>
       {filter=="yetto" && <CirclePlus className="text-yellow-400" />}
-      {filter=="attempted" && <CircleSlash className="text-yellow-50" />}
+      {filter=="incomplete" && <CircleSlash className="text-yellow-50" />}
       {filter=="completed" && <CircleCheckBig className="text-green-100" />}
     </div>
   </Link>
