@@ -376,7 +376,7 @@ export const getFilteredQuizzes = asyncWrapper(async (req: Request, res: Respons
 
 
 export const getLeaderboard = asyncWrapper(async (req, res) => {
-  const leaderboard = await User.find({}, '_id email name xp').sort({ xp: -1 }).limit(3); // Get top 3 users based on XP
+  const leaderboard = await User.find({}, '_id email name xp').sort({ xp: -1 }).limit(5); // Get top 3 users based on XP
   res.status(200).json({ status: 'success', data: leaderboard });
 })
 
