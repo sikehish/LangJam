@@ -83,11 +83,7 @@ export default function App() {
         <Route
           path="/categories"
           element={
-            state?.user ? (
-              <Categories token={state?.user?.token} />
-            ) : (
-              <Navigate to="/" />
-            )
+              <Categories token={state?.user?.token || null} />
           }
         />
 

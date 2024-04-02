@@ -1,16 +1,11 @@
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
-export const useCategoryQueries = (queryClient: QueryClient, token: string) => {
+export const useCategoryQueries = (queryClient: QueryClient, token: string | null) => {
   const {data: getCategories} = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const response = await fetch('/api/entities/categories', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const response = await fetch('/api/entities/categories');
       if (!response.ok) {
         throw new Error('Unable to fetch categories');
       }

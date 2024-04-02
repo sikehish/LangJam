@@ -54,7 +54,7 @@ const Navbar: React.FC = () => {
               Login
             </Link>
           )}
-          {state.user && (
+          {state.user && !state?.user?.isAdmin && (
             <Link to="/profile" className="text-white hover:text-blue-200 cursor-pointer">
               Profile
             </Link>

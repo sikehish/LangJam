@@ -7,7 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/context/AuthContext';
 
-const Categories: React.FC<{ token: string }> = ({ token }) => {
+const Categories: React.FC<{ token: string | null}> = ({ token }) => {
   const queryClient = useQueryClient();
   const {state}=useAuthContext()
   const navigate=useNavigate()
@@ -17,7 +17,7 @@ const Categories: React.FC<{ token: string }> = ({ token }) => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {getCategories?.data?.map((category: { name: string; _id: string }) => (
-          <Category key={category._id} category={category} token={token} />
+          <Category key={category._id} category={category} token={token || null} />
         ))}
       </div>
     );

@@ -28,11 +28,11 @@ const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
       if (data?.status === 'error' || data?.status === 'fail') {
           throw new Error(data?.message || 'Unknown error occurred');
         }
-        //   if(!((data?.data)?.length)){
-  //     if(filter=="yetto") setFilter("incomplete")
-  //     else if(filter=="completed") setFilter("yetto")
-  //     else setFilter("completed")
-  //   }
+    //       if(!((data?.data)?.length)){
+    //   if(filter=="yetto") setFilter("incomplete")
+    //   else if(filter=="completed") setFilter("yetto")
+    //   else setFilter("completed")
+    // }
       return data;
     },
   });

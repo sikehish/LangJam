@@ -15,7 +15,7 @@ function Category({
   token,
 }: {
   category: { name: string; _id: string };
-  token: string;
+  token: string | null;
 }) {
   const queryClient = useQueryClient();
   const { state } = useAuthContext();
