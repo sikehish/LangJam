@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 const userRouter: Router = express.Router();
-import { userLogin, userVerify, userSignup, deleteAccount, updateUser, resetRequestController, resetPasswordController, adminLogin, attemptQuestion, getAttemptedQuestions, getAttemptedQuizDetails, getFilteredQuizzes, getLeaderboard, getRank } from '../controllers/userController';
+import { userLogin, userVerify, userSignup, deleteAccount, updateUser, resetRequestController, resetPasswordController, adminLogin, attemptQuestion, getAttemptedQuestions, getAttemptedQuizDetails, getFilteredQuizzes, getLeaderboard, getRank, getCurrentUser } from '../controllers/userController';
 import { checkAuth } from '../middleware/authMiddleware';
 
 userRouter.route('/login').post(userLogin);
@@ -16,6 +16,7 @@ userRouter.route("/attempted-quiz-details/:quizId").get(checkAuth,getAttemptedQu
 userRouter.route("/quiz-filter/:topicId").get(checkAuth,getFilteredQuizzes)
 userRouter.route("/leaderboard").get(getLeaderboard)
 userRouter.route("/user-rank").get(checkAuth, getRank)
+userRouter.route("/current-user").get(checkAuth,getCurrentUser)
 
 // Admin route
 userRouter.route('/admin-login').post(adminLogin);

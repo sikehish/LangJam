@@ -391,3 +391,13 @@ export const getRank = asyncWrapper(async (req, res) => {
   const userRank = await User.countDocuments({ xp: { $gt: user?.xp ?? 0 } }) + 1;
   res.status(200).json({ status: 'success', data: { user: userId, rank: userRank, xp: user?.xp, name:user?.name , email:user?.email} });
 })
+
+export const getCurrentUser = asyncWrapper(async (req, res) => {
+  const userId = (req as AuthReq)?.user;
+  const user = await User.findById(userId);
+  if (!user) {
+    res.status(404)
+    throw new Error("User not found")
+  }
+  res.status(200).json({ status: 'success', data: user });
+})

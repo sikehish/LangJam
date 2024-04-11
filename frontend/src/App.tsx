@@ -131,7 +131,7 @@ export default function App() {
 
         <Route
           path="/profile"
-          element={state?.user && !state?.user?.isAdmin ? <Profile /> : <Navigate to="/" />}
+          element={state?.user && !state?.user?.isAdmin ? <Profile token={state?.user?.token} /> : <Navigate to="/" />}
         />
 
       </Routes>
