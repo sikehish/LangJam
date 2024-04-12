@@ -68,6 +68,12 @@ const userSchema = new Schema<UserDocument>({
     type: Boolean,
     default: true
   },
+  dp:{
+    type: String
+  },
+  description:{
+    type: String
+  },
   attempts: {
     type: Map,
     of: attemptSchema 
