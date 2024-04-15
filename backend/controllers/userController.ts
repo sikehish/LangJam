@@ -13,6 +13,7 @@ import { AuthReq } from '../typings';
 import Quiz from '../models/quizModel';
 import { UserDocument } from '../models/userModel';
 import { getQuizzesIncomplete, getQuizzesCompleted, getQuizzesNotAttempted } from '../utils/filterMethods';
+import redisClient from "../config/redisConfig"
 
 
 export const userSignup=asyncWrapper(async (req, res) => {
@@ -396,8 +397,34 @@ export const getCurrentUser = asyncWrapper(async (req, res) => {
   const userId = (req as AuthReq)?.user;
   const user = await User.findById(userId);
   if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  const imageData = await redisClient.get(userId);
+
+  const userDataWithDP = { ...user, dp: imageData };
+
+  res.status(200).json({ status: 'success', data: userDataWithDP });
+});
+
+
+
+export const uploadImage = asyncWrapper(async (req, res) => {
+  const userId = (req as AuthReq)?.user;
+  const user = await User.findById(userId);
+  if (!user) {
     res.status(404)
     throw new Error("User not found")
   }
-  res.status(200).json({ status: 'success', data: user });
-})
+  const imageData = req?.file?.buffer.toString("base64"); 
+
+  if(!imageData){
+    res.status(400)
+    throw new Error("Image data issue")
+  }
+
+  await redisClient.set(userId, imageData);
+
+  res.status(200).json({ status: 'success', data: imageData });
+});

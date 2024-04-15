@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import validator from 'validator';
+import validator, { isEmpty } from 'validator';
 import { isEmail, isStrongPassword } from "validator"
 
 type Attempt = {
@@ -28,6 +28,9 @@ export interface UserDocument extends Document {
   attempts: Attempts; 
   quizAttempts: QuizAttempts
   xp: number;
+  dp:string
+  description:string
+  country: string
   recordAttempt(
     quizId: Types.ObjectId,
     questionId: Types.ObjectId,
@@ -69,10 +72,14 @@ const userSchema = new Schema<UserDocument>({
     default: true
   },
   dp:{
-    type: String
+    type: String,
   },
   description:{
-    type: String
+    type: String,
+    trim: true,
+  },
+  country:{
+    type: String,
   },
   attempts: {
     type: Map,

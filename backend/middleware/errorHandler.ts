@@ -20,4 +20,4 @@ const globalErrHandler = (err: Error, req: Request, res: Response, next: NextFun
   next();
 };
 
-export = globalErrHandler;
+export default globalErrHandler
