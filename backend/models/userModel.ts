@@ -30,7 +30,6 @@ export interface UserDocument extends Document {
   xp: number;
   dp:string
   description:string
-  country: string
   recordAttempt(
     quizId: Types.ObjectId,
     questionId: Types.ObjectId,
@@ -77,9 +76,6 @@ const userSchema = new Schema<UserDocument>({
   description:{
     type: String,
     trim: true,
-  },
-  country:{
-    type: String,
   },
   attempts: {
     type: Map,
