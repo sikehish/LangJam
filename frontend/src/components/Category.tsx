@@ -57,44 +57,49 @@ function Category({
     }
   };
 
+  const handleLinkClick = () => {
+    if (!token) {
+      toast.error("You need to login to access this page");
+    }
+  };
+
   return (
     <div className="mb-4">
-      <Link to={`/categories/${category._id}`}>
-      <div className="p-4 rounded-lg shadow-md bg-blue-500">
-        <p className="text-white">{category.name}</p>
-      </div>
+      <Link to={`/categories/${category._id}`} onClick={handleLinkClick}>
+        <div className="p-4 rounded-lg shadow-md bg-blue-500">
+          <p className="text-white">{category.name}</p>
+        </div>
       </Link>
       {token && state?.user?.isAdmin && <div className="flex">
-        {/* <button onClick={} className="mr-2"><FaTrash /></button> */}
         <Button variant={"ghost"} onClick={handleDelete}>
-                <FaTrash className="text-red-800" />
-              </Button>
-          <Popover modal={true} open={isEditClicked} onOpenChange={setEditClicked}>
-            <PopoverTrigger asChild>
-              <Button variant={"ghost"}>
-                <FaEdit />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="grid gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium leading-none">Category Name</h4>
-                </div>
-                <div className="grid gap-2">
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="cname">Category Name</Label>
-                    <Input
-                      id="cname"
-                      defaultValue={category.name} // Set default value to current name
-                      className="col-span-2 h-8"
-                      onChange={(e) => setEditedCategoryName(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <Button type="submit" onClick={handleEditSubmit}>Save</Button>
+          <FaTrash className="text-red-800" />
+        </Button>
+        <Popover modal={true} open={isEditClicked} onOpenChange={setEditClicked}>
+          <PopoverTrigger asChild>
+            <Button variant={"ghost"}>
+              <FaEdit />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="grid gap-4">
+              <div className="space-y-2">
+                <h4 className="font-medium leading-none">Category Name</h4>
               </div>
-            </PopoverContent>
-          </Popover>
+              <div className="grid gap-2">
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="cname">Category Name</Label>
+                  <Input
+                    id="cname"
+                    defaultValue={category.name} // Set default value to current name
+                    className="col-span-2 h-8"
+                    onChange={(e) => setEditedCategoryName(e.target.value)}
+                  />
+                </div>
+              </div>
+              <Button type="submit" onClick={handleEditSubmit}>Save</Button>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>}
     </div>
   );
