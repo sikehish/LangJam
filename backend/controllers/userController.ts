@@ -402,10 +402,9 @@ export const getCurrentUser = asyncWrapper(async (req, res) => {
   }
 
   const imageData = await redisClient.get(userId);
+  console.log(imageData)
 
-  const userDataWithDP = { ...user, dp: imageData };
-
-  res.status(200).json({ status: 'success', data: userDataWithDP });
+  res.status(200).json({ status: 'success', data: imageData? { ...user.toJSON, dp: imageData } : user });
 });
 
 
@@ -426,5 +425,5 @@ export const uploadImage = asyncWrapper(async (req, res) => {
 
   await redisClient.set(userId, imageData);
 
-  res.status(200).json({ status: 'success', data: imageData });
+  res.status(200).json({ status: 'success', data: {...user, dp: imageData} });
 });
