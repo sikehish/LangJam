@@ -52,7 +52,7 @@ const Leaderboard = ({ token }: { token: string | null }) => {
       </div>
       <ul>
         {leaderboard?.data.map((user: { _id: string, name: string, xp: number, email: string, dp?:string }, index: number) => (
-          <li key={user._id} className={`p-4 rounded-lg shadow-md ${user.email === state?.user?.email && !state?.user?.isAdmin ? 'bg-blue-200' : 'bg-gray-200'} mt-4 md:w-[50%] mx-auto flex justify-between items-center`}>
+          <li key={user._id} className={`p-4 rounded-lg shadow-md ${user.email === state?.user?.email && !state?.user?.isAdmin ? 'bg-blue-200' : 'bg-gray-100'} mt-4 md:w-[50%] mx-auto flex justify-between items-center`}>
             <div className='flex items-center'>
             <p className="text-lg mx-2">{index + 1}</p>
             {user?.dp ? (
