@@ -395,16 +395,16 @@ export const getRank = asyncWrapper(async (req, res) => {
 
 export const getCurrentUser = asyncWrapper(async (req, res) => {
   const userId = (req as AuthReq)?.user;
-  const user = await User.findById(userId);
+  const user = await User.findById(userId, { password: 0, isAdmin: 0 });
   if (!user) {
     res.status(404);
     throw new Error("User not found");
   }
 
   const imageData = await redisClient.get(userId);
-  console.log(imageData)
-
-  res.status(200).json({ status: 'success', data: imageData? { ...user.toJSON, dp: imageData } : user });
+  const data= imageData? { ...(user.toJSON()), dp: imageData } : user 
+  console.log(Object.keys(data))
+  res.status(200).json({ status: 'success', data });
 });
 
 

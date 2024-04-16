@@ -18,7 +18,7 @@ userRouter.route("/quiz-filter/:topicId").get(checkAuth,getFilteredQuizzes)
 userRouter.route("/leaderboard").get(getLeaderboard)
 userRouter.route("/user-rank").get(checkAuth, getRank)
 userRouter.route("/current-user").get(checkAuth,getCurrentUser)
-userRouter.post("/upload-dp", dpMiddleware, uploadImage);
+userRouter.post("/upload-dp",checkAuth, dpMiddleware, uploadImage);
 
 // Admin route
 userRouter.route('/admin-login').post(adminLogin);
