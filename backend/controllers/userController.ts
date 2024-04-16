@@ -201,58 +201,66 @@ export const deleteAccount = asyncWrapper(async (req, res) => {
     res.status(204).json({ status:"success",message: 'User account deleted successfully.' });
 })
 
-export const updateUser= asyncWrapper(async (req,res)=>{
+//Updates made from the profile page
+export const updateUser = asyncWrapper(async (req, res) => {
   const id = ((req as unknown) as AuthReq).user;
-  let { name,password,confirmPassword } = req.body;
-  console.log(name,password,confirmPassword)
-  //Changing passwords
-  if( password!==undefined && confirmPassword!==undefined){
-    password=password.trim()
-    confirmPassword=confirmPassword.trim()
-    if(!password || !confirmPassword) {
-      res.status(400)
+  let { name, password, confirmPassword, description } = req.body;
+
+  if (password !== undefined && confirmPassword !== undefined) {
+    password = password.trim();
+    confirmPassword = confirmPassword.trim();
+
+    if (!password || !confirmPassword) {
+      res.status(400);
       throw new Error("Passwords cannot be empty");
     }
     if (password !== confirmPassword) {
-      res.status(400)
-      throw Error("Passwords not matching")
+      res.status(400);
+      throw new Error("Passwords do not match");
     }
-    if(!validator.isStrongPassword(password)){
-      res.status(400)
-      throw new Error("Password not strong enough!")
+    if (!validator.isStrongPassword(password)) {
+      res.status(400);
+      throw new Error("Password is not strong enough");
     }
-    
-    const newDoc = await User.findByIdAndUpdate(id,{ password },{
+
+    const updatedUser = await User.findByIdAndUpdate(id, { password }, {
       new: true,
       runValidators: true
-    } )
-  }  
-
-  //Updating name
-  if(name==undefined){
-    res.status(404)  
-    throw new Error("No name to update")
-  }
-  
-  name=name.trim()
-
-  if(!name) {
-    res.status(404)  
-    throw new Error("Please enter a valid name!")
+    });
+    console.log(updatedUser);
   }
 
+  if (name !== undefined) {
+    name = name.trim();
 
-  const newDoc = await User.findByIdAndUpdate(id,{ name },{
-    new: true,
-    runValidators: true
-  } )
-  if (!newDoc) {
-    res.status(404)
-    throw new Error("User doesn't exist")
+    if (!name) {
+      res.status(400);
+      throw new Error("Please enter a valid name");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, { name }, {
+      new: true,
+      runValidators: true
+    });
   }
-  console.log(newDoc)
-  res.status(200).json({status:"success", data: newDoc})
-})
+
+  if (description !== undefined) {
+    description = description.trim();
+
+    if (!description) {
+      res.status(400);
+      throw new Error("Description cannot be empty!");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, { description }, {
+      new: true,
+      runValidators: true
+    });
+  }
+
+  res.status(200).json({ status: "success" });
+});
+
 
 
 export const resetRequestController=asyncWrapper(async (req,res)=>{
