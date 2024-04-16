@@ -203,7 +203,6 @@ export const deleteAccount = asyncWrapper(async (req, res) => {
 
 //Updates made from the profile page
 export const updateUser = asyncWrapper(async (req, res) => {
-  console.log("HAHAHAH")
   const id = ((req as unknown) as AuthReq).user;
   let { name, password, confirmPassword, description } = req.body;
 
@@ -386,7 +385,12 @@ export const getFilteredQuizzes = asyncWrapper(async (req: Request, res: Respons
 
 
 export const getLeaderboard = asyncWrapper(async (req, res) => {
-  const leaderboard = await User.find({}, '_id email name xp').sort({ xp: -1 }).limit(5); // Get top 3 users based on XP
+  const leaderboard = await User.find({}, '_id email name xp dp').sort({ xp: -1 }).limit(5); // Get top 5 users based on XP
+  for(const user of leaderboard){
+      const imageData = await redisClient.get(user._id);
+      if(imageData) user["dp"]=imageData
+    
+  }
   res.status(200).json({ status: 'success', data: leaderboard });
 })
 
@@ -398,6 +402,7 @@ export const getRank = asyncWrapper(async (req, res) => {
     res.status(404)
     throw new Error("User not found")
   }
+
   const userRank = await User.countDocuments({ xp: { $gt: user?.xp ?? 0 } }) + 1;
   res.status(200).json({ status: 'success', data: { user: userId, rank: userRank, xp: user?.xp, name:user?.name , email:user?.email} });
 })
@@ -412,7 +417,6 @@ export const getCurrentUser = asyncWrapper(async (req, res) => {
 
   const imageData = await redisClient.get(userId);
   const data= imageData? { ...(user.toJSON()), dp: imageData } : user 
-  console.log(Object.keys(data))
   res.status(200).json({ status: 'success', data });
 });
 
