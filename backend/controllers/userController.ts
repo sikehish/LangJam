@@ -203,6 +203,7 @@ export const deleteAccount = asyncWrapper(async (req, res) => {
 
 //Updates made from the profile page
 export const updateUser = asyncWrapper(async (req, res) => {
+  console.log("HAHAHAH")
   const id = ((req as unknown) as AuthReq).user;
   let { name, password, confirmPassword, description } = req.body;
 

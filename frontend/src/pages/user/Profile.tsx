@@ -1,6 +1,6 @@
 import { MdFileUpload } from "react-icons/md";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pencil, Save } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -8,6 +8,8 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
   const queryClient = useQueryClient();
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingDesc, setIsEditingDesc] = useState(false);
+  const [descData, setDescData] = useState("");
+  const [nameData, setNameData] = useState("");
   const { data, isLoading, isError } = useQuery({
     queryKey: ["current-user"],
     queryFn: async () => {
@@ -27,10 +29,15 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
 
   if (data) console.log(Object.keys(data?.data));
   const { data: user } = data || {};
-  const [descData, setDescData] = useState(user?.description || "");
-  const [nameData, setNameData] = useState(user?.name || "");
 
-  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (user?.name) setNameData(user?.name);
+    if (user?.description) setDescData(user?.description);
+  }, [user]);
+
+  const handleInputChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       const formData = new FormData();
@@ -38,7 +45,7 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
 
       try {
         const response = await fetch("/api/users/upload-dp", {
-          method: "POST",
+          method: "PATCH",
           body: formData,
           headers: {
             Authorization: `Bearer ${token}`,
@@ -62,12 +69,12 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
   const handleEditDesc = async () => {
     if (isEditingDesc) {
       try {
-        if (descData.trim()) {
+        if (!descData.trim()) {
           throw new Error("Description can't be empty!");
         }
 
         const response = await fetch("/api/users/update", {
-          method: "POST",
+          method: "PATCH",
           body: JSON.stringify({ description: descData }),
           headers: {
             "Content-Type": "application/json",
@@ -92,11 +99,11 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
   const handleEditName = async () => {
     if (isEditingName) {
       try {
-        if (nameData.trim()) {
-          throw new Error("Description can't be empty!");
+        if (!nameData.trim()) {
+          throw new Error("Name can't be empty!");
         }
         const response = await fetch("/api/users/update", {
-          method: "POST",
+          method: "PATCH",
           body: JSON.stringify({ name: nameData }), // Stringify the object
           headers: {
             "Content-Type": "application/json", // Set the content type to JSON
@@ -119,58 +126,67 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto shadow-md rounded-md p-6 mt-20 bg-slate-100">
-      <div className="relative flex items-center mb-4">
-        <div className="relative mr-2">
-          {user?.dp ? (
-            <img
-              src={`data:image/jpeg;base64,${user.dp}`}
-              alt="User Avatar"
-              className="w-[5rem] h-[5rem] rounded-full mr-5"
-            />
-          ) : (
-            <img
-              src="placeholder.svg"
-              alt="Placeholder"
-              className="w-12 h-12 rounded-full mr-5"
-            />
-          )}
-          <label className="absolute bottom-0 right-2 text-lg text-black cursor-pointer">
-            <input
-              type="file"
-              accept=".jpg, .jpeg, .png, .webp"
-              style={{ display: "none" }}
-              onChange={handleInputChange}
-            />
-            <MdFileUpload />
-          </label>
-        </div>
-
-        <div>
-          <div>
-            {isEditingName ? (
-              <input
-                type="text"
-                value={nameData}
-                onChange={(e) => setNameData(e.target.value)} 
+    <div className="mx-auto max-w-md mt-20">
+      <h1 className="text-2xl font-bold text-center mb-6 text-blue-800">Your Profile</h1>
+      <div className="max-w-md mx-auto shadow-md rounded-md p-6 bg-slate-100">
+        <div className="relative flex items-center mb-4">
+          <div className="relative mr-2">
+            {user?.dp ? (
+              <img
+                src={`data:image/jpeg;base64,${user.dp}`}
+                alt="User Avatar"
+                className="w-[5rem] h-[5rem] rounded-full mr-5"
               />
             ) : (
-              <h2 className="text-xl font-semibold">{nameData}</h2>
+              <img
+                src="placeholder.svg"
+                alt="Placeholder"
+                className="w-12 h-12 rounded-full mr-5"
+              />
             )}
-             <button onClick={handleEditName}>
-            {isEditingName ? <Save /> : <Pencil />}
-          </button>
+            <label className="absolute bottom-0 right-2 text-lg text-black cursor-pointer" title="Upload profile photo">
+              <input
+                type="file"
+                accept=".jpg, .jpeg, .png, .webp"
+                style={{ display: "none" }}
+                onChange={handleInputChange}
+              />
+              <MdFileUpload/>
+            </label>
+          </div>
+
+          <div>
+            <div className="flex items-center">
+              {isEditingName ? (
+                <input
+                  type="text"
+                  value={nameData}
+                  onChange={(e) => setNameData(e.target.value)} 
+                />
+              ) : (
+                <h2 className="text-xl font-semibold">{nameData}</h2>
+              )}
+              <button onClick={handleEditName} className="ml-2">
+                {isEditingName ? <Save className="w-5 h-5" /> : <Pencil className="w-5 h-5" />}
+              </button>
+            </div>
             <p className="text-gray-600">{user?.email}</p>
           </div>
         </div>
-        </div>
 
-        <div className="mt-5">
-          <h1>Description:</h1>
-          {isEditingDesc ? (
+        <div className="mt-6 flex-col mb-4">
+          <div className="flex items-center">
+            <h1 className="text-lg font-semibold">Description:</h1>
+            <button onClick={handleEditDesc} className="ml-2">
+              {isEditingDesc ? <Save className="w-5 h-5" /> : <Pencil className="w-5 h-5" />}
+            </button>
+          </div>
+          {isEditingDesc? (
             <textarea
+              rows={4}
               value={descData}
               onChange={(e) => setDescData(e.target.value)}
+              className="w-full px-2 pb-5 pt-1"
             />
           ) : (
             <p>
@@ -182,27 +198,25 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
                 </span>
               )}
             </p>
-          )}
-          <button onClick={handleEditDesc}>
-            {isEditingDesc ? <Save /> : <Pencil />}
-          </button>
+          )}    
         </div>
 
         <div className="mb-4">
-          <h1>Your stats:</h1>
-          <p className="text-lg font-semibold">XP: {user?.xp}</p>
+          <h1 className="text-lg font-semibold mb-1">Your stats:</h1>
+          <p className="">XP: {user?.xp}</p>
           {user?.quizAttempts && (
-            <p className="text-lg font-semibold">
+            <p className="">
               Quizzes Attempted: {Object.keys(user?.quizAttempts).length}
             </p>
           )}
           {user?.attempts && (
-            <p className="text-lg font-semibold">
+            <p className="">
               Questions Attempted: {Object.keys(user?.attempts).length}
             </p>
           )}
         </div>
       </div>
+    </div>
   );
 };
 
