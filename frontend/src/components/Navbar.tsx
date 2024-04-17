@@ -69,6 +69,11 @@ const Navbar: React.FC = () => {
               Admin
             </Link>
           )}
+          {state.user && !state?.user?.isAdmin  &&(
+            <Link to="/notes" className="text-white hover:text-blue-200 cursor-pointer">
+            Notes
+          </Link>
+          )}
           {state.user && (
             <button onClick={logout} className="text-white hover:text-blue-200 cursor-pointer">
               Logout

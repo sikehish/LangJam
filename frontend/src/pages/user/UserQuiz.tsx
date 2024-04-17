@@ -116,7 +116,7 @@ const UserQuiz = ({ token }: { token: string }) => {
           id="noteTitle"
           placeholder="Note Title"
           value={noteData.title}
-          className="col-span-3 h-8 w-full px-2 py-1 rounded  border-gray-400"
+          className="col-span-3 h-8 w-full px-2 py-1 rounded "
           onChange={(e) => setNoteData(prev => ({ ...prev, title: e.target.value }))}
         />
       </div>
@@ -125,7 +125,7 @@ const UserQuiz = ({ token }: { token: string }) => {
           id="noteDescription"
           placeholder="Note Description"
           value={noteData.description}
-          className="col-span-3 h-8 w-full px-2 py-1 rounded  border-gray-400"
+          className="col-span-3 h-8 w-full px-2 py-1 rounded"
           onChange={(e) => setNoteData(prev => ({ ...prev, description: e.target.value }))}
         />
       </div>

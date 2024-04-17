@@ -513,3 +513,16 @@ export const createNote = asyncWrapper(
     res.status(201).json({ status: "success", data: createdNote });
   }
 );
+
+export const getNotes = asyncWrapper(
+  async (req, res) => {
+    const userId = (req as AuthReq)?.user;
+  const user = await User.findById(userId);
+  if (!user) {
+    res.status(404)
+    throw new Error("User not found")
+  }
+    const notes = await Note.find({userId})
+    res.status(201).json({ status: "success", data: notes });
+  }
+);

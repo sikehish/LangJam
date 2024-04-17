@@ -19,6 +19,7 @@ import Quizzes from "./pages/Quizzes";
 import Quiz from "./pages/Quiz";
 import CreateQuiz from "./pages/CreateQuiz";
 import UserQuizzes from "./pages/user/UserQuizzes";
+import Notes from "./pages/user/Notes";
 
 export default function App() {
   const { state } = useAuthContext();
@@ -133,6 +134,12 @@ export default function App() {
           path="/profile"
           element={state?.user && !state?.user?.isAdmin ? <Profile token={state?.user?.token} /> : <Navigate to="/" />}
         />
+
+<Route
+          path="/notes"
+          element={state?.user && !state?.user?.isAdmin ? <Notes token={state?.user?.token} /> : <Navigate to="/" />}
+        />
+
 
       </Routes>
       <ToastContainer position="top-right" />
