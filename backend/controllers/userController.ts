@@ -526,3 +526,18 @@ export const getNotes = asyncWrapper(
     res.status(201).json({ status: "success", data: notes });
   }
 );
+
+
+export const deleteNote = asyncWrapper(
+  async (req, res) => {
+    const {id}= req.params
+    const userId = (req as AuthReq)?.user;
+  const user = await User.findById(userId);
+  if (!user) {
+    res.status(404)
+    throw new Error("User not found")
+  }
+    const deletedNote = await Note.findByIdAndDelete(id)
+    res.status(200).json({ status: "success", data: deletedNote });
+  }
+);
