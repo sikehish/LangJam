@@ -70,7 +70,7 @@ export const userSignup=asyncWrapper(async (req, res) => {
     // sendMail(email,subject, html)
 
     
-    res.status(201).json({ status: 'success', data: { name, email} });
+    res.status(201).json({ status: 'success', data: { name, email, id:user._id} });
 })
 
 export const userLogin =asyncWrapper( async (req, res) => {
@@ -204,7 +204,7 @@ export const deleteAccount = asyncWrapper(async (req, res) => {
 //Updates made from the profile page
 export const updateUser = asyncWrapper(async (req, res) => {
   const id = ((req as unknown) as AuthReq).user;
-  let { name, password, confirmPassword, description } = req.body;
+  let { name, password, confirmPassword, description,dp } = req.body;
 
   if (password !== undefined && confirmPassword !== undefined) {
     password = password.trim();
@@ -256,6 +256,16 @@ export const updateUser = asyncWrapper(async (req, res) => {
       new: true,
       runValidators: true
     });
+  }
+
+  if(!dp){
+    const imageData = req?.file?.buffer.toString("base64"); 
+  if(!imageData){
+    res.status(400)
+    throw new Error("Image data issue")
+  }
+
+  await redisClient.set(id, imageData);
   }
 
   res.status(200).json({ status: "success" });
@@ -439,4 +449,42 @@ export const uploadImage = asyncWrapper(async (req, res) => {
   await redisClient.set(userId, imageData);
 
   res.status(200).json({ status: 'success', data: {...user, dp: imageData} });
+});
+
+//Handle Optional fields(on signup)
+export const handleOptionalFields = asyncWrapper(async (req, res) => {
+  let { email, description } = req.body;
+
+  if(!email){
+    res.status(400);
+    throw new Error("Email cannot be empty!");
+  }
+  
+  const existingUser = await User.findOne({ email });
+  if (!existingUser) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  if(typeof description === "string" && description.length && !description.trim()){
+    res.status(404);
+    throw new Error("Ensure that the description you enter isnt an empty string!");
+  }
+  
+  if(description!==undefined)
+    {
+      description = description.trim();
+      const updatedUser = await User.findOneAndUpdate({ email }, { description }, {
+        new: true,
+        runValidators: true
+      });
+    }
+
+
+  const imageData = req?.file?.buffer.toString("base64");
+  if (imageData) {
+    await redisClient.set(existingUser._id, imageData);
+  } 
+
+  res.status(200).json({ status: "success" });
 });

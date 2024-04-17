@@ -27,6 +27,8 @@ export interface SignupData{
   email: string
   password: string
   confirmPassword: string
+  description?: string
+  profilePicture?: File | null
 }
 
 // export interface ApiResponse<T = unknown> {
