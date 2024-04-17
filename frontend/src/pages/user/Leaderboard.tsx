@@ -20,7 +20,7 @@ const Leaderboard = ({ token }: { token: string | null }) => {
   });
 
   const { data: userRank, isLoading: rankLoading, isError: rankError } = useQuery({
-    queryKey: ['userRank'],
+    queryKey: ['user-rank'],
     queryFn: async () => {
       if(!token) return {}
       const response = await fetch('/api/users/user-rank', {
@@ -42,8 +42,6 @@ const Leaderboard = ({ token }: { token: string | null }) => {
   if (leaderboardError) {
     return <p>Error fetching data.</p>;
   }
-
-  console.log(userRank)
 
   return (
     <div className="container mx-auto pt-10">
@@ -74,7 +72,7 @@ const Leaderboard = ({ token }: { token: string | null }) => {
           </li>
         ))}
       </ul>
-      {!rankError && state?.user && token && !state?.user?.isAdmin && userRank?.data?.rank && userRank?.data?.rank > leaderboard?.data?.length && userRank?.user?.dp && (
+      {!rankError && state?.user && token && !state?.user?.isAdmin && userRank?.data?.rank && userRank?.data?.rank > leaderboard?.data?.length && (
         <div className="mt-16 mb-8">
           <div className="border-b border-black mb-4 md:w-[50%] mx-auto" />
           <div className="p-4 rounded-lg shadow-md bg-blue-200 mt-4 md:w-[50%] mx-auto flex justify-between items-center">

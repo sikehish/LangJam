@@ -18,8 +18,8 @@ userRouter.route("/quiz-filter/:topicId").get(checkAuth,getFilteredQuizzes)
 userRouter.route("/leaderboard").get(getLeaderboard)
 userRouter.route("/user-rank").get(checkAuth, getRank)
 userRouter.route("/current-user").get(checkAuth,getCurrentUser)
-userRouter.post("/upload-dp",checkAuth, dpMiddleware, uploadImage);
-userRouter.patch("/optional-fields", dpMiddleware, handleOptionalFields);
+userRouter.route("/upload-dp").patch(checkAuth, dpMiddleware, uploadImage);
+userRouter.route("/optional-fields").patch(dpMiddleware, handleOptionalFields);
 
 // Admin route
 userRouter.route('/admin-login').post(adminLogin);

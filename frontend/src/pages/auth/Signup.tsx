@@ -72,6 +72,7 @@ function Signup() {
   };
 
   const handleSkipOptionalFields = () => {
+    navigate("/login")
     setShowOptionalFields(false);
   };
   return (

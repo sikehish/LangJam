@@ -414,7 +414,9 @@ export const getRank = asyncWrapper(async (req, res) => {
   }
 
   const userRank = await User.countDocuments({ xp: { $gt: user?.xp ?? 0 } }) + 1;
-  res.status(200).json({ status: 'success', data: { user: userId, rank: userRank, xp: user?.xp, name:user?.name , email:user?.email} });
+  const imageData = await redisClient.get(user._id);
+  const data= { user: userId, rank: userRank, xp: user?.xp, name:user?.name , email:user?.email, dp: imageData || ""} 
+  res.status(200).json({ status: 'success', data});
 })
 
 export const getCurrentUser = asyncWrapper(async (req, res) => {

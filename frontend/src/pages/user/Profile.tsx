@@ -57,6 +57,7 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
         }
 
         queryClient.invalidateQueries({ queryKey: ["current-user"] });
+        queryClient.invalidateQueries({ queryKey: ["user-rank"] });
 
         toast.success("DP successfully updated!");
       } catch (error) {
