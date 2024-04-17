@@ -3,10 +3,15 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import UserQuizCarousel from '@/components/UserQuizCarousel';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, NotebookPen } from 'lucide-react';
 import { attemptQuestion } from '../../../../backend/controllers/userController';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
+import { Label } from '@radix-ui/react-label';
 const UserQuiz = ({ token }: { token: string }) => {
   const { subjectId, topicId, categoryId, quizId } = useParams();
+  const [isNoteClicked, setNoteClicked] = useState(false)
+  const [noteData, setNoteData]=useState({title:"", description:""})
   const navigate=useNavigate()
 
   const { data: quizDetails } = useQuery({
@@ -65,6 +70,41 @@ const UserQuiz = ({ token }: { token: string }) => {
    className="cursor-pointer transition-transform transform hover:scale-110 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
    onClick={() => navigate(`/categories/${categoryId}/subjects/${subjectId}/topics/${topicId}`)}
    >Return</button>
+   {token && <div className="flex">
+        <Popover modal={true} open={isNoteClicked} onOpenChange={setNoteClicked}>
+          <PopoverTrigger asChild>
+            <Button variant={"ghost"}>
+              <NotebookPen />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="grid gap-4">
+              <div className="space-y-2">
+                <h4 className="font-medium leading-none">Create Note</h4>
+              </div>
+              <div className="grid gap-2">
+              <div className="grid grid-cols-3 items-center gap-4">
+            <Input
+              id="noteTitle"
+              placeholder="Note Title"
+              value={noteData.title}
+              className="col-span-2 h-8"
+              onChange={(e) => setNoteData(prev => ({ ...prev, title: e.target.value }))}
+            />
+            <Input
+              id="noteDescription"
+              placeholder="Note Description"
+              value={noteData.description}
+              className="col-span-2 h-8"
+              onChange={(e) => setNoteData(prev => ({ ...prev, description: e.target.value }))}
+            />
+          </div>
+              </div>
+              <Button type="submit" onClick={handleNoteSubmit}>Save</Button>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>}
    </div>
       {questions && 
         <UserQuizCarousel

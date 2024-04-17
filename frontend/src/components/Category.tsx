@@ -83,7 +83,7 @@ function Category({
           <PopoverContent className="w-80">
             <div className="grid gap-4">
               <div className="space-y-2">
-                <h4 className="font-medium leading-none">Category Name</h4>
+                <h4 className="font-medium leading-none">Edit Category</h4>
               </div>
               <div className="grid gap-2">
                 <div className="grid grid-cols-3 items-center gap-4">

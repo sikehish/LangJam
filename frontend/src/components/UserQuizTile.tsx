@@ -50,17 +50,6 @@ function UserQuizTile({
     }
   };
 
-  const handleDelete = async (e: React.MouseEvent) => {
-    try {
-      const result: boolean=confirm(`Are you sure you want to delete the ${editedQuizTitle} quiz?`)
-      if(result){
-        deleteQuizMutation.mutate(quiz._id);
-      }else toast.error(`${editedQuizTitle}: Delete event aborted`)
-    } catch (error) {
-      console.error("Error deleting quiz:", error);
-      toast.error("Failed to delete quiz!");
-    }
-  };
 
   return (
     <div className="my-5">
