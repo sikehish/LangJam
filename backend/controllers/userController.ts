@@ -503,11 +503,11 @@ export const createNote = asyncWrapper(
   }
 
   const {title, description} = req.body
-
-    if (!title.trim() || !description.trim()) {
-      res.status(400);
-      throw new Error("Title and Description cannot be empty");
-    }
+  
+  if (!title || !description || !title.trim() || !description.trim()) {
+    res.status(400);
+    throw new Error("Title and Description cannot be empty");
+  }
 
     const createdNote = await Note.create({userId, title: title.trim(), description: description.trim()})
     res.status(201).json({ status: "success", data: createdNote });

@@ -31,7 +31,6 @@ function Category({
   const handleEditSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!editedCategoryName) return;
-      console.log(editedCategoryName)
     try {
       editCategoryMutation.mutate({
         categoryId: category._id,
