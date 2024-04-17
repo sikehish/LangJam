@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 const userRouter: Router = express.Router();
-import { userLogin, userVerify, userSignup, deleteAccount, updateUser, resetRequestController, resetPasswordController, adminLogin, attemptQuestion, getAttemptedQuestions, getAttemptedQuizDetails, getFilteredQuizzes, getLeaderboard, getRank, getCurrentUser, uploadImage, handleOptionalFields } from '../controllers/userController';
+import { userLogin, userVerify, userSignup, deleteAccount, updateUser, resetRequestController, resetPasswordController, adminLogin, attemptQuestion, getAttemptedQuestions, getAttemptedQuizDetails, getFilteredQuizzes, getLeaderboard, getRank, getCurrentUser, uploadImage, handleOptionalFields, createNote } from '../controllers/userController';
 import { checkAuth } from '../middleware/authMiddleware';
 import { dpMiddleware } from '../middleware/multerMiddleware';
 
@@ -20,6 +20,7 @@ userRouter.route("/user-rank").get(checkAuth, getRank)
 userRouter.route("/current-user").get(checkAuth,getCurrentUser)
 userRouter.route("/upload-dp").patch(checkAuth, dpMiddleware, uploadImage);
 userRouter.route("/optional-fields").patch(dpMiddleware, handleOptionalFields);
+userRouter.route("/create-note").post(checkAuth, createNote);
 
 // Admin route
 userRouter.route('/admin-login').post(adminLogin);
