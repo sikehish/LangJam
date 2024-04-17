@@ -14,6 +14,7 @@ import Quiz from '../models/quizModel';
 import { UserDocument } from '../models/userModel';
 import { getQuizzesIncomplete, getQuizzesCompleted, getQuizzesNotAttempted } from '../utils/filterMethods';
 import redisClient from "../config/redisConfig"
+import Note from '../models/noteModel';
 
 
 export const userSignup=asyncWrapper(async (req, res) => {
@@ -490,3 +491,25 @@ export const handleOptionalFields = asyncWrapper(async (req, res) => {
 
   res.status(200).json({ status: "success" });
 });
+
+
+export const createNote = asyncWrapper(
+  async (req, res) => {
+    const userId = (req as AuthReq)?.user;
+  const user = await User.findById(userId);
+  if (!user) {
+    res.status(404)
+    throw new Error("User not found")
+  }
+
+  const {title, description} = req.body
+
+    if (!title.trim() || !description.trim()) {
+      res.status(400);
+      throw new Error("Title and Description cannot be empty");
+    }
+
+    const createdNote = await Note.create({userId, title: title.trim(), description: description.trim()})
+    res.status(201).json({ status: "success", data: createdNote });
+  }
+);
