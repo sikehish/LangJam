@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 const userRouter: Router = express.Router();
-import { userLogin, userVerify, userSignup, deleteAccount, updateUser, resetRequestController, resetPasswordController, adminLogin, attemptQuestion, getAttemptedQuestions, getAttemptedQuizDetails, getFilteredQuizzes, getLeaderboard, getRank, getCurrentUser, uploadImage, handleOptionalFields, createNote, getNotes, deleteNote } from '../controllers/userController';
-import { checkAuth } from '../middleware/authMiddleware';
+import { userLogin, userVerify, userSignup, deleteAccount, updateUser, resetRequestController, resetPasswordController, adminLogin, attemptQuestion, getAttemptedQuestions, getAttemptedQuizDetails, getFilteredQuizzes, getLeaderboard, getRank, getCurrentUser, uploadImage, handleOptionalFields, createNote, getNotes, deleteNote, chatAiController } from '../controllers/userController';
+import { checkAuth, checkMixedAuth } from '../middleware/authMiddleware';
 import { dpMiddleware } from '../middleware/multerMiddleware';
 
 userRouter.route('/login').post(userLogin);
@@ -23,6 +23,8 @@ userRouter.route("/optional-fields").patch(dpMiddleware, handleOptionalFields);
 userRouter.route("/create-note").post(checkAuth, createNote);
 userRouter.route("/notes").get(checkAuth, getNotes);
 userRouter.route("/notes/:id").delete(checkAuth, deleteNote);
+userRouter.route("/notes/:id").delete(checkAuth, deleteNote);
+userRouter.route("/chat-with-ai").post(checkMixedAuth, chatAiController);
 
 // Admin route
 userRouter.route('/admin-login').post(adminLogin);

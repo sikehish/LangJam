@@ -15,6 +15,7 @@ import { UserDocument } from '../models/userModel';
 import { getQuizzesIncomplete, getQuizzesCompleted, getQuizzesNotAttempted } from '../utils/filterMethods';
 import redisClient from "../config/redisConfig"
 import Note from '../models/noteModel';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 
 export const userSignup=asyncWrapper(async (req, res) => {
@@ -539,5 +540,23 @@ export const deleteNote = asyncWrapper(
   }
     const deletedNote = await Note.findByIdAndDelete(id)
     res.status(200).json({ status: "success", data: deletedNote });
+  }
+);
+
+export const chatAiController = asyncWrapper(
+  async (req: Request, res: Response) => {
+    try {
+      const { prompt }  = req.body
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const result = await model.generateContent(prompt);
+      const response = result.response;
+      const text = response.text()
+      res.status(200).json({ status: "success", data: text });
+    } catch (error) {
+      res.status(404);
+      console.log(error)
+      throw new Error("An error occurred while generating the quiz.");
+    }
   }
 );
