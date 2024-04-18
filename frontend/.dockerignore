@@ -1,4 +1,5 @@
 **/node_modules/
+**/*.md
 **/dist
 npm-debug.log
 .coverage
