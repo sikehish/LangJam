@@ -15,7 +15,7 @@ const Quiz: React.FC<{ token: string }> = ({ token }) => {
   return (
     <>
       {state?.user?.isAdmin ? <AdminQuiz token={token} /> : <UserQuiz token={token} />}
-      {showChatbot && <Chatbot />} 
+      {showChatbot && <Chatbot token={token} />} 
       <button className='bg-blue-800 p-3 rounded-full text-white fixed bottom-4 right-4' onClick={()=>{
         setShowChatbot(prevState => !prevState);
       }}>

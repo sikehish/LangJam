@@ -69,7 +69,7 @@ export const checkMixedAuth = (req: Request, res: Response, next: NextFunction):
     } catch (error){
       decodedToken = jwt.verify(token, process.env.JWT_ADMIN_KEY as jwt.Secret);
     }
-    
+    console.log(decodedToken)
     if (!decodedToken || typeof decodedToken !== 'object' || !decodedToken.id) {
       return res.status(401).json({ status: "fail", message: "Invalid token format" });
     }
