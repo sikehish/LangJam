@@ -11,11 +11,12 @@ import Chatbot from '@/components/ChatBot';
 const Quiz: React.FC<{ token: string }> = ({ token }) => {
   const { state } = useAuthContext();
   const [showChatbot, setShowChatbot] = useState(false);
+  const [messages, setMessages] = useState<{ text: string; isBot: boolean }[]>([]);
   
   return (
     <>
       {state?.user?.isAdmin ? <AdminQuiz token={token} /> : <UserQuiz token={token} />}
-      {showChatbot && <Chatbot token={token} />} 
+      {showChatbot && <Chatbot token={token} messages={messages} setMessages={setMessages}/>} 
       <button className='bg-blue-800 p-3 rounded-full text-white fixed bottom-4 right-4' onClick={()=>{
         setShowChatbot(prevState => !prevState);
       }}>
