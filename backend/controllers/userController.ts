@@ -260,7 +260,7 @@ export const updateUser = asyncWrapper(async (req, res) => {
     });
   }
 
-  if(!dp){
+  if(dp !== undefined){
     const imageData = req?.file?.buffer.toString("base64"); 
   if(!imageData){
     res.status(400)
@@ -509,7 +509,6 @@ export const createNote = asyncWrapper(
     res.status(400);
     throw new Error("Title and Description cannot be empty");
   }
-
     const createdNote = await Note.create({userId, title: title.trim(), description: description.trim()})
     res.status(201).json({ status: "success", data: createdNote });
   }
@@ -523,8 +522,8 @@ export const getNotes = asyncWrapper(
     res.status(404)
     throw new Error("User not found")
   }
-    const notes = await Note.find({userId})
-    res.status(201).json({ status: "success", data: notes });
+    const notes = await Note.find({userId}).sort({"createdAt":"desc"})
+    res.status(200).json({ status: "success", data: notes });
   }
 );
 

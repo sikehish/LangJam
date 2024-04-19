@@ -63,9 +63,14 @@ const UserQuiz = ({ token }: { token: string }) => {
         },
         body: JSON.stringify(data),
       })
-
+      const resData=await response.json()
       if (!response.ok) {
         throw new Error("Error creating a note :(");
+      }
+
+      console.log(resData)
+      if(resData.status=="error"){
+        throw new Error(resData.message)
       }
 
       toast.success("Note created!")

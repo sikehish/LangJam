@@ -7,6 +7,12 @@ interface Note {
   _id: string;
   title: string;
   description: string;
+  createdAt: string;
+}
+
+function formatDate(timestamp: string): string {
+  const date = new Date(timestamp);
+  return date.toLocaleString(); // Adjust the format as per your preference
 }
 
 function Notes({ token }: { token: string }) {
@@ -56,7 +62,8 @@ function Notes({ token }: { token: string }) {
       {!isError && !isLoading && notesData?.data?.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {notesData?.data?.map((note: Note) => (
-            <div key={note._id} className="bg-slate-100 rounded-lg shadow-md p-6">
+          <div className='flex flex-col'>
+            <div key={note._id} className="bg-slate-100 rounded-lg shadow-md p-6 relative">
               <div className="flex justify-between">
                 <h2 className="text-xl font-semibold mb-2">{note.title}</h2>
                 <button
@@ -67,6 +74,8 @@ function Notes({ token }: { token: string }) {
                 </button>
               </div>
               <p className="text-gray-700">{note.description}</p>
+            </div>
+              <p className='text-xs text-right mt-1'>{formatDate(note.createdAt)}</p>
             </div>
           ))}
         </div>

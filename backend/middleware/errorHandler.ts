@@ -4,7 +4,6 @@ const globalErrHandler = (err: Error, req: Request, res: Response, next: NextFun
   if (res.statusCode < 400) {
     next();
   }
-
   const statusCode = res.statusCode || 500;
   let status = 'error';
 
