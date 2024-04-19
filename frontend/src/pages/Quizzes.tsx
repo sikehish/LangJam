@@ -53,6 +53,9 @@ const Quizzes: React.FC<{ token: string }> = ({ token }) => {
       ) : (
         renderQuizzes()
       )}
+       {token && state?.user?.isAdmin &&  <div>
+        <Button  variant="outline" onClick={() => { navigate('/admin/new-quiz') }}>New Quiz</Button>
+      </div>}
     </div>
   );
 };

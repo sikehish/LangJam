@@ -428,7 +428,6 @@ export const generateQuiz = asyncWrapper(
     try {
       const { subject:subjectId, topic:topicId, category:categoryId, difficulty, numberOfQuestions, title } =
         req.body;
-        console.log(subjectId, topicId, categoryId, difficulty, numberOfQuestions)
 
         const category = await Category.findById(categoryId);
         const subject = await Subject.findById(subjectId);
@@ -441,7 +440,6 @@ export const generateQuiz = asyncWrapper(
         const subjectName = subject?.name 
         const topicName = topic?.name
 
-        console.log(categoryName,subjectName,topicName)
   
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY as string);
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
@@ -485,8 +483,8 @@ export const generateQuiz = asyncWrapper(
       
 
       const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = await response.text().replace(/^```json\s+|\s+```$/gi, '');
+      const response = result.response;
+      const text = response.text().replace(/^```json\s+|\s+```$/gi, '');
       console.log("ERR: ",text)
       const data = JSON.parse(text);
       // console.log(data)

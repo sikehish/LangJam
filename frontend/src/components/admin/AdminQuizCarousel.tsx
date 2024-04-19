@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { CircleX, Loader2, RotateCw, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import ReactMarkdown from 'react-markdown';
 
 interface QuizData {
   difficulty?: string;
@@ -241,7 +242,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                 </div>
               ) : (
                 <div>
-                  <p>{editedContent}</p>
+                   <ReactMarkdown children={editedContent} />
                   <div className="flex justify-end mt-2">
                     <Button
                       onClick={() => setEditingQuestionIndex("intro")}
@@ -255,7 +256,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
             </div>
           </CarouselItem>
 
-          {/* Question Cards */}
+
           {editedQuestions && editedQuestions.map((question, index) => (
             <CarouselItem key={index}>
               <div className="shadow-md rounded-lg p-4 bg-slate-100">
@@ -283,8 +284,6 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                         </button>
                       </div>
                     </div>
-                    {/* Input fields for editing */}
-                    {/* Code Snippet Input */}
                     <Textarea
                       value={question.question}
                       onChange={(e) =>
@@ -293,7 +292,6 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                       id="editlabel"
                       className="form-input mt-1 block w-full"
                     />
-                    {/* Choices Input */}
                     <p>
                       Choices:
                       {question.choices.map((choice, choiceIndex) => (
@@ -314,7 +312,6 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                         </label>
                       ))}
                     </p>
-                    {/* Correct Option Input */}
                     <label>
                       Correct Option:
                       <input
@@ -330,7 +327,6 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                         className="form-input mt-1 block w-full"
                       />
                     </label>
-                    {/* Explanation Input */}
                     <label>
                     Explanation:
                     <Textarea
@@ -358,7 +354,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                         </button>
                       </div>
                     </div>
-                    <p>{question.question}</p>
+                    <ReactMarkdown children={question.question} />
                     <ul className="my-4">
                       {question.choices.map((choice, choiceIndex) => (
                         <li key={choiceIndex} className="mb-1">
@@ -372,7 +368,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                               className="form-radio h-5 w-5 text-indigo-600"
                               disabled={editingQuestionIndex !== null}
                             />
-                            <span className="ml-2">{choice}</span>
+                            <span className="ml-2">{<ReactMarkdown children={choice} />}</span>
                           </label>
                         </li>
                       ))}
@@ -380,7 +376,7 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
                     <p>Correct Option: {question.correctOption + 1}</p>
                     <p>
                       <span className="underline">Explanation:</span>{" "}
-                      {question.explanation}
+                      <ReactMarkdown children={question.explanation} />
                     </p>
                   </div>
                 )}

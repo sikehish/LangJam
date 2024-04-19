@@ -138,7 +138,7 @@ const NewQuiz: React.FC<{ token: string }> = ({ token }) => {
       <Card className="w-[70%] lg:w-[50%] mx-0 bg-blue-50">
         <ArrowLeft
           className="cursor-pointer ml-2 mt-2 transition-transform transform hover:scale-110"
-          onClick={() => navigate("/admin")}
+          onClick={() => navigate(-1)}
         />
         <CardHeader className="text-center">
           <CardTitle>New Quiz Parameters</CardTitle>
