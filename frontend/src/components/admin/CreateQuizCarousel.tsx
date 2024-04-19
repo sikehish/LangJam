@@ -36,9 +36,8 @@ const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, conte
   const [editedQuestions, setEditedQuestions] = useState<Question[]>(questions);
   const [editedContent, setEditedContent]=useState<string>(content)
   const [originalContent, setOriginalContent]=useState<string>(content)
-  const [originalQuestions, setOriginalQuestions] = useState<Question[]>(questions); //Used to ahndle the cancellation of an edit in a question
+  const [originalQuestions, setOriginalQuestions] = useState<Question[]>(questions); //Used to handle the cancellation of an edit in a question
 
-  console.log(questions)
 
 
   const {mutate: saveToDatabase,isPending: isSaving} = useMutation({
@@ -137,7 +136,6 @@ const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, conte
     </div>)}
       <Carousel className="w-full max-w-lg mx-auto">
         <CarouselContent>
-          {/* Introduction Card */}
           <CarouselItem key="intro">
             <div className="shadow-md rounded-lg p-4 bg-slate-100">
               <h2 className="text-lg font-semibold mb-2">Introduction</h2>
@@ -186,12 +184,10 @@ const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, conte
             </div>
           </CarouselItem>
 
-          {/* Question Cards */}
           {editedQuestions && editedQuestions.map((question, index) => (
             <CarouselItem key={index}>
               <div className="shadow-md rounded-lg p-4 bg-slate-100">
                 {editingQuestionIndex === index ? (
-                  // Edit Mode
                   <div>
                     <div className="flex justify-between mb-4">
                       <label htmlFor="editlabel">
@@ -214,8 +210,6 @@ const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, conte
                         </button>
                       </div>
                     </div>
-                    {/* Input fields for editing */}
-                    {/* Code Snippet Input */}
                     <Textarea
                       value={question.question}
                       onChange={(e) =>
@@ -224,7 +218,6 @@ const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, conte
                       id="editlabel"
                       className="form-input mt-1 block w-full"
                     />
-                    {/* Choices Input */}
                     <p>
                       Choices:
                       {question.choices.map((choice, choiceIndex) => (

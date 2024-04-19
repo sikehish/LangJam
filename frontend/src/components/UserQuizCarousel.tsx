@@ -16,6 +16,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "@/context/AuthContext";
 import { attemptQuestion } from '../../../backend/controllers/userController';
 import Confetti from "./Confetti";
+import ReactMarkdown from 'react-markdown';
 
 interface QuizData {
   _id?: string;
@@ -171,7 +172,7 @@ const UserQuizCarousel: React.FC<Props> = ({
             <div className="shadow-md rounded-lg p-4 bg-slate-100">
               <h2 className="text-lg font-semibold mb-2">Introduction</h2>
               <div>
-                <p>{content}</p>
+              <ReactMarkdown children={content} />
               </div>
             </div>
           </CarouselItem>
@@ -191,7 +192,7 @@ const UserQuizCarousel: React.FC<Props> = ({
                         Question {index + 1}
                       </h3>
                     </div>
-                    <p>{question.question}</p>
+                    <ReactMarkdown children={question.question} />
                     <ul className="my-4">
                       {question.choices.map((choice, choiceIndex) => (
                         <li key={choiceIndex} className="mb-1">
@@ -217,8 +218,8 @@ const UserQuizCarousel: React.FC<Props> = ({
                                 attemptedQuestions.hasOwnProperty(question?._id)
                               }
                             />
-                            <span className="ml-2">
-                              {choice}
+                            <span className="flex ml-2">
+                              {<ReactMarkdown children={choice} className="mx-1" />}
                               {question?._id != undefined &&
                                 attemptedQuestions.hasOwnProperty(
                                   question?._id
@@ -260,7 +261,7 @@ const UserQuizCarousel: React.FC<Props> = ({
                           )}
                           <p>
                             <span className="underline">Explanation:</span>{" "}
-                            {question.explanation}
+                            {<ReactMarkdown children={question.explanation} />}
                           </p>
                         </div>
                       )}
