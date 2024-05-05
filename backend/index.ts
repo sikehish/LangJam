@@ -6,8 +6,19 @@ import globalErrHandler from './middleware/errorHandler';
 import userRouter from './routes/userRouter';
 import adminRouter from './routes/adminRouter';
 import entityRouter from './routes/entityRouter';
+import oauthRouter from './routes/oauthRouter';
+import passport from "passport"
+import "./utils/passport"
+import cors from 'cors';
 
 const app = express();
+
+app.use(passport.initialize());
+
+app.use(cors({
+  origin:"http://localhost:5173",
+  methods:"GET,POST,PUT,DELETE",
+}))
 
 // Set up logger
 app.use(morgan('dev'));
@@ -19,6 +30,7 @@ app.use(express.json())
 app.use(mongoSanitize());
 
 // Routes
+app.use('/api/oauth', oauthRouter);
 app.use('/api/users', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/entities', entityRouter) //Getting all entities(categories,subjects,topics,quizzes)

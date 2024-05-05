@@ -18,6 +18,16 @@ function Signup() {
   const navigate=useNavigate()
   const queryClient=useQueryClient() 
 
+  console.log(process.env.REACT_APP_API_URL)
+
+  const googleAuth = (e) => {
+    e.preventDefault()
+		window.open(
+			`${process.env.REACT_APP_API_URL}/api/oauth/google/callback`,
+			"_self"
+		);
+	};
+
   const handleSubmitBasicInfo = (e: FormEvent) => {
     e.preventDefault();
     signup({ name, email, password, confirmPassword, profilePicture, description });
@@ -178,7 +188,11 @@ function Signup() {
 
         {/* {error && <div className="text-red-500 mb-4">{error}</div>} */}
         {/* {isSucc && <div className="text-green-500 mb-4">Signup successful!</div>} */}
+
       </div>
+      <button onClick={googleAuth}>
+						<span>Sing up with Google</span>
+					</button>
     </div>
   );
 }
