@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import passport from "passport";
 
 export const successHandler = async (req: Request, res: Response) => {
-    console.log("SUCCESS ")
+    // console.log("SUCCESS ", req)
     if (req.user) {
         res.status(200).json({
             error: false,

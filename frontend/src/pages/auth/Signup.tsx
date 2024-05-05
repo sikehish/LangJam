@@ -190,9 +190,9 @@ function Signup() {
         {/* {isSucc && <div className="text-green-500 mb-4">Signup successful!</div>} */}
 
       </div>
-      <button onClick={googleAuth}>
+      {/* <button onClick={googleAuth}>
 						<span>Sing up with Google</span>
-					</button>
+					</button> */}
     </div>
   );
 }
