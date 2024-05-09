@@ -7,13 +7,13 @@ import userRouter from './routes/userRouter';
 import adminRouter from './routes/adminRouter';
 import entityRouter from './routes/entityRouter';
 import oauthRouter from './routes/oauthRouter';
-import passport from "passport"
-import "./utils/passport"
+// import passport from "passport"
+// import "./utils/passport"
 import cors from 'cors';
 
 const app = express();
 
-app.use(passport.initialize());
+// app.use(passport.initialize());
 
 app.use(cors({
   origin:"http://localhost:5173",
