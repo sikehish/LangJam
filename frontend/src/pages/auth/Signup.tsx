@@ -4,6 +4,7 @@ import useSignup from "../../hooks/useSignup"; // Import your useSignup hook
 import { Link, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { FaGoogle } from "react-icons/fa";
 
 function Signup() {
   const [name, setName] = useState("");
@@ -20,7 +21,7 @@ function Signup() {
 
   console.log(process.env.REACT_APP_API_URL)
 
-  const googleAuth = (e) => {
+  const googleAuth = (e: any) => {
     e.preventDefault()
 		window.open(
 			`${process.env.REACT_APP_API_URL}/api/oauth/google/callback`,
@@ -86,8 +87,9 @@ function Signup() {
     setShowOptionalFields(false);
   };
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md p-8 bg-white rounded-md shadow-md">
+<div className="min-h-screen flex items-center justify-center bg-gray-100 flex-col">
+          <div className="flex flex-col justify-center items-center">
+        <div className="w-full max-w-md p-8 bg-white rounded-md shadow-md">
         <h2 className="text-2xl font-bold mb-4">User Signup</h2>
 
         {!showOptionalFields ? (<><form onSubmit={handleSubmitBasicInfo}>
@@ -190,9 +192,12 @@ function Signup() {
         {/* {isSucc && <div className="text-green-500 mb-4">Signup successful!</div>} */}
 
       </div>
-      <button onClick={googleAuth}>
-						<span>Sign up with Google</span>
+      <span className="text-gray-400 mt-2">--- OR ---</span>
+      <button onClick={googleAuth} className="mt-2 mb-4 flex w-3/4 box-border bg-blue-600 px-3 py-2 rounded-full items-center justify-center">
+        <FaGoogle className="mr-2 text-white" />
+						<span className="text-white">Sign up with Google</span>
 					</button>
+          </div>
     </div>
   );
 }

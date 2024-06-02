@@ -15,7 +15,8 @@ router.get("/google", passport.authenticate("google",  { scope: ["profile", "ema
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Google OAuth callback URL
-router.get('/google/callback', passport.authenticate('google', { session: false }), (req, res) => {
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect:`${process.env.CLIENT_URL}/failed` }), (req, res) => {
+    console.log("HAHAHAHAH")
   if (req.user) {
     const user: any = req.user;
     console.log("USERRRR: ", user)

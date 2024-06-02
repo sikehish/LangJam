@@ -148,7 +148,7 @@ export default function App() {
         />}
 
 {!(state?.user) && <Route
-          path="/failure"
+          path="/failed"
           element={<GoogleFailure />}
         />}
 
