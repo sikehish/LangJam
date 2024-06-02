@@ -16,6 +16,7 @@ import { getQuizzesIncomplete, getQuizzesCompleted, getQuizzesNotAttempted } fro
 import redisClient from "../config/redisConfig"
 import Note from '../models/noteModel';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { getImageDataFromUrl } from '../utils/getImageDataFromUrl';
 
 
 export const userSignup=asyncWrapper(async (req, res) => {
@@ -233,7 +234,7 @@ export const deleteAccount = asyncWrapper(async (req, res) => {
 //Updates made from the profile page
 export const updateUser = asyncWrapper(async (req, res) => {
   const id = ((req as unknown) as AuthReq).user;
-  let { name, password, confirmPassword, description,dp } = req.body;
+  let { name, password, confirmPassword, description,dp,imageUrl } = req.body;
 
   if (password !== undefined && confirmPassword !== undefined) {
     password = password.trim();
@@ -288,7 +289,13 @@ export const updateUser = asyncWrapper(async (req, res) => {
   }
 
   if(dp !== undefined){
-    const imageData = req?.file?.buffer.toString("base64"); 
+    let imageData;
+    if (dp !== undefined) {
+      imageData = req?.file?.buffer.toString("base64");
+    } else if (imageUrl) {
+      imageData = await getImageDataFromUrl(imageUrl);
+    }
+
   if(!imageData){
     res.status(400)
     throw new Error("Image data issue")

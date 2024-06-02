@@ -20,6 +20,8 @@ import Quiz from "./pages/Quiz";
 import CreateQuiz from "./pages/CreateQuiz";
 import UserQuizzes from "./pages/user/UserQuizzes";
 import Notes from "./pages/user/Notes";
+import GoogleSuccess from "./pages/auth/redirects/GoogleSuccess";
+import GoogleFailure from "./pages/auth/redirects/GoogleFailure";
 
 export default function App() {
   const { state } = useAuthContext();
@@ -139,6 +141,18 @@ export default function App() {
           path="/notes"
           element={state?.user && !state?.user?.isAdmin ? <Notes  /> : <Navigate to="/" />}
         />
+
+{state?.user && <Route
+          path="/success"
+          element={<GoogleSuccess />}
+        />}
+
+{!(state?.user) && <Route
+          path="/failure"
+          element={<GoogleFailure />}
+        />}
+
+        
 
 
       </Routes>
