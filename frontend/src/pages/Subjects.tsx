@@ -7,18 +7,18 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react';
 import { useAuthContext } from '@/context/AuthContext';
 
-const Subjects: React.FC<{ token: string }> = ({ token }) => {
+const Subjects: React.FC = () => {
   const {state}=useAuthContext()
   const queryClient = useQueryClient();
   const {categoryId} = useParams();
   const navigate=useNavigate()
-  const { getSubjects, createSubjectMutation } = useSubjectQueries(queryClient, token, categoryId!);
+  const { getSubjects, createSubjectMutation } = useSubjectQueries(queryClient, categoryId!);
 
   const renderSubjects = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {getSubjects?.data?.map((subject: { name: string; _id: string, category:string }) => (
-          <Subject key={subject._id} subject={subject} token={token} />
+          <Subject key={subject._id} subject={subject} />
         ))}
       </div>
     );
@@ -36,7 +36,7 @@ const Subjects: React.FC<{ token: string }> = ({ token }) => {
       ) : (
         renderSubjects()
       )}
-      {token && state?.user?.isAdmin && <CreateBtn saveMethod={createSubjectMutation} name="Subject"/>}
+      {state?.user?.isAdmin && <CreateBtn saveMethod={createSubjectMutation} name="Subject"/>}
     </div>
   );
 };

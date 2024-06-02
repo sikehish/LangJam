@@ -4,10 +4,10 @@ import { toast } from 'react-toastify';
 import ReactMarkdown from 'react-markdown';
 import { Loader2, Send } from 'lucide-react'; 
 
-const Chatbot: React.FC<{ token: string, messages: {text: string, isBot: boolean}[], setMessages: React.Dispatch<React.SetStateAction<{
+const Chatbot: React.FC<{messages: {text: string, isBot: boolean}[], setMessages: React.Dispatch<React.SetStateAction<{
   text: string;
   isBot: boolean;
-}[]>>}> = ({ token, messages, setMessages }) => {
+}[]>>}> = ({messages, setMessages }) => {
   const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,9 +35,9 @@ const Chatbot: React.FC<{ token: string, messages: {text: string, isBot: boolean
       const response = await fetch('/api/users/chat-with-ai', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ prompt: variables.message }),
       });
 

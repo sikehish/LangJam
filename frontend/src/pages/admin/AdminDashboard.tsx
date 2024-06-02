@@ -4,15 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
-const AdminDashboard: React.FC<{ token: string }> = ({ token }) => {
+const AdminDashboard: React.FC= () => {
   const navigate = useNavigate();
   const { data: gatheredData, isLoading, isError } = useQuery({
     queryKey: ['adminStats'],
     queryFn: async () => {
       const response = await fetch('/api/admin/stats', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
       return response.json();
     },

@@ -24,18 +24,18 @@ export interface Question {
   }
   
 
-const Quizzes: React.FC<{ token: string }> = ({ token }) => {
+const Quizzes: React.FC= () => {
   const {state}=useAuthContext()
     const navigate=useNavigate()
   const queryClient = useQueryClient();
   const {topicId, subjectId, categoryId} = useParams();
-  const { getQuizzes } = useQuizQueries(queryClient, token, topicId!);
+  const { getQuizzes } = useQuizQueries(queryClient, topicId!);
 
   const renderQuizzes = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {getQuizzes?.data?.map((quiz:IQuiz) => (
-          <AdminQuizTile key={quiz._id} quiz={quiz} token={token} categoryId={categoryId!} subjectId={subjectId!}/>
+          <AdminQuizTile key={quiz._id} quiz={quiz} categoryId={categoryId!} subjectId={subjectId!}/>
           ))}
       </div>
     );
@@ -53,7 +53,7 @@ const Quizzes: React.FC<{ token: string }> = ({ token }) => {
       ) : (
         renderQuizzes()
       )}
-       {token && state?.user?.isAdmin &&  <div>
+       {state?.user?.isAdmin &&  <div>
         <Button  variant="outline" onClick={() => { navigate('/admin/new-quiz') }}>New Quiz</Button>
       </div>}
     </div>

@@ -39,7 +39,6 @@ interface Props {
     subject: string;
     topic: string;
     category: string;
-    token: string;
     title: string;
     quizId?: string;
     difficulty: string;
@@ -51,7 +50,6 @@ const UserQuizCarousel: React.FC<Props> = ({
   subject,
   topic,
   category,
-  token,
   title,
   quizId,
   difficulty
@@ -74,8 +72,8 @@ const UserQuizCarousel: React.FC<Props> = ({
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
+          credentials: 'include',
         });
         const data = await response.json();
         if (!response.ok) {
@@ -89,7 +87,7 @@ const UserQuizCarousel: React.FC<Props> = ({
       }
     };
     fetchAttemptedQuestions();
-  }, [token]);
+  }, [state?.user]);
   
 
   // const [attemptQuestionIndex, setAttemptQuestionIndex] = useState<number | null>(null);
@@ -112,8 +110,8 @@ const UserQuizCarousel: React.FC<Props> = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify(quesData),
       });
 

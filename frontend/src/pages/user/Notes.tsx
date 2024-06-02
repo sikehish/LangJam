@@ -15,15 +15,13 @@ function formatDate(timestamp: string): string {
   return date.toLocaleString(); // Adjust the format as per your preference
 }
 
-function Notes({ token }: { token: string }) {
+function Notes() {
   const queryClient = useQueryClient();
   const { data: notesData, isLoading, isError } = useQuery({
     queryKey: ['notes'],
     queryFn: async () => {
       const response = await fetch(`/api/users/notes`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -37,9 +35,7 @@ function Notes({ token }: { token: string }) {
     try {
       const response = await fetch(`/api/users/notes/${id}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       const resData = await response.json();

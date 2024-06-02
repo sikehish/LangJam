@@ -1,14 +1,12 @@
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
-export const useQuizQueries = (queryClient: QueryClient, token: string, topicId: string) => {
+export const useQuizQueries = (queryClient: QueryClient, topicId: string) => {
   const {data: getQuizzes} = useQuery({
     queryKey: ['quizzes', topicId],
     queryFn: async () => {
       const response = await fetch(`/api/entities/quizzes/${topicId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -27,8 +25,8 @@ export const useQuizQueries = (queryClient: QueryClient, token: string, topicId:
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify({ title, topic:topicId }),
       });
 
@@ -54,8 +52,8 @@ export const useQuizQueries = (queryClient: QueryClient, token: string, topicId:
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify({ title: newTitle, topicId }),
       });
   
@@ -76,9 +74,7 @@ export const useQuizQueries = (queryClient: QueryClient, token: string, topicId:
       mutationFn: async (quizId: string) => {
         const response = await fetch(`/api/admin/quizzes/${quizId}`, {
           method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: 'include',
         });
   
         const resData = await response.json();

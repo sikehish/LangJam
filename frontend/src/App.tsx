@@ -41,7 +41,7 @@ export default function App() {
           element={state.user ? <Navigate to="/" /> : <Signup />}
         />
 
-        <Route path="/leaderboard" element={<Leaderboard token={state?.user?.token || null} />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
 
         <Route
           path="/admin-login"
@@ -52,7 +52,7 @@ export default function App() {
           path="/admin"
           element={
             state?.user?.isAdmin ? (
-              <AdminDashboard token={state?.user?.token} />
+              <AdminDashboard  />
             ) : (
               <Navigate to="/" />
             )
@@ -63,7 +63,7 @@ export default function App() {
           path="/admin/new-quiz"
           element={
             state?.user?.isAdmin ? (
-              <NewQuiz token={state?.user?.token} />
+              <NewQuiz  />
             ) : (
               <Navigate to="/" />
             )
@@ -74,7 +74,7 @@ export default function App() {
           path="/admin/new-quiz/generate"
           element={
             state?.user?.isAdmin ? (
-              <GenerateQuiz token={state?.user?.token} />
+              <GenerateQuiz  />
             ) : (
               <Navigate to="/" />
             )
@@ -84,7 +84,7 @@ export default function App() {
         <Route
           path="/categories"
           element={
-              <Categories token={state?.user?.token || null} />
+              <Categories  />
           }
         />
 
@@ -92,7 +92,7 @@ export default function App() {
           path="/categories/:categoryId"
           element={
             state?.user ? (
-              <Subjects token={state?.user?.token} />
+              <Subjects  />
             ) : (
               <Navigate to="/" />
             )
@@ -103,7 +103,7 @@ export default function App() {
           path="/categories/:categoryId/subjects/:subjectId"
           element={
             state?.user ? (
-              <Topics token={state?.user?.token} />
+              <Topics  />
             ) : (
               <Navigate to="/" />
             )
@@ -114,10 +114,10 @@ export default function App() {
   path="/categories/:categoryId/subjects/:subjectId/topics/:topicId"
   element={
     state?.user?.isAdmin ? (
-      <Quizzes token={state?.user?.token} />
+      <Quizzes  />
     ) : (
-      state?.user?.token ? (
-        <UserQuizzes token={state?.user?.token} />
+      state?.user? (
+        <UserQuizzes  />
       ) : (
         <Navigate to="/" />
       )
@@ -126,18 +126,18 @@ export default function App() {
 />
 
 
-        <Route path="/categories/:categoryId/subjects/:subjectId/topics/:topicId/quizzes/:quizId" element={state?.user ? <Quiz token={state?.user?.token} /> :   <Navigate to="/" />} />  
+        <Route path="/categories/:categoryId/subjects/:subjectId/topics/:topicId/quizzes/:quizId" element={state?.user ? <Quiz  /> :   <Navigate to="/" />} />  
 
-          <Route path="/admin/new-quiz/create"  element={state?.user?.isAdmin? <CreateQuiz token={state?.user?.token} /> :   <Navigate to="/" />} />
+          <Route path="/admin/new-quiz/create"  element={state?.user?.isAdmin? <CreateQuiz  /> :   <Navigate to="/" />} />
 
         <Route
           path="/profile"
-          element={state?.user && !state?.user?.isAdmin ? <Profile token={state?.user?.token} /> : <Navigate to="/" />}
+          element={state?.user && !state?.user?.isAdmin ? <Profile  /> : <Navigate to="/" />}
         />
 
 <Route
           path="/notes"
-          element={state?.user && !state?.user?.isAdmin ? <Notes token={state?.user?.token} /> : <Navigate to="/" />}
+          element={state?.user && !state?.user?.isAdmin ? <Notes  /> : <Navigate to="/" />}
         />
 
 

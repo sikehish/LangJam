@@ -109,15 +109,34 @@ const Navbar: React.FC = () => {
             <li>
               <Link to="/leaderboard">Leaderboard</Link>
             </li>
-            <li>
+            {!state.user && <li>
               <Link to="/login">Login</Link>
-            </li>
-            <li>
+            </li> }
+            {state.user && !state?.user?.isAdmin && <li>
               <Link to="/profile">Profile</Link>
-            </li>
+            </li>}
+            {state.user && !state?.user?.isAdmin  &&(
+              <li>
+            <Link to="/notes">
+            Notes
+          </Link>
+              </li>
+          )}
+          {!state.user && (
             <li>
-              <Link to="/admin">Admin</Link>
+            <Link to="/admin-login">
+              Admin
+            </Link>
             </li>
+          )}
+            {state.user?.isAdmin  && <li>
+              <Link to="/admin">Admin</Link>
+            </li>}
+            {state.user && <li>
+              <button onClick={logout}>
+              Logout
+            </button>
+            </li>}
           </ul>
         </div>
       )}

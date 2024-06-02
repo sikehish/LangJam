@@ -10,19 +10,19 @@ import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover
 import { Label } from '@radix-ui/react-label';
 import { toast } from 'react-toastify';
 import { Textarea } from '@/components/ui/textarea';
-const UserQuiz = ({ token }: { token: string }) => {
+import { useAuthContext } from '@/context/AuthContext';
+const UserQuiz = () => {
   const { subjectId, topicId, categoryId, quizId } = useParams();
   const [isNoteClicked, setNoteClicked] = useState(false)
   const [noteData, setNoteData]=useState({title:"", description:""})
   const navigate=useNavigate()
+  const {state}=useAuthContext()
 
   const { data: quizDetails } = useQuery({
     queryKey: ['quizDetails', quizId],
     queryFn: async () => {
       const response = await fetch(`/api/users/attempted-quiz-details/${quizId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
   
       if (!response.ok) {
@@ -36,9 +36,7 @@ const UserQuiz = ({ token }: { token: string }) => {
     queryKey: ['quiz', quizId],
     queryFn: async () => {
       const response = await fetch(`/api/entities/quiz/${quizId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
   
       if (!response.ok) {
@@ -58,9 +56,9 @@ const UserQuiz = ({ token }: { token: string }) => {
       const response=await fetch(`/api/users/create-note`,{
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        credentials: 'include',
         body: JSON.stringify(data),
       })
       const resData=await response.json()
@@ -105,7 +103,7 @@ const UserQuiz = ({ token }: { token: string }) => {
    className="cursor-pointer transition-transform transform hover:scale-110 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg px-4 py-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
    onClick={() => navigate(`/categories/${categoryId}/subjects/${subjectId}/topics/${topicId}`)}
    >Return</button>
-   {token && <div className="flex">
+   {state?.user  && <div className="flex">
         <Popover modal={true}  open={isNoteClicked} onOpenChange={setNoteClicked} >
         <PopoverTrigger asChild title='Add Note'>
           <Button className='mx-2 bg-blue-600 px-4 text-xs rounded-lg' variant={"default"}>
@@ -150,7 +148,6 @@ const UserQuiz = ({ token }: { token: string }) => {
    </div>
       {questions && 
         <UserQuizCarousel
-        token={token}
         quizData={{questions, content, numberOfQuestions}}
         topic={topicId!}
         subject={subjectId!}

@@ -20,7 +20,6 @@ interface Props {
    topic: string,
    subject: string,
    category: string,
-   token:string,
    title: string,
    quizId?: string,
    difficulty: string,
@@ -29,7 +28,7 @@ interface Props {
    numberOfQuestions: number
 }
 
-const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, content,subject, topic, category,token, title,difficulty }) => {
+const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, content,subject, topic, category, title,difficulty }) => {
   const queryClient=useQueryClient()
   const navigate=useNavigate()
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<number | null | "intro">(null);
@@ -51,8 +50,8 @@ const CreateQuizCarousel: React.FC<Props> = ({numberOfQuestions,questions, conte
           method: "POST",
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
           },
+          credentials: 'include',
           body: JSON.stringify(quizGen),
         });
   

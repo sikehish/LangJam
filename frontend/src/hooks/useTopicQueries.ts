@@ -1,14 +1,12 @@
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
-export const useTopicQueries = (queryClient: QueryClient, token: string, subjectId: string) => {
+export const useTopicQueries = (queryClient: QueryClient, subjectId: string) => {
   const {data: getTopics} = useQuery({
     queryKey: ['topics', subjectId],
     queryFn: async () => {
       const response = await fetch(`/api/entities/topics/${subjectId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -27,8 +25,8 @@ export const useTopicQueries = (queryClient: QueryClient, token: string, subject
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify({ name, subject:subjectId }),
       });
 
@@ -54,8 +52,8 @@ export const useTopicQueries = (queryClient: QueryClient, token: string, subject
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify({ name: newName, subjectId }),
       });
   
@@ -76,9 +74,7 @@ export const useTopicQueries = (queryClient: QueryClient, token: string, subject
       mutationFn: async (topicId: string) => {
         const response = await fetch(`/api/admin/topics/${topicId}`, {
           method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: 'include',
         });
   
         const resData = await response.json();

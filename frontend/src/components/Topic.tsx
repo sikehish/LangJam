@@ -13,11 +13,9 @@ import { useAuthContext } from "@/context/AuthContext";
 
 function Topic({
   topic,
-  token,
   categoryId,
 }: {
     topic: { name: string; _id: string, subject:string},
-  token: string,
   categoryId: string
 }) {
   const {state}=useAuthContext()
@@ -27,7 +25,7 @@ function Topic({
   const {
     editTopicMutation,
     deleteTopicMutation,
-  } = useTopicQueries(queryClient, token, topic.subject);
+  } = useTopicQueries(queryClient, topic.subject);
 
   const handleEditSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -65,7 +63,7 @@ function Topic({
         <p className="text-white">{topic.name}</p>
       </div>
       </Link>
-      {token && state?.user?.isAdmin && <div className="flex">
+      {state?.user?.isAdmin && <div className="flex">
         {/* <button onClick={} className="mr-2"><FaTrash /></button> */}
         <Button variant={"ghost"} onClick={handleDelete}>
                 <FaTrash className="text-red-800" />

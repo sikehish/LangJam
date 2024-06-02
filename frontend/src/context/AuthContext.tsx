@@ -1,10 +1,12 @@
-import React, { createContext, useReducer, useContext, ReactNode } from 'react';
+import React, { createContext, useReducer, useContext, ReactNode, useEffect } from 'react';
 import {User} from "../../typings"
 
+// Define the AuthState interface
 interface AuthState {
-  user: User | null | undefined;
-  flag?: string; // Add any other properties as needed
+  user: User | null;
+  flag?: string; 
 }
+
 
 interface AuthContextProps {
   dispatch: React.Dispatch<AuthAction>;
@@ -27,27 +29,52 @@ export const useAuthContext = (): AuthContextProps => {
 };
 
 const reducer = (state: AuthState, action: AuthAction): AuthState => {
-  if (action.type === 'SIGNUP') {
-    return { user: null, flag: 'signed up' }; // NOT IMPLEMENTING AUTO REGISTRATION ON SIGNUP
-  } else if (action.type === 'LOGIN') {
-    return { user: action.payload };
-  } else if (action.type === 'LOGOUT') {
-    return { user: null };
-  } else return state;
+  switch (action.type) {
+    case 'SIGNUP':
+      return { user: null, flag: 'signed up' };
+    case 'LOGIN':
+      return { user: action.payload || null };
+    case 'LOGOUT':
+      return { user: null };
+    default:
+      return state;
+  }
 };
 
 interface AuthContextProviderProps {
   children: ReactNode;
 }
 
+
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, {
-    user: localStorage.getItem('langJam-user') ? JSON.parse(localStorage.getItem('langJam-user')!) : null,
-    // user:  null,
-  });
+  const [state, dispatch] = useReducer(reducer, { user: null });
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/users/check', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user');
+        }
+
+        const data = await response.json();
+        if (data.user) {
+          dispatch({ type: 'LOGIN', payload: data.user });
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ dispatch, state }}>
+    <AuthContext.Provider value={{ state, dispatch }}>
       {children}
     </AuthContext.Provider>
   );

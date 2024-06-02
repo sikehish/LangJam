@@ -34,14 +34,13 @@ interface Props {
    topic: string,
    subject: string,
    category: string,
-   token:string,
    title: string,
    mode: string,
    quizId?: string,
    difficulty: string
 }
 
-const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category,token, title, mode, quizId, difficulty }) => {
+const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category, title, mode, quizId, difficulty }) => {
   const { questions, content } = quizData;
   const queryClient=useQueryClient()
   const navigate=useNavigate()
@@ -65,8 +64,8 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify(quizParams),
       });
   
@@ -98,8 +97,8 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
           method: "POST",
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
           },
+          credentials: 'include',
           body: JSON.stringify(quizGen),
         });
       }else{
@@ -107,8 +106,8 @@ const AdminQuizCarousel: React.FC<Props> = ({ quizData, subject, topic, category
           method: "PATCH",
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
           },
+          credentials: 'include',
           body: JSON.stringify(quizGen),
         });
       }

@@ -1,21 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
-import { AuthReq } from "../typings"
+import { AuthReq } from "../typings";
 
 export const checkAuth = (req: Request, res: Response, next: NextFunction): Response | void => {
-  // const { authorization: auth } = req.headers;
 
-  // if (!auth || !auth.startsWith('Bearer ')) {
-  //   return res.status(401).json({ status: "fail", message: 'Unauthorized access. Bearer token not provided.' });
-  // }
-  // const token = auth.split(' ')[1]; // Format: Bearer 'token'
-  //OR
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-
-
+  const token = req.cookies.token;
+  console.log(token)
+  
   if (!token) {
-    return res.status(401).json({ status: "fail", message: 'Unauthorized access. Invalid Bearer token.' });
+    return res.status(401).json({ status: "fail", message: 'Unauthorized access. Token not provided.' });
   }
 
   try {
@@ -36,9 +30,9 @@ export const checkAuth = (req: Request, res: Response, next: NextFunction): Resp
 };
 
 export const checkAdminAuth = (req: Request, res: Response, next: NextFunction): Response | void => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
+  const token = req.cookies.token;
   if (!token) {
-    return res.status(401).json({ status: "fail", message: 'Unauthorized access. Invalid Bearer token.' });
+    return res.status(401).json({ status: "fail", message: 'Unauthorized access. Token not provided.' });
   }
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_ADMIN_KEY as jwt.Secret);
@@ -57,9 +51,10 @@ export const checkAdminAuth = (req: Request, res: Response, next: NextFunction):
 };
 
 export const checkMixedAuth = (req: Request, res: Response, next: NextFunction): Response | void => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
+  // console.log("COOKIES: ",req.cookies)
+  const token = req.cookies.token;
   if (!token) {
-    return res.status(401).json({ status: "fail", message: 'Unauthorized access. Invalid Bearer token.' });
+    return res.status(401).json({ status: "fail", message: 'Unauthorized access. Token not provided.' });
   }
   try {
     let decodedToken: any;

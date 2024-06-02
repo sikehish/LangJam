@@ -1,7 +1,8 @@
 **/*.env
 **/*.md
-**/node_modules/
+# **/node_modules/
 **/dist
 npm-debug.log
 .coverage
 .coverage.*
+node_modules

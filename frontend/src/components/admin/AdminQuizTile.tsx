@@ -13,12 +13,10 @@ import { IQuiz } from "@/pages/Quizzes";
 
 function AdminQuizTile({
   quiz,
-  token,
   categoryId,
   subjectId
 }: {
     quiz: IQuiz,
-  token: string,
   categoryId: string,
   subjectId: string
 }) {
@@ -29,7 +27,7 @@ function AdminQuizTile({
   const {
     editQuizMutation,
     deleteQuizMutation,
-  } = useQuizQueries(queryClient, token, quiz.topic);
+  } = useQuizQueries(queryClient, quiz.topic);
 
   const handleEditSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -67,7 +65,7 @@ function AdminQuizTile({
         <p className="text-white">{quiz.title}</p>
       </div>
       </Link>
-      {token && state?.user?.isAdmin && <div className="flex">
+      { state?.user?.isAdmin && <div className="flex">
         <Button variant={"ghost"} onClick={handleDelete}>
                 <FaTrash className="text-red-800" />
               </Button>

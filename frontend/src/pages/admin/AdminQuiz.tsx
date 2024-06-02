@@ -4,16 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import AdminQuizCarousel from '@/components/admin/AdminQuizCarousel';
 import { Input } from '@/components/ui/input';
 
-const AdminQuiz = ({ token }: { token: string }) => {
+const AdminQuiz = () => {
   const { subjectId, topicId, categoryId, quizId } = useParams();
 
   const { data: quizData } = useQuery({
     queryKey: ['quiz', quizId],
     queryFn: async () => {
       const response = await fetch(`/api/entities/quiz/${quizId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -70,7 +68,6 @@ const AdminQuiz = ({ token }: { token: string }) => {
       </div>
       {quizData && 
         <AdminQuizCarousel
-          token={token}
           quizData={quizData?.data}
           topic={topicId!}
           subject={subjectId!}

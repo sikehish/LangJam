@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import UserQuizTile from '@/components/UserQuizTile';
 import { IQuiz } from '../Quizzes';
 
-const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
+const UserQuizzes: React.FC = () => {
   const { state } = useAuthContext();
   const navigate = useNavigate();
   const { topicId, subjectId, categoryId } = useParams();
@@ -17,9 +17,7 @@ const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
     queryKey: ['quizzes', filter],
     queryFn: async () => {
       const response = await fetch(`/api/users/quiz-filter/${topicId}?filter=${filter}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
       if (!response.ok) {
         throw new Error('Unable to fetch quizzes');
@@ -46,7 +44,6 @@ const UserQuizzes: React.FC<{ token: string }> = ({ token }) => {
           <UserQuizTile
             key={quiz._id}
             quiz={quiz}
-            token={token}
             categoryId={categoryId!}
             subjectId={subjectId!}
             filter={filter}

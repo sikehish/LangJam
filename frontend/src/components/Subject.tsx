@@ -12,10 +12,8 @@ import { useAuthContext } from "@/context/AuthContext";
 
 function Subject({
   subject,
-  token,
 }: {
   subject: { name: string; _id: string, category:string};
-  token: string;
 }) {
   const {state}=useAuthContext()
   const queryClient = useQueryClient();
@@ -24,7 +22,7 @@ function Subject({
   const {
     editSubjectMutation,
     deleteSubjectMutation,
-  } = useSubjectQueries(queryClient, token, subject.category);
+  } = useSubjectQueries(queryClient, subject.category);
 
   const handleEditSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -62,7 +60,7 @@ function Subject({
         <p className="text-white">{subject.name}</p>
       </div>
       </Link>
-      {token && state?.user?.isAdmin && <div className="flex">
+      {state?.user?.isAdmin && <div className="flex">
         {/* <button onClick={} className="mr-2"><FaTrash /></button> */}
         <Button variant={"ghost"} onClick={handleDelete}>
                 <FaTrash className="text-red-800" />

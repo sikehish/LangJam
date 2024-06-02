@@ -3,7 +3,7 @@ import React from 'react'
 import { useLocation } from 'react-router-dom'
 import { Question } from './Quizzes';
 
-function CreateQuiz({token}:{token: string}) {
+function CreateQuiz() {
     const location = useLocation();
   const {subject,
     topic,
@@ -30,7 +30,7 @@ function CreateQuiz({token}:{token: string}) {
           Number of Questions: {numberOfQuestions}
         </p>
       </div>
-      {<CreateQuizCarousel token={token} questions={questions} content={content} numberOfQuestions={numberOfQuestions} topic={topic} subject={subject} category={category} title={title}  difficulty={difficulty}/>}
+      {<CreateQuizCarousel questions={questions} content={content} numberOfQuestions={numberOfQuestions} topic={topic} subject={subject} category={category} title={title}  difficulty={difficulty}/>}
     </div>
   );
 }

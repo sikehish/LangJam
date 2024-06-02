@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Crown, Sparkles } from 'lucide-react';
 
-const Leaderboard = ({ token }: { token: string | null }) => {
+const Leaderboard = () => {
   const navigate = useNavigate();
   const { state } = useAuthContext();
 
@@ -22,11 +22,9 @@ const Leaderboard = ({ token }: { token: string | null }) => {
   const { data: userRank, isLoading: rankLoading, isError: rankError } = useQuery({
     queryKey: ['user-rank'],
     queryFn: async () => {
-      if(!token) return {}
+      if(!(state?.user)) return {}
       const response = await fetch('/api/users/user-rank', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
       if (!response.ok) {
         throw new Error('Unable to fetch user rank');
@@ -42,7 +40,7 @@ const Leaderboard = ({ token }: { token: string | null }) => {
   if (leaderboardError) {
     return <p>Error fetching data.</p>;
   }
-
+  console.log(leaderboard, state?.user)
   return (
     <div className="container mx-auto pt-10">
      <div className="flex items-center justify-center mt-5 mb-4 py-4">
@@ -72,7 +70,7 @@ const Leaderboard = ({ token }: { token: string | null }) => {
           </li>
         ))}
       </ul>
-      {!rankError && state?.user && token && !state?.user?.isAdmin && userRank?.data?.rank && userRank?.data?.rank > leaderboard?.data?.length && (
+      {!rankError && state?.user && !state?.user?.isAdmin && userRank?.data?.rank && userRank?.data?.rank > leaderboard?.data?.length && (
         <div className="mt-16 mb-8">
           <div className="border-b border-black mb-4 md:w-[50%] mx-auto" />
           <div className="p-4 rounded-lg shadow-md bg-blue-200 mt-4 md:w-[50%] mx-auto flex justify-between items-center">

@@ -14,12 +14,10 @@ import { CircleCheckBig, CirclePlus, CircleSlash, Paintbrush2 } from "lucide-rea
 
 function UserQuizTile({
   quiz,
-  token,
   categoryId,
   subjectId, filter
 }: {
     quiz: IQuiz,
-  token: string,
   categoryId: string,
   subjectId: string,
   filter: string
@@ -31,7 +29,7 @@ function UserQuizTile({
   const {
     editQuizMutation,
     deleteQuizMutation,
-  } = useQuizQueries(queryClient, token, quiz.topic);
+  } = useQuizQueries(queryClient, quiz.topic);
 
   const handleEditSubmit = async (e: FormEvent) => {
     e.preventDefault()

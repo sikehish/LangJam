@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Pencil, Save } from "lucide-react";
 import { toast } from "react-toastify";
 
-const Profile: React.FC<{ token: string }> = ({ token }) => {
+const Profile: React.FC = () => {
   const queryClient = useQueryClient();
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingDesc, setIsEditingDesc] = useState(false);
@@ -14,9 +14,7 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
     queryKey: ["current-user"],
     queryFn: async () => {
       const response = await fetch("/api/users/current-user", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -47,9 +45,7 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
         const response = await fetch("/api/users/upload-dp", {
           method: "PATCH",
           body: formData,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: 'include',
         });
 
         if (!response.ok) {
@@ -79,8 +75,8 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
           body: JSON.stringify({ description: descData }),
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
+          credentials: 'include',
         });
 
         if (!response.ok) {
@@ -108,8 +104,8 @@ const Profile: React.FC<{ token: string }> = ({ token }) => {
           body: JSON.stringify({ name: nameData }), // Stringify the object
           headers: {
             "Content-Type": "application/json", // Set the content type to JSON
-            Authorization: `Bearer ${token}`,
           },
+          credentials: 'include',
         });
 
         if (!response.ok) {

@@ -1,7 +1,7 @@
 import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
-export const useCategoryQueries = (queryClient: QueryClient, token: string | null) => {
+export const useCategoryQueries = (queryClient: QueryClient) => {
   const {data: getCategories} = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
@@ -22,8 +22,8 @@ export const useCategoryQueries = (queryClient: QueryClient, token: string | nul
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify({ name }),
       });
 
@@ -49,8 +49,8 @@ export const useCategoryQueries = (queryClient: QueryClient, token: string | nul
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify({ name: newName }),
       });
   
@@ -71,9 +71,7 @@ export const useCategoryQueries = (queryClient: QueryClient, token: string | nul
       mutationFn: async (categoryId: string) => {
         const response = await fetch(`/api/admin/categories/${categoryId}`, {
           method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: 'include',
         });
   
         const resData = await response.json();

@@ -7,17 +7,17 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/context/AuthContext';
 
-const Categories: React.FC<{ token: string | null}> = ({ token }) => {
+const Categories: React.FC= () => {
   const queryClient = useQueryClient();
   const {state}=useAuthContext()
   const navigate=useNavigate()
-  const { getCategories, createCategoryMutation } = useCategoryQueries(queryClient, token);
+  const { getCategories, createCategoryMutation } = useCategoryQueries(queryClient);
 
   const renderCategories = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {getCategories?.data?.map((category: { name: string; _id: string }) => (
-          <Category key={category._id} category={category} token={token || null} />
+          <Category key={category._id} category={category}/>
         ))}
       </div>
     );
@@ -35,7 +35,7 @@ const Categories: React.FC<{ token: string | null}> = ({ token }) => {
       ) : (
         renderCategories()
       )}
-     {token && state?.user?.isAdmin && <CreateBtn saveMethod={createCategoryMutation} name="Category" />}
+     {state?.user?.isAdmin && <CreateBtn saveMethod={createCategoryMutation} name="Category" />}
     </div>
   );
 };

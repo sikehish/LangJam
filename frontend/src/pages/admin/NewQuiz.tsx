@@ -25,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
-const NewQuiz: React.FC<{ token: string }> = ({ token }) => {
+const NewQuiz: React.FC = () => {
   const [category, setCategory] = useState("");
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
@@ -61,9 +61,7 @@ const NewQuiz: React.FC<{ token: string }> = ({ token }) => {
 
   const fetchCategories = async () => {
     const response = await fetch("/api/entities/categories", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: 'include',
     });
     const data = await response.json();
     return data;
@@ -71,9 +69,7 @@ const NewQuiz: React.FC<{ token: string }> = ({ token }) => {
 
   const fetchSubjects = async (categoryId: string) => {
     const response = await fetch(`/api/entities/subjects/${categoryId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: 'include',
     });
     const data = await response.json();
     return data;
@@ -81,9 +77,7 @@ const NewQuiz: React.FC<{ token: string }> = ({ token }) => {
 
   const fetchTopics = async (subjectId: string) => {
     const response = await fetch(`/api/entities/topics/${subjectId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: 'include',
     });
     const data = await response.json();
     return data;
@@ -109,10 +103,7 @@ const NewQuiz: React.FC<{ token: string }> = ({ token }) => {
       console.log(quizParams);
       const response = await fetch("/api/admin/ai-quiz-gen", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
         body: JSON.stringify(quizParams),
       });
 

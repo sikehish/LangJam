@@ -9,18 +9,18 @@ import { useTopicQueries } from '@/hooks/useTopicQueries';
 import { ArrowLeft } from 'lucide-react';
 import { useAuthContext } from '@/context/AuthContext';
 
-const Topics: React.FC<{ token: string }> = ({ token }) => {
+const Topics: React.FC = () => {
   const queryClient = useQueryClient();
   const navigate=useNavigate()
   const {state}=useAuthContext()
   const {subjectId, categoryId} = useParams();
-  const { getTopics, createTopicMutation } = useTopicQueries(queryClient, token, subjectId!);
+  const { getTopics, createTopicMutation } = useTopicQueries(queryClient, subjectId!);
 
   const renderTopics = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {getTopics?.data?.map((topic: { name: string; _id: string, subject:string }) => (
-          <Topic key={topic._id} topic={topic} token={token} categoryId={categoryId!}/>
+          <Topic key={topic._id} topic={topic}categoryId={categoryId!}/>
         ))}
       </div>
     );
@@ -38,7 +38,7 @@ const Topics: React.FC<{ token: string }> = ({ token }) => {
       ) : (
         renderTopics()
       )}
-      {token && state?.user?.isAdmin && <CreateBtn saveMethod={createTopicMutation} name="Topic"/>}
+      {state?.user?.isAdmin && <CreateBtn saveMethod={createTopicMutation} name="Topic"/>}
     </div>
   );
 };

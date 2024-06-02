@@ -12,10 +12,8 @@ import { useAuthContext } from "@/context/AuthContext";
 
 function Category({
   category,
-  token,
 }: {
   category: { name: string; _id: string };
-  token: string | null;
 }) {
   const queryClient = useQueryClient();
   const { state } = useAuthContext();
@@ -26,7 +24,7 @@ function Category({
     createCategoryMutation,
     editCategoryMutation,
     deleteCategoryMutation,
-  } = useCategoryQueries(queryClient, token);
+  } = useCategoryQueries(queryClient);
 
   const handleEditSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -57,7 +55,7 @@ function Category({
   };
 
   const handleLinkClick = () => {
-    if (!token) {
+    if (!(state?.user)) {
       toast.error("You need to login to access this page");
     }
   };
@@ -69,7 +67,7 @@ function Category({
           <p className="text-white">{category.name}</p>
         </div>
       </Link>
-      {token && state?.user?.isAdmin && <div className="flex">
+      {state?.user?.isAdmin && <div className="flex">
         <Button variant={"ghost"} onClick={handleDelete}>
           <FaTrash className="text-red-800" />
         </Button>

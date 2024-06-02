@@ -6,19 +6,22 @@ import globalErrHandler from './middleware/errorHandler';
 import userRouter from './routes/userRouter';
 import adminRouter from './routes/adminRouter';
 import entityRouter from './routes/entityRouter';
+import "./utils/passport"
 import oauthRouter from './routes/oauthRouter';
-// import passport from "passport"
-// import "./utils/passport"
 import cors from 'cors';
+import cookieParser from "cookie-parser"
+import passport from 'passport';
 
 const app = express();
 
-// app.use(passport.initialize());
+app.use(passport.initialize());
 
 app.use(cors({
   origin:"http://localhost:5173",
   methods:"GET,POST,PUT,DELETE",
 }))
+
+app.use(cookieParser());
 
 // Set up logger
 app.use(morgan('dev'));

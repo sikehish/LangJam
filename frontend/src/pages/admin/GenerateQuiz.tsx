@@ -2,7 +2,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import AdminQuizCarousel from "@/components/admin/AdminQuizCarousel";
 
-const GenerateQuiz = ({ token }: { token: string }) => {
+const GenerateQuiz = () => {
   const location = useLocation();
   const {data: quizData, subject, topic, category, title} = location.state;
   
@@ -15,7 +15,7 @@ const GenerateQuiz = ({ token }: { token: string }) => {
           Number of Questions: {quizData?.data?.numberOfQuestions}
         </p>
       </div>
-      {quizData && <AdminQuizCarousel token={token} quizData={quizData?.data} topic={topic} subject={subject} category={category} title={title} mode={"generate-view"} difficulty={quizData?.data?.difficulty}/>}
+      {quizData && <AdminQuizCarousel  quizData={quizData?.data} topic={topic} subject={subject} category={category} title={title} mode={"generate-view"} difficulty={quizData?.data?.difficulty}/>}
     </div>
   );
 };

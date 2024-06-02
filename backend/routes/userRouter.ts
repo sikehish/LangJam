@@ -1,11 +1,14 @@
 import express, { Router } from 'express';
 const userRouter: Router = express.Router();
-import { userLogin, userVerify, userSignup, deleteAccount, updateUser, resetRequestController, resetPasswordController, adminLogin, attemptQuestion, getAttemptedQuestions, getAttemptedQuizDetails, getFilteredQuizzes, getLeaderboard, getRank, getCurrentUser, uploadImage, handleOptionalFields, createNote, getNotes, deleteNote, chatAiController } from '../controllers/userController';
+import { userLogin, userVerify, userSignup, deleteAccount, updateUser, resetRequestController, resetPasswordController, adminLogin, attemptQuestion, getAttemptedQuestions, getAttemptedQuizDetails, getFilteredQuizzes, getLeaderboard, getRank, getCurrentUser, uploadImage, handleOptionalFields, createNote, getNotes, deleteNote, chatAiController, userCheck, logout } from '../controllers/userController';
 import { checkAuth, checkMixedAuth } from '../middleware/authMiddleware';
 import { dpMiddleware } from '../middleware/multerMiddleware';
 
 userRouter.route('/login').post(userLogin);
+userRouter.route('/check').get(checkMixedAuth,userCheck);
 userRouter.route('/signup').post(userSignup);
+userRouter.route('/logout').post(logout);
+
 userRouter.route('/verify/:token').get(userVerify);
 userRouter.route('/delete').delete(checkAuth, deleteAccount);
 userRouter.route('/update').patch(checkAuth, updateUser);

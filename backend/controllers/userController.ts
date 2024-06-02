@@ -75,91 +75,118 @@ export const userSignup=asyncWrapper(async (req, res) => {
     res.status(201).json({ status: 'success', data: { name, email, id:user._id} });
 })
 
-export const userLogin =asyncWrapper( async (req, res) => {
-    let { email, password } = req.body;
-    email=email.trim()
-    password=password.trim()
-    if (!email || !password) {
-      res.status(400)
-      throw Error("Email and password must be filled");
+export const userCheck = asyncWrapper(async (req: Request, res: Response) => {
+  
+  if (!(req as AuthReq).user) {
+    res.status(401)
+    throw new Error('User is not authenticated')
+  }
+  console.log("USER ", (req as AuthReq).user)
+  const admin = await Admin.findById((req as AuthReq).user);
+  console.log("ADMIN: ",admin)
+    if (admin) {
+      res.status(200).json({ user: {email:admin.email , isAdmin: true} });
+      return;
     }
-        else if (!validator.isEmail(email)) {
-          res.status(400)
-          throw Error("Email format invalid");
-        }
-        
-        
-        // Find the user by email
-        const user = await User.findOne({ email });
 
-        if (!user) {
-          res.status(404)
-          throw new Error("User doesn't exist")
-        }
-        
-        // Compare passwords
-        const exists = await bcrypt.compare(password, user.password);
-        if (!exists) {
-          res.status(401)
-          throw new Error("Incorrect password")
-        }
+    const user = await User.findById((req as AuthReq).user);
+    console.log("USER: ",user)
+    if (!user) {
+      res.status(404);
+      throw new Error("User doesn't exist");
+    }
+    res.status(200).json({ user: {name: user.name, email:user.email, isAdmin: false } });
+});
 
-        //Will be implemented later
-        // if(!user.verified) {
-        //   res.status(401)
-        //   throw new Error("User is not verified")
-        // }
+export const userLogin = asyncWrapper(async (req: Request, res: Response) => {
+  let { email, password } = req.body;
+  email = email.trim();
+  password = password.trim();
 
-    // Create a JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_KEY as jwt.Secret, /*{ expiresIn: '5d'}*/);
-    // console.log(token) 
-    // console.log(user,user.name,  user.isAdmin, Boolean(user.isAdmin))            
-    res.status(200).json({status:"success", data:{  email , name:user.name, token }});
-})
+  if (!email || !password) {
+      res.status(400);
+      throw new Error("Email and password must be filled");
+  } else if (!validator.isEmail(email)) {
+      res.status(400);
+      throw new Error("Email format invalid");
+  }
 
+  // Find the user by email
+  const user = await User.findOne({ email });
+
+  if (!user) {
+      res.status(404);
+      throw new Error("User doesn't exist");
+  }
+
+  // Compare passwords
+  const exists = await bcrypt.compare(password, user.password);
+  if (!exists) {
+      res.status(401);
+      throw new Error("Incorrect password");
+  }
+
+  // Create a JWT token
+  const token = jwt.sign({ id: user._id }, process.env.JWT_KEY as jwt.Secret, { expiresIn: '5d' });
+
+  // Set the token in a cookie
+  res.cookie('token', token, {
+      httpOnly: true,
+      // secure: process.env.NODE_ENV === 'production',
+      // sameSite: 'strict',  
+      sameSite: "none",  
+      maxAge: 5 * 24 * 60 * 60 * 1000 
+  });
+
+  res.status(200).json({
+      status: "success",
+      data: {
+          email,
+          name: user.name
+      }
+  });
+});
 
 //Admin Login
-export const adminLogin =asyncWrapper( async (req, res) => {
-    let { email, password } = req.body;
-    email=email.trim()
-    password=password.trim()
-    if (!email || !password) {
-      res.status(400)
-      throw Error("Email and password must be filled");
-    }
-        else if (!validator.isEmail(email)) {
-          res.status(400)
-          throw Error("Email format invalid");
-        }
-        
-        
-        // Find the user by email
-        const user: AdminSchema | null= await Admin.findOne({ email });
-        console.log(Admin)
+export const adminLogin = asyncWrapper(async (req, res) => {
+  let { email, password } = req.body;
+  email = email.trim();
+  password = password.trim();
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("Email and password must be filled");
+  } else if (!validator.isEmail(email)) {
+    res.status(400);
+    throw new Error("Email format invalid");
+  }
 
-        if (!user) {
-          res.status(404)
-          throw new Error("You aren't authorized!")
-        }
-        
-        // Compare passwords
-        const exists = await bcrypt.compare(password, user.password);
-        if (!exists) {
-          res.status(401)
-          throw new Error("Incorrect password")
-        }
+  const user: AdminSchema | null = await Admin.findOne({ email });
 
-        //Will be implemented later
-        // if(!user.verified) {
-        //   res.status(401)
-        //   throw new Error("User is not verified")
-        // }
+  if (!user) {
+    res.status(404);
+    throw new Error("You aren't authorized!");
+  }
 
-    // Create a JWT token
-    const token = jwt.sign({ id: user._id }, (process?.env?.JWT_ADMIN_KEY as jwt.Secret), /*{ expiresIn: '1d'}*/);
-    res.status(200).json({status:"success", data:{ email ,isAdmin: true, name:user?.email, token }});
+  const exists = await bcrypt.compare(password, user.password);
+  if (!exists) {
+    res.status(401);
+    throw new Error("Incorrect password");
+  }
 
-})
+  const token = jwt.sign({ id: user._id }, process.env.JWT_ADMIN_KEY as jwt.Secret, /*{ expiresIn: '1d'}*/);
+  
+  res.cookie('token', token, {
+    httpOnly: true,
+    // secure: process.env.NODE_ENV === 'production',
+    // sameSite: 'strict',  
+    sameSite: "none",  
+    maxAge: 5 * 24 * 60 * 60 * 1000 
+});
+
+
+  res.status(200).json({ status: "success", data: { email, isAdmin: true, name: user?.email, token } });
+});
+
 
 //NOTE: Will be implemented later. Not using it anywhere for now.
 export const userVerify=asyncWrapper(async (req,res)=>{
@@ -559,3 +586,11 @@ export const chatAiController = asyncWrapper(
     }
   }
 );
+
+
+// General logout endpoint
+export const logout = asyncWrapper(
+  async (req: Request, res: Response) => {
+  res.clearCookie('token');
+    res.status(200).json({ status: "success", message: "Logged out successfully" });
+})
