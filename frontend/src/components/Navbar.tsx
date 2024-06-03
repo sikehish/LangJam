@@ -101,39 +101,39 @@ const Navbar: React.FC = () => {
           </button>
           <ul className="space-y-8 py-16">
             <li>
-              <Link to="/">Home</Link>
+              <Link to="/" onClick={toggleMenu}>Home</Link>
             </li>
             <li>
-              <Link to="/categories">Categories</Link>
+              <Link to="/categories" onClick={toggleMenu}>Categories</Link>
             </li>
             <li>
-              <Link to="/leaderboard">Leaderboard</Link>
+              <Link to="/leaderboard" onClick={toggleMenu}>Leaderboard</Link>
             </li>
             {!state.user && <li>
-              <Link to="/login">Login</Link>
+              <Link to="/login" onClick={toggleMenu}>Login</Link>
             </li> }
             {state.user && !state?.user?.isAdmin && <li>
-              <Link to="/profile">Profile</Link>
+              <Link to="/profile" onClick={toggleMenu}>Profile</Link>
             </li>}
             {state.user && !state?.user?.isAdmin  &&(
               <li>
-            <Link to="/notes">
+            <Link to="/notes" onClick={toggleMenu}>
             Notes
           </Link>
               </li>
           )}
           {!state.user && (
             <li>
-            <Link to="/admin-login">
+            <Link to="/admin-login" onClick={toggleMenu}>
               Admin
             </Link>
             </li>
           )}
             {state.user?.isAdmin  && <li>
-              <Link to="/admin">Admin</Link>
+              <Link to="/admin" onClick={toggleMenu}>Admin</Link>
             </li>}
             {state.user && <li>
-              <button onClick={logout}>
+              <button onClick={logout} >
               Logout
             </button>
             </li>}
