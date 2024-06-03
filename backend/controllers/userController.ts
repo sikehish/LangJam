@@ -134,6 +134,7 @@ export const userLogin = asyncWrapper(async (req: Request, res: Response) => {
   res.cookie('token', token, {
       httpOnly: true,
       // secure: process.env.NODE_ENV === 'production',
+      secure: true,
       // sameSite: 'strict',  
       sameSite: "none",  
       maxAge: 5 * 24 * 60 * 60 * 1000 
@@ -179,6 +180,7 @@ export const adminLogin = asyncWrapper(async (req, res) => {
   res.cookie('token', token, {
     httpOnly: true,
     // secure: process.env.NODE_ENV === 'production',
+    secure: true,
     // sameSite: 'strict',  
     sameSite: "none",  
     maxAge: 5 * 24 * 60 * 60 * 1000 
@@ -234,7 +236,7 @@ export const deleteAccount = asyncWrapper(async (req, res) => {
 //Updates made from the profile page
 export const updateUser = asyncWrapper(async (req, res) => {
   const id = ((req as unknown) as AuthReq).user;
-  let { name, password, confirmPassword, description,dp,imageUrl } = req.body;
+  let { name, password, confirmPassword, description, dp, imageUrl } = req.body;
 
   if (password !== undefined && confirmPassword !== undefined) {
     password = password.trim();
@@ -253,11 +255,10 @@ export const updateUser = asyncWrapper(async (req, res) => {
       throw new Error("Password is not strong enough");
     }
 
-    const updatedUser = await User.findByIdAndUpdate(id, { password }, {
+    await User.findByIdAndUpdate(id, { password }, {
       new: true,
       runValidators: true
     });
-    console.log(updatedUser);
   }
 
   if (name !== undefined) {
@@ -268,7 +269,7 @@ export const updateUser = asyncWrapper(async (req, res) => {
       throw new Error("Please enter a valid name");
     }
 
-    const updatedUser = await User.findByIdAndUpdate(id, { name }, {
+    await User.findByIdAndUpdate(id, { name }, {
       new: true,
       runValidators: true
     });
@@ -282,30 +283,35 @@ export const updateUser = asyncWrapper(async (req, res) => {
       throw new Error("Description cannot be empty!");
     }
 
-    const updatedUser = await User.findByIdAndUpdate(id, { description }, {
+    await User.findByIdAndUpdate(id, { description }, {
       new: true,
       runValidators: true
     });
   }
 
-  if(dp !== undefined){
+  if (dp !== undefined) {
     let imageData;
     if (dp !== undefined) {
-      imageData = req?.file?.buffer.toString("base64");
+      if (req.file && req.file.size >= 500 * 1024) { // Check if the file size is >= 1MB
+        res.status(400);
+        throw new Error("Image size should be less than 1MB");
+      }
+      imageData = req.file?.buffer.toString("base64");
     } else if (imageUrl) {
       imageData = await getImageDataFromUrl(imageUrl);
     }
 
-  if(!imageData){
-    res.status(400)
-    throw new Error("Image data issue")
-  }
+    if (!imageData) {
+      res.status(400);
+      throw new Error("Image data issue");
+    }
 
-  await redisClient.set(id, imageData);
+    await redisClient.set(id, imageData);
   }
 
   res.status(200).json({ status: "success" });
 });
+
 
 
 

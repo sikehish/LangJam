@@ -53,12 +53,16 @@ const Profile: React.FC = () => {
           throw new Error("Failed to upload profile picture");
         }
 
+        const data=await response.json()
+        
+        if(data.status=="error") if(data.message.includes("max request size exceeded")) throw new Error("Image size shouldn't exceed 500 KB!"); else throw new Error("Error uploading DP :(")
+
         queryClient.invalidateQueries({ queryKey: ["current-user"] });
         queryClient.invalidateQueries({ queryKey: ["user-rank"] });
 
         toast.success("DP successfully updated!");
-      } catch (error) {
-        toast.error("Error uploading profile picture!");
+      } catch (error: any) {
+        toast.error(error?.message);
         console.error("Error uploading profile picture:", error);
       }
     }
@@ -83,6 +87,7 @@ const Profile: React.FC = () => {
         if (!response.ok) {
           throw new Error("Failed to update description");
         }
+
 
         queryClient.invalidateQueries({ queryKey: ["current-user"] });
         toast.success("Description successfully updated!");

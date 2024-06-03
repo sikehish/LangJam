@@ -6,7 +6,7 @@ import { AuthReq } from "../typings";
 export const checkAuth = (req: Request, res: Response, next: NextFunction): Response | void => {
 
   const token = req.cookies.token;
-  console.log(token)
+  console.log(req.cookies)
   
   if (!token) {
     return res.status(401).json({ status: "fail", message: 'Unauthorized access. Token not provided.' });
@@ -53,6 +53,7 @@ export const checkAdminAuth = (req: Request, res: Response, next: NextFunction):
 export const checkMixedAuth = (req: Request, res: Response, next: NextFunction): Response | void => {
   // console.log("COOKIES: ",req.cookies)
   const token = req.cookies.token;
+  console.log(req.cookies)
   if (!token) {
     return res.status(401).json({ status: "fail", message: 'Unauthorized access. Token not provided.' });
   }
