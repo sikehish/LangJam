@@ -1,3 +1,4 @@
+import Loader from '@/components/Loader';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 import { FaTrash } from 'react-icons/fa';
@@ -47,11 +48,14 @@ function Notes() {
     }
   };
 
+  if(!isError && isLoading){
+    return <Loader/>
+  }
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-semibold mb-6 mt-8">Your Notes</h1>
       {isError && <p className="text-red-600">Error fetching notes. Please try again later.</p>}
-      {!isError && isLoading && <p>Loading...</p>}
       {!isError && !isLoading && notesData?.data?.length === 0 && (
         <p className="text-gray-600">You have no notes.</p>
       )}

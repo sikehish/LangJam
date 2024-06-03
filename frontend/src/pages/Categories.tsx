@@ -6,22 +6,30 @@ import { CreateBtn } from '@/components/buttons/CreateBtn';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/context/AuthContext';
+import Loader from '@/components/Loader';
 
 const Categories: React.FC= () => {
   const queryClient = useQueryClient();
   const {state}=useAuthContext()
   const navigate=useNavigate()
   const { getCategories, createCategoryMutation } = useCategoryQueries(queryClient);
+  const { data: getData, isLoading} =getCategories;
 
   const renderCategories = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {getCategories?.data?.map((category: { name: string; _id: string }) => (
+        {getData?.data?.map((category: { name: string; _id: string }) => (
           <Category key={category._id} category={category}/>
         ))}
       </div>
     );
   };
+
+  if(isLoading){
+    return (
+     <Loader />
+    )
+  }
 
   return (
     <div className="container mx-auto pt-10">
@@ -30,7 +38,7 @@ const Categories: React.FC= () => {
           onClick={() => navigate(`/admin`)}
           />
       <h1 className="text-3xl font-bold mb-4">Categories</h1>
-      {!getCategories?.data?.length ? (
+      {!getData?.data?.length ? (
         <p>No categories stored yet!</p>
       ) : (
         renderCategories()
@@ -41,3 +49,4 @@ const Categories: React.FC= () => {
 };
 
 export default Categories;
+

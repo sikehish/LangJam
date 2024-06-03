@@ -6,6 +6,7 @@ import { SelectComponent } from '@/components/SelectComponent';
 import { useQuery } from '@tanstack/react-query';
 import UserQuizTile from '@/components/UserQuizTile';
 import { IQuiz } from '../Quizzes';
+import Loader from '@/components/Loader';
 
 const UserQuizzes: React.FC = () => {
   const { state } = useAuthContext();
@@ -53,6 +54,8 @@ const UserQuizzes: React.FC = () => {
     );
   };
 
+  if(isLoading) return <Loader />
+
   return (
     <div className="container mx-auto pt-10">
         <ArrowLeft
@@ -63,7 +66,6 @@ const UserQuizzes: React.FC = () => {
         <h1 className="text-3xl font-bold mb-4">Quizzes</h1>
         <SelectComponent setFilter={setFilter} filter={filter} />
       </div>
-      {isLoading && <p className="mt-4">Loading...</p>}
       {isError && <p className="mt-4 text-red-500">Error fetching quizzes.</p>}
       {!isLoading && quizzes.length === 0 && (
         <p className="mt-4">

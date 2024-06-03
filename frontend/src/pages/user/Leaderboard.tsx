@@ -3,6 +3,7 @@ import { useAuthContext } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Crown, Sparkles } from 'lucide-react';
+import Loader from '@/components/Loader';
 
 const Leaderboard = () => {
   const navigate = useNavigate();
@@ -34,15 +35,18 @@ const Leaderboard = () => {
   });
 
   if (leaderboardLoading || rankLoading) {
-    return <p>Loading...</p>;
+    return (
+     <Loader />
+    )
   }
-
-  if (leaderboardError) {
-    return <p>Error fetching data.</p>;
-  }
-  console.log(leaderboard, state?.user)
-  return (
-    <div className="container mx-auto pt-10">
+  
+    if (leaderboardError) {
+      return <p>Error fetching data.</p>;
+    }
+    console.log(leaderboard, state?.user)
+    return (
+      <div className="container mx-auto pt-10">
+      <img src="loader.svg" alt="" />
      <div className="flex items-center justify-center mt-5 mb-4 py-4">
         <span className="text-3xl font-bold">👑 Leaderboard 👑</span>
       </div>

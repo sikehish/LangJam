@@ -1,12 +1,13 @@
 import React, { createContext, useReducer, useContext, ReactNode, useEffect } from 'react';
-import {User} from "../../typings"
+import { User } from "../../typings";
+import Loader from '../components/Loader';
 
 // Define the AuthState interface
 interface AuthState {
   user: User | null;
-  flag?: string; 
+  flag?: string;
+  loading: boolean;
 }
-
 
 interface AuthContextProps {
   dispatch: React.Dispatch<AuthAction>;
@@ -14,7 +15,7 @@ interface AuthContextProps {
 }
 
 interface AuthAction {
-  type: 'SIGNUP' | 'LOGIN' | 'LOGOUT';
+  type: 'SIGNUP' | 'LOGIN' | 'LOGOUT' | 'SET_LOADING';
   payload?: User;
 }
 
@@ -31,11 +32,13 @@ export const useAuthContext = (): AuthContextProps => {
 const reducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
     case 'SIGNUP':
-      return { user: null, flag: 'signed up' };
+      return { ...state, user: null, flag: 'signed up', loading: false };
     case 'LOGIN':
-      return { user: action.payload || null };
+      return { ...state, user: action.payload || null, loading: false };
     case 'LOGOUT':
-      return { user: null };
+      return { ...state, user: null, loading: false };
+    case 'SET_LOADING':
+      return { ...state, loading: true };
     default:
       return state;
   }
@@ -45,12 +48,12 @@ interface AuthContextProviderProps {
   children: ReactNode;
 }
 
-
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, { user: null });
+  const [state, dispatch] = useReducer(reducer, { user: null, loading: true });
 
   useEffect(() => {
     const fetchUser = async () => {
+      dispatch({ type: 'SET_LOADING' });
       try {
         const response = await fetch('/api/users/check', {
           method: 'GET',
@@ -64,9 +67,12 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
         const data = await response.json();
         if (data.user) {
           dispatch({ type: 'LOGIN', payload: data.user });
+        } else {
+          dispatch({ type: 'LOGOUT' });
         }
       } catch (error) {
         console.error('Error fetching user:', error);
+        dispatch({ type: 'LOGOUT' });
       }
     };
 
@@ -75,7 +81,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
 
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
-      {children}
+      {state.loading ? <Loader /> : children}
     </AuthContext.Provider>
   );
 };

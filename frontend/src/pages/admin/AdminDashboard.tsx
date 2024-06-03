@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import Loader from '@/components/Loader';
 
 const AdminDashboard: React.FC= () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const AdminDashboard: React.FC= () => {
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return<Loader />
   }
 
   if (isError) {

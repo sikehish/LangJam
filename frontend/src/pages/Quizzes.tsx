@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useAuthContext } from '@/context/AuthContext';
 import AdminQuizTile from '@/components/admin/AdminQuizTile';
+import Loader from '@/components/Loader';
 
 export interface IQuiz {
     _id: string,
@@ -30,16 +31,20 @@ const Quizzes: React.FC= () => {
   const queryClient = useQueryClient();
   const {topicId, subjectId, categoryId} = useParams();
   const { getQuizzes } = useQuizQueries(queryClient, topicId!);
+  const {data: getData, isLoading}=getQuizzes
 
   const renderQuizzes = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {getQuizzes?.data?.map((quiz:IQuiz) => (
+        {getData?.data?.map((quiz:IQuiz) => (
           <AdminQuizTile key={quiz._id} quiz={quiz} categoryId={categoryId!} subjectId={subjectId!}/>
           ))}
       </div>
     );
   };
+
+
+  if(isLoading) return <Loader />
 
   return (
     <div className="container mx-auto pt-10">
@@ -48,7 +53,7 @@ const Quizzes: React.FC= () => {
           onClick={() => navigate(`/categories/${categoryId}/subjects/${subjectId}`)}
           />
       <h1 className="text-3xl font-bold mb-4">Quizzes</h1>
-      {!getQuizzes?.data?.length ? (
+      {!getData?.data?.length ? (
         <p>No Quizzes stored yet!</p>
       ) : (
         renderQuizzes()

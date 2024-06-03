@@ -2,7 +2,7 @@ import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
 export const useTopicQueries = (queryClient: QueryClient, subjectId: string) => {
-  const {data: getTopics} = useQuery({
+  const getTopics = useQuery({
     queryKey: ['topics', subjectId],
     queryFn: async () => {
       const response = await fetch(`/api/entities/topics/${subjectId}`, {

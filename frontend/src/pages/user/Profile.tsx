@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Pencil, Save } from "lucide-react";
 import { toast } from "react-toastify";
+import Loader from "@/components/Loader";
 
 const Profile: React.FC = () => {
   const queryClient = useQueryClient();
@@ -121,6 +122,13 @@ const Profile: React.FC = () => {
     }
     setIsEditingName((prev) => !prev);
   };
+
+  if (isLoading) {
+    return (
+        <Loader />
+    );
+  }
+
 
   return (
     <div className="mx-auto max-w-md mt-20">

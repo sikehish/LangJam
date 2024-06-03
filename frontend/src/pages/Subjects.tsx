@@ -6,6 +6,7 @@ import { CreateBtn } from '@/components/buttons/CreateBtn';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react';
 import { useAuthContext } from '@/context/AuthContext';
+import Loader from '@/components/Loader';
 
 const Subjects: React.FC = () => {
   const {state}=useAuthContext()
@@ -13,16 +14,19 @@ const Subjects: React.FC = () => {
   const {categoryId} = useParams();
   const navigate=useNavigate()
   const { getSubjects, createSubjectMutation } = useSubjectQueries(queryClient, categoryId!);
+  const {data: getData, isLoading}=getSubjects
 
   const renderSubjects = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {getSubjects?.data?.map((subject: { name: string; _id: string, category:string }) => (
+        {getData?.data?.map((subject: { name: string; _id: string, category:string }) => (
           <Subject key={subject._id} subject={subject} />
         ))}
       </div>
     );
   };
+
+  if(isLoading) return <Loader />
 
   return (
     <div className="container mx-auto pt-10">
@@ -31,7 +35,7 @@ const Subjects: React.FC = () => {
           onClick={() => navigate(`/categories`)}
           />
       <h1 className="text-3xl font-bold mb-4">Subjects</h1>
-      {!getSubjects?.data?.length ? (
+      {!getData?.data?.length ? (
         <p>No Subjects stored yet!</p>
       ) : (
         renderSubjects()

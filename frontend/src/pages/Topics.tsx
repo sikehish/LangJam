@@ -8,6 +8,7 @@ import Topic from '@/components/Topic';
 import { useTopicQueries } from '@/hooks/useTopicQueries';
 import { ArrowLeft } from 'lucide-react';
 import { useAuthContext } from '@/context/AuthContext';
+import Loader from '@/components/Loader';
 
 const Topics: React.FC = () => {
   const queryClient = useQueryClient();
@@ -15,16 +16,19 @@ const Topics: React.FC = () => {
   const {state}=useAuthContext()
   const {subjectId, categoryId} = useParams();
   const { getTopics, createTopicMutation } = useTopicQueries(queryClient, subjectId!);
+  const {data: getData, isLoading} = getTopics
 
   const renderTopics = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {getTopics?.data?.map((topic: { name: string; _id: string, subject:string }) => (
+        {getData?.data?.map((topic: { name: string; _id: string, subject:string }) => (
           <Topic key={topic._id} topic={topic}categoryId={categoryId!}/>
         ))}
       </div>
     );
   };
+
+  if(isLoading) return <Loader />
 
   return (
     <div className="container mx-auto pt-10">
@@ -33,7 +37,7 @@ const Topics: React.FC = () => {
           onClick={() => navigate(`/categories/${categoryId}`)}
           />
       <h1 className="text-3xl font-bold mb-4">Topics</h1>
-      {!getTopics?.data?.length ? (
+      {!getData?.data?.length ? (
         <p>No Topics stored yet!</p>
       ) : (
         renderTopics()
