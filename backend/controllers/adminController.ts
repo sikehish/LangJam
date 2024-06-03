@@ -429,6 +429,7 @@ export const generateQuiz = asyncWrapper(
       const { subject:subjectId, topic:topicId, category:categoryId, difficulty, numberOfQuestions, title } =
         req.body;
 
+
         const category = await Category.findById(categoryId);
         const subject = await Subject.findById(subjectId);
         const topic = await Topic.findById(topicId)

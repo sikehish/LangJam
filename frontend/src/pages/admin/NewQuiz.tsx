@@ -103,6 +103,9 @@ const NewQuiz: React.FC = () => {
       console.log(quizParams);
       const response = await fetch("/api/admin/ai-quiz-gen", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         credentials: 'include',
         body: JSON.stringify(quizParams),
       });
