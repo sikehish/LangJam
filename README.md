@@ -7,7 +7,9 @@ LangJam is an innovative platform designed to make learning technical subjects a
 
 ### Learning Hierarchy
 
-Our structured approach to learning ensures that you can progress from broad categories to specific quizzes seamlessly. Start by exploring broad language categories, dive deeper into specific subjects within each category, explore detailed topics, and finally, test your knowledge with quizzes.
+Our structured approach to learning ensures that you can progress from broad categories to specific quizzes seamlessly. Start by exploring **broad language categories**, dive deeper into **specific subjects within each category**, explore **detailed topics**, and finally, **test your knowledge with quizzes**.
+
+**The hierarchy is as follows: Categories -> Subjects -> Topics -> Quizzes**
 
 ### AI-Generated Quiz Creation
 
