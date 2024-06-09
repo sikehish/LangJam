@@ -43,6 +43,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Zip deployment package
+        run: |
+          zip -r deployment_package.zip . -x ".git/*" "frontend/node_modules/*" "backend/node_modules/*"
+
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
@@ -53,4 +57,4 @@ jobs:
           region: ${{ secrets.EB_REGION }}
           version_label: "version-${{ github.run_number }}" #OR 
           use_existing_version_if_available: true
-          deployment_package: docker-compose.yml
+          deployment_package: deployment_package.zip
