@@ -1,4 +1,4 @@
-![image](https://github.com/sikehish/LangJam/assets/118361679/9843242e-8366-4a07-9ffd-7f72a9c5b38b)# LangJam
+# LangJam
 
 A state of the art language learning game, built for all the budding linguaphiles out there!
 LangJam is an innovative platform designed to make learning technical subjects and coding fun, accessible, and effective for people of all walks of life. Whether you're a seasoned developer looking to expand your skill set or a beginner eager to dive into the world of programming, LangJam has something for you.
