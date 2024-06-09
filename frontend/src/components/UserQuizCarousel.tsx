@@ -14,7 +14,6 @@ import { CircleX, Loader2, RotateCw, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "@/context/AuthContext";
-import { attemptQuestion } from '../../../backend/controllers/userController';
 import Confetti from "./Confetti";
 import ReactMarkdown from 'react-markdown';
 

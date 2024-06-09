@@ -12,8 +12,6 @@ router.get("/login/failed", failureHandler);
 
 router.get("/google", passport.authenticate("google",  { scope: ["profile", "email"] }));
 
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
 // Google OAuth callback URL
 router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect:`${process.env.CLIENT_URL}/failed` }), (req, res) => {
     console.log("HAHAHAHAH")

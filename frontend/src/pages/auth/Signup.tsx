@@ -19,12 +19,18 @@ function Signup() {
   const navigate=useNavigate()
   const queryClient=useQueryClient() 
 
-  console.log(process.env.REACT_APP_API_URL)
-
+  // const googleAuth = (e: any) => {
+  //   e.preventDefault()
+	// 	window.open(
+	// 		`http://localhost:3000/api/oauth/google/callback`,
+	// 		"_self"
+	// 	);
+	// };
+  // OR
   const googleAuth = (e: any) => {
     e.preventDefault()
 		window.open(
-			`${process.env.REACT_APP_API_URL}/api/oauth/google/callback`,
+			`${import.meta.env.VITE_REACT_APP_API_URL}/api/oauth/google/callback`,
 			"_self"
 		);
 	};

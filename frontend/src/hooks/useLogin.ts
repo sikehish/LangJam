@@ -20,6 +20,7 @@ function useLogin(): LoginHook {
   const { mutate: login, error, isPending: isLoading, isSuccess: isSucc } = useMutation({
     mutationFn: (resData: LoginData) => loginMutFn(resData, "login"),
     onError: (error, variables, context) => {
+      console.log(error)
       if (error.message.startsWith("JSON.parse")) toast.error("Network error!");
       else toast.error(error.message);
     },

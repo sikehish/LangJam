@@ -15,14 +15,32 @@ function Login() {
     e.preventDefault();
     login({ email, password });
   };
-  
+
+
+  // const googleAuth = (e: any) => {
+  //   e.preventDefault()
+	// 	window.open(
+	// 		`http://localhost:3000/api/oauth/google/callback`,
+	// 		"_self"
+	// 	);
+	// };
+  // OR
   const googleAuth = (e: any) => {
     e.preventDefault()
 		window.open(
-			`${process.env.REACT_APP_API_URL}/api/oauth/google/callback`,
+			`${import.meta.env.VITE_REACT_APP_API_URL}/api/oauth/google/callback`,
 			"_self"
 		);
 	};
+
+    // // Old approach: (without NGINX):
+  // const googleAuth = (e: any) => {
+  //   e.preventDefault()
+	// 	window.open(
+	// 		`${process.env.REACT_APP_API_URL}/api/oauth/google/callback`,
+	// 		"_self"
+	// 	);
+	// };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 flex-col">

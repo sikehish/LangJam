@@ -4,7 +4,7 @@ import { ErrorResponse, LoginData, LoginResponse, SignupData } from "../../typin
 
 export const  userSignupMutFn= async (resData: SignupData) => {
 
-  const res = await fetch("api/users/signup", {
+  const res = await fetch("/api/users/signup", {
     method: "POST",
     headers: {
       "Content-type": "application/json",
@@ -28,7 +28,7 @@ export const loginMutFn=async (resData: LoginData, endpoint: string): Promise<Lo
     },
     body: JSON.stringify(resData),
   });
-  // console.log(res)
+  console.log(res)
   const data: LoginResponse | ErrorResponse = await res.json();
   if(!res.ok) throw Error((data as ErrorResponse).message)
   return data

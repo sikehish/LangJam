@@ -4,3 +4,8 @@
 npm-debug.log
 .coverage
 .coverage.*
+
+node_modules
+.git
+dist
+*.log

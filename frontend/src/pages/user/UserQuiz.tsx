@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import UserQuizCarousel from '@/components/UserQuizCarousel';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, NotebookPen } from 'lucide-react';
-import { attemptQuestion } from '../../../../backend/controllers/userController';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
 import { Label } from '@radix-ui/react-label';

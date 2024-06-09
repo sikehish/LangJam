@@ -16,12 +16,14 @@
         "./src/*"
       ]
     },
+    "types": ["vite/client"],
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx"
   },
+  "files": ["globals.d.ts"],
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
