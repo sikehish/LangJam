@@ -1,35 +1,36 @@
+version: '3.8'
+
 services:
   backend:
-    build:
-      context: ./backend
+    image: ${DOCKER_USERNAME}/langjam-backend
     ports:
       - "3000:3000"
     environment:
-      - GOOGLE_API_KEY=$GOOGLE_API_KEY
-      - MONGO_URI=$MONGO_URI
-      - MONGO_PW=$MONGO_PW
-      - PORT=$PORT
-      - JWT_KEY=$JWT_KEY
-      - JWT_VERIFY_KEY=$JWT_VERIFY_KEY
-      - JWT_ADMIN_KEY=$JWT_ADMIN_KEY
-      - GEMINI_KEY=$GEMINI_KEY
-      - REDIS_PASSWORD=$REDIS_PASSWORD
-      - REDIS_URI=$REDIS_URI
-      - OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID
-      - OAUTH_CLIENT_SECRET=$OAUTH_CLIENT_SECRET
-      - CLIENT_URL=$CLIENT_URL
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_PW=${MONGO_PW}
+      - PORT=${PORT}
+      - JWT_KEY=${JWT_KEY}
+      - JWT_VERIFY_KEY=${JWT_VERIFY_KEY}
+      - JWT_ADMIN_KEY=${JWT_ADMIN_KEY}
+      - GEMINI_KEY=${GEMINI_KEY}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_URI=${REDIS_URI}
+      - OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID}
+      - OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
+      - CLIENT_URL=${CLIENT_URL}
     volumes:
       - /app/node_modules
       - ./backend:/app
+
   frontend:
-    build:
-      context: ./frontend
+    image: ${DOCKER_USERNAME}/langjam-frontend
     ports:
       - "80:80"
     volumes:
       - /app/node_modules
       - ./frontend:/app
     environment:
-      - VITE_REACT_APP_API_URL=$VITE_REACT_APP_API_URL
+      - VITE_REACT_APP_API_URL=${VITE_REACT_APP_API_URL}
     depends_on:
       - backend

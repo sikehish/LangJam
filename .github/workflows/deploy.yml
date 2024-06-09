@@ -1,0 +1,55 @@
+# yaml-language-server: $schema='none'
+
+name: Deploy to AWS Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_REGISTRY: docker.io
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # # Not very useful for now, but can help in caching
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push frontend image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/langjam-frontend ./frontend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/langjam-frontend
+
+      - name: Build and push backend image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/langjam-backend ./backend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/langjam-backend
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: ${{ secrets.EB_APP_NAME }}
+          environment_name: ${{ secrets.EB_ENV_NAME }}
+          region: ${{ secrets.EB_REGION }}
+          version_label: "version-${{ github.run_number }}" #OR  ${{ github.sha }}
+          deployment_package: docker-compose.yml
