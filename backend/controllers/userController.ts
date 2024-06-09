@@ -112,7 +112,6 @@ export const userLogin = asyncWrapper(async (req: Request, res: Response) => {
       throw new Error("Email format invalid");
   }
 
-  // Find the user by email
   const user = await User.findOne({ email });
 
   if (!user) {
@@ -120,21 +119,19 @@ export const userLogin = asyncWrapper(async (req: Request, res: Response) => {
       throw new Error("User doesn't exist");
   }
 
-  // Compare passwords
   const exists = await bcrypt.compare(password, user.password);
   if (!exists) {
       res.status(401);
       throw new Error("Incorrect password");
   }
 
-  // Create a JWT token
   const token = jwt.sign({ id: user._id }, process.env.JWT_KEY as jwt.Secret, { expiresIn: '5d' });
 
   // Set the token in a cookie
   res.cookie('token', token, {
       httpOnly: true,
-      // secure: process.env.NODE_ENV === 'production',
-      // secure: true,
+      secure: process.env.NODE_ENV === 'production',
+      // secure: true, //for ngrok/https, its true else false
       // sameSite: 'strict',  
       sameSite: "none",  
       maxAge: 5 * 24 * 60 * 60 * 1000 
@@ -179,7 +176,7 @@ export const adminLogin = asyncWrapper(async (req, res) => {
   
   res.cookie('token', token, {
     httpOnly: true,
-    // secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production',
     // secure: true,
     // sameSite: 'strict',  
     sameSite: "none",  

@@ -32,6 +32,7 @@ app.use(express.json())
 // Data sanitization (NoSQL query injection protection)
 app.use(mongoSanitize());
 
+
 // Routes
 app.use('/api/oauth', oauthRouter);
 app.use('/api/users', userRouter);
@@ -54,13 +55,14 @@ app.all('*', (req, res) => {
 app.use(globalErrHandler);
 
 mongoose
-  .connect(uri)
-  .then(() => {
-    console.log('Connected to MongoDB Atlas!');
-    app.listen(PORT, () => {
-      console.log(`Server is listening at ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('Error connecting to MongoDB Atlas:', err);
+.connect(uri)
+.then(() => {
+  console.log('Connected to MongoDB Atlas!');
+  app.listen(PORT, () => {
+    console.log("HAHAHAHAHAHH", process.env.NODE_ENV)
+    console.log(`Server is listening at ${PORT}`);
+  });
+})
+.catch((err) => {
+  console.error('Error connecting to MongoDB Atlas:', err);
   });

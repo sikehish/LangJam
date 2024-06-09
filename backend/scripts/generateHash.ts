@@ -9,7 +9,7 @@ if (!password) {
 }
 
 // Generate the hash
-bcrypt.hash(password, saltRounds, (err, hash) => {
+bcrypt.hash(password, saltRounds, (err: Error, hash: string) => {
   if (err) {
     console.error('Error generating the hash:', err);
   } else {

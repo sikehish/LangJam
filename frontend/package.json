@@ -42,7 +42,7 @@
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.20.1",
     "@types/node": "^20.11.27",
-    "@types/react": "^18.2.64",
+    "@types/react": "^18.3.3",
     "@types/react-dom": "^18.2.21",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.16",
