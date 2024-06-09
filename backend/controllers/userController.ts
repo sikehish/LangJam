@@ -134,7 +134,7 @@ export const userLogin = asyncWrapper(async (req: Request, res: Response) => {
   res.cookie('token', token, {
       httpOnly: true,
       // secure: process.env.NODE_ENV === 'production',
-      secure: true,
+      // secure: true,
       // sameSite: 'strict',  
       sameSite: "none",  
       maxAge: 5 * 24 * 60 * 60 * 1000 
@@ -180,7 +180,7 @@ export const adminLogin = asyncWrapper(async (req, res) => {
   res.cookie('token', token, {
     httpOnly: true,
     // secure: process.env.NODE_ENV === 'production',
-    secure: true,
+    // secure: true,
     // sameSite: 'strict',  
     sameSite: "none",  
     maxAge: 5 * 24 * 60 * 60 * 1000 
