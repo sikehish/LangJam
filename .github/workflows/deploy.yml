@@ -51,5 +51,5 @@ jobs:
           application_name: ${{ secrets.EB_APP_NAME }}
           environment_name: ${{ secrets.EB_ENV_NAME }}
           region: ${{ secrets.EB_REGION }}
-          version_label: "version-${{ github.run_number }}" #OR  ${{ github.sha }}
+          # version_label: "version-${{ github.run_number }}" #OR  ${{ github.sha }}
           deployment_package: docker-compose.yml
