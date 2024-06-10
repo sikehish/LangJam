@@ -16,13 +16,15 @@ function Login() {
     login({ email, password });
   };
 
+  console.log(import.meta.env.VITE_REACT_APP_API_URL)
 
   const googleAuth = (e: any) => {
     e.preventDefault()
-		window.open(
-			`/api/oauth/google/callback`,
-			"_self"
-		);
+		// window.open(
+		// 	`http://localhost:3000/api/oauth/google/callback`,
+		// 	"_self"
+		// );
+    window.location="http://langjam.us-east-1.elasticbeanstalk.com/api/oauth/google/callback"
 	};
   // // OR   //--> The below is returning undefined in Elastic Beanstalk
   // const googleAuth = (e: any) => {
