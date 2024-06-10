@@ -16,12 +16,11 @@ function Login() {
     login({ email, password });
   };
 
-  console.log(import.meta.env.VITE_REACT_APP_API_URL)
-  
+
   const googleAuth = (e: any) => {
     e.preventDefault()
 		window.open(
-			`/api/oauth/google/callback`,
+			`http://langjam.us-east-1.elasticbeanstalk/api/oauth/google/callback`,
 			"_self"
 		);
 	};
