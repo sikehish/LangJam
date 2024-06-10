@@ -20,9 +20,10 @@ function Login() {
   const googleAuth = (e: any) => {
     e.preventDefault()
 		window.open(
-			`http://langjam.us-east-1.elasticbeanstalk/api/oauth/google/callback`,
+			`/api/oauth/google/callback`,
 			"_self"
 		);
+	};
 	};
   // // OR   //--> The below is returning undefined in Elastic Beanstalk
   // const googleAuth = (e: any) => {
