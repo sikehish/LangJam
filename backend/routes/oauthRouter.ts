@@ -28,9 +28,11 @@ router.get('/google/callback', passport.authenticate('google', { session: false,
     });
 
     // Redirect to the success URL
-    res.redirect(`${process.env.CLIENT_URL}/success`);
+    if(proces.env.NODE_ENV=="aws-eb")  res.redirect(`/success`);
+    else res.redirect(`${process.env.CLIENT_URL}/success`);
   } else {
     // Redirect to the failure URL
+    f(proces.env.NODE_ENV=="aws-eb")  res.redirect(`/failed`);
     res.redirect(`${process.env.CLIENT_URL}/failed`);
   }
 });
