@@ -24,7 +24,6 @@ function Login() {
 			"_self"
 		);
 	};
-	};
   // // OR   //--> The below is returning undefined in Elastic Beanstalk
   // const googleAuth = (e: any) => {
   //   e.preventDefault()
