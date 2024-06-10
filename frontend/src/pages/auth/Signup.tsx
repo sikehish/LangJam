@@ -19,21 +19,21 @@ function Signup() {
   const navigate=useNavigate()
   const queryClient=useQueryClient() 
 
-  // const googleAuth = (e: any) => {
-  //   e.preventDefault()
-	// 	window.open(
-	// 		`http://localhost:3000/api/oauth/google/callback`,
-	// 		"_self"
-	// 	);
-	// };
-  // OR
   const googleAuth = (e: any) => {
     e.preventDefault()
 		window.open(
-			`${import.meta.env.VITE_REACT_APP_API_URL}/api/oauth/google/callback`,
+			`/api/oauth/google/callback`,
 			"_self"
 		);
 	};
+  // // OR
+  // const googleAuth = (e: any) => {
+  //   e.preventDefault()
+	// 	window.open(
+	// 		`${import.meta.env.VITE_REACT_APP_API_URL}/api/oauth/google/callback`,
+	// 		"_self"
+	// 	);
+	// };
 
   const handleSubmitBasicInfo = (e: FormEvent) => {
     e.preventDefault();
