@@ -18,12 +18,15 @@ function Login() {
 
 
   const googleAuth = (e: any) => {
-    e.preventDefault()
-		window.open(
-			`/api/oauth/google/callback`,
-			"_self"
-		);
-	};
+    e.preventDefault();
+    const callbackUrl =
+        import.meta.env.VITE_NODE_ENV === "development"
+            ? "http://localhost:3000/api/oauth/google/callback"
+            : "/api/oauth/google/callback";
+
+    window.open(callbackUrl, "_self");
+};
+
   // // OR   //--> The below is returning undefined in Elastic Beanstalk
   // const googleAuth = (e: any) => {
   //   e.preventDefault()

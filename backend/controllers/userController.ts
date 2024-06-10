@@ -495,6 +495,7 @@ export const uploadImage = asyncWrapper(async (req, res) => {
 //Handle Optional fields(on signup)
 export const handleOptionalFields = asyncWrapper(async (req, res) => {
   let { email, description } = req.body;
+  console.log("HAHAHAHAH ", email, description)
 
   if(!email){
     res.status(400);
@@ -520,9 +521,9 @@ export const handleOptionalFields = asyncWrapper(async (req, res) => {
         runValidators: true
       });
     }
-
-
-  const imageData = req?.file?.buffer.toString("base64");
+      
+    const imageData = req?.file?.buffer.toString("base64");
+    console.log("HAHA: ",description, imageData)
   if (imageData) {
     await redisClient.set(existingUser._id, imageData);
   } 

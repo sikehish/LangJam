@@ -20,12 +20,14 @@ function Signup() {
   const queryClient=useQueryClient() 
 
   const googleAuth = (e: any) => {
-    e.preventDefault()
-		window.open(
-			`/api/oauth/google/callback`,
-			"_self"
-		);
-	};
+    e.preventDefault();
+    const callbackUrl =
+        import.meta.env.VITE_NODE_ENV === "development"
+            ? "http://localhost:3000/api/oauth/google/callback"
+            : "/api/oauth/google/callback";
+
+    window.open(callbackUrl, "_self");
+};
   // // OR
   // const googleAuth = (e: any) => {
   //   e.preventDefault()
@@ -49,18 +51,18 @@ function Signup() {
       if(typeof description === "string" && description.length && !description.trim()){
         throw new Error("Ensure that the description you enter isnt an empty string!");
       }
-  
+      
       const formData = new FormData();
-  
+      
       formData.append("email", email);
-  
+      
       if (description || profilePicture) {
         if (typeof description === "string" && description.trim()) {
           formData.append("description", description.trim());
         }
-  
+        
         if (profilePicture) {
-          formData.append("profilePicture", profilePicture);
+          formData.append("avatar", profilePicture);
         }
       } else {
         throw new Error("Data has to be entered for it to be saved :P");
@@ -70,12 +72,16 @@ function Signup() {
         method: "PATCH",
         body: formData,
       });
+
+      const res=await response.json()
   
-      if (!response.ok) {
-        throw new Error("Failed to update optional fields");
+      if (!response.ok || res.status==="error") {
+        if(res.status=="error") throw new Error(res.message)
+        else throw new Error("Failed to update optional fields");
       }
-  
+      
       queryClient.invalidateQueries({ queryKey: ["current-user"] });
+      console.log("HHAAHHAHA ",email, description, profilePicture)
       toast.success("Optional fields successfully updated!");
       navigate("/login");
     } catch (error) {
@@ -198,11 +204,11 @@ function Signup() {
         {/* {isSucc && <div className="text-green-500 mb-4">Signup successful!</div>} */}
 
       </div>
-      <span className="text-gray-400 mt-2">--- OR ---</span>
-      <button onClick={googleAuth} className="mt-2 mb-4 flex w-3/4 box-border bg-blue-600 px-3 py-2 rounded-full items-center justify-center">
+      {!showOptionalFields && <span className="text-gray-400 mt-2">--- OR ---</span>}
+      {!showOptionalFields && <button onClick={googleAuth} className="mt-2 mb-4 flex w-3/4 box-border bg-blue-600 px-3 py-2 rounded-full items-center justify-center">
         <FaGoogle className="mr-2 text-white" />
 						<span className="text-white">Sign up with Google</span>
-					</button>
+					</button>}
           </div>
     </div>
   );

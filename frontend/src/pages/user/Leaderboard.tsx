@@ -95,6 +95,7 @@ const Leaderboard = () => {
             )}
             <p className='mx-2'> {userRank?.data?.name}</p>
             </div>
+            <p className='flex bg-blue-400 bg-opacity-20 px-3 py-1.5 rounded-xl shadow-md shadow-blue-400'><span className='text-lg'>{userRank?.data?.xp}</span> <Sparkles className="text-yellow-600 pl-1 fill-yellow-400" /></p>
           </div>
         </div>
       )}
