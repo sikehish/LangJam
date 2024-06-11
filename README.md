@@ -53,7 +53,7 @@ REDIS_URI
 ```bash
 docker compose -f docker-compose.dev.yml up --build
 ```
-3. Run the below command to stop/terminate docker-compose and containers
+Run the below command to stop/terminate docker-compose and containers
 ```bash
 docker compose -f docker-compose.dev.yml down
 ```
