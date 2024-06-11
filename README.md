@@ -49,9 +49,13 @@ GEMINI_KEY
 REDIS_PASSWORD
 REDIS_URI
 ```
-3. Run the below command
+3. Run the below command to set the project up in development mode
 ```bash
-sudo docker-compose down && sudo docker-compose up --build
+docker compose -f docker-compose.dev.yml up --build
+```
+3. Run the below command to stop/terminate docker-compose and containers
+```bash
+docker compose -f docker-compose.dev.yml down
 ```
 ## Features
 ### Home
