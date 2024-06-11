@@ -21,8 +21,8 @@ function Login() {
     e.preventDefault();
     const callbackUrl =
         import.meta.env.VITE_NODE_ENV === "development"
-            ? "http://localhost:3000/api/oauth/google/callback"
-            : "/api/oauth/google/callback";
+            ? "http://localhost:3000/api/oauth/google"
+            : "/api/oauth/google";
 
     window.open(callbackUrl, "_self");
 };

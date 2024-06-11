@@ -132,8 +132,8 @@ export const userLogin = asyncWrapper(async (req: Request, res: Response) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       // secure: true, //for ngrok/https, its true else false
-      // sameSite: 'strict',  
-      sameSite: "none",  
+      sameSite: 'strict',  
+      // sameSite: "none",  
       maxAge: 5 * 24 * 60 * 60 * 1000 
   });
 
@@ -178,8 +178,8 @@ export const adminLogin = asyncWrapper(async (req, res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     // secure: true,
-    // sameSite: 'strict',  
-    sameSite: "none",  
+    sameSite: 'strict',  
+    // sameSite: "none",  
     maxAge: 5 * 24 * 60 * 60 * 1000 
 });
 

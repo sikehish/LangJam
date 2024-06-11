@@ -10,10 +10,10 @@ router.get("/login/success", successHandler);
 
 router.get("/login/failed", failureHandler);
 
-router.get("/google", passport.authenticate("google",  { scope: ["profile", "email"] }));
+router.get("/google", passport.authenticate("google",  { scope: ["profile", "email"], prompt: 'select_account' }));
 
 // Google OAuth callback URL
-router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect:`${process.env.CLIENT_URL}/failed` }), (req, res) => {
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect:`${process.env.CLIENT_URL}/failed`,prompt: 'select_account' }), (req, res) => {
     console.log("HAHAHAHAH")
   if (req.user) {
     const user: any = req.user;
@@ -23,7 +23,8 @@ router.get('/google/callback', passport.authenticate('google', { session: false,
     // Set the cookie
     res.cookie('token', token, {
       httpOnly: true,
-      sameSite: 'none',  
+      sameSite: 'strict',  
+      // sameSite: 'none',  
       maxAge: 5 * 24 * 60 * 60 * 1000 
     });
 
