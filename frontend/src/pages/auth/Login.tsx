@@ -20,8 +20,9 @@ function Login() {
   const googleAuth = (e: any) => {
     e.preventDefault();
     const callbackUrl =
+	    // "http://localhost:3000/api/oauth/google"
         import.meta.env.VITE_NODE_ENV === "development"
-            ? "http://localhost:3000/api/oauth/google"
+            ? "http://langjam-env.eba-hpagnuec.us-east-1.elasticbeanstalk.com/api/oauth/google"
             : "/api/oauth/google";
 
     window.open(callbackUrl, "_self");
